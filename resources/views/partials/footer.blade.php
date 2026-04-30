@@ -23,8 +23,8 @@
       <!-- Brand -->
       <div>
         <div class="flex items-center space-x-2 mb-4">
-          <img src="/images/LogoEFA.svg" alt="Logo EFA" class="w-12 h-12 object-contain" />
-        <span class="font-display font-bold text-xl -primary-100 text-primary-700 font-oswal">EFA</span> 
+          <img src="/images/EFA.svg" alt="Logo EFA" class="w-12 h-12 object-contain" />
+        <span class="font-display font-bold text-xl text-white font-oswal">EFA</span> 
         </div>
         <p class="text-gray-400 text-sm leading-relaxed" data-i18n="footer_desc">English For Akhwat - Program kursus bahasa Inggris terbaik yang dirancang khusus untuk akhwat dengan metode pembelajaran yang menyenangkan.</p>
       </div>

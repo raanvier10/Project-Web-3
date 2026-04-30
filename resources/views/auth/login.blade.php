@@ -19,9 +19,7 @@
     <div class="relative z-10 flex flex-col justify-between w-full px-12 xl:px-16 2xl:px-20 py-14">
       {{-- Top: Logo --}}
       <div class="flex items-center space-x-3">
-        <div class="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-lg">
-          <img src="/images/LogoEFA.svg" alt="Logo EFA" class="w-8 h-8 object-contain" />
-        </div>
+          <img src="/images/EFA.svg" alt="Logo EFA" class="w-8 h-8 object-contain" />
         <span class="font-extrabold text-2xl text-white tracking-wide" style="font-family:'Oswald',sans-serif;">EFA</span>
       </div>
 
