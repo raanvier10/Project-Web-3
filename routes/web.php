@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DashboardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,7 +30,21 @@ Route::middleware('guest')->group(function () {
 // Authenticated routes
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
+
+    // Dashboard
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    // Course Packages
+    Route::get('/dashboard/packages', [DashboardController::class, 'packages'])->name('dashboard.packages');
+
+    // Registration
+    Route::get('/dashboard/register/{package}', [DashboardController::class, 'showRegistrationForm'])->name('dashboard.register');
+    Route::post('/dashboard/register/{package}', [DashboardController::class, 'register'])->name('dashboard.register.submit');
+
+    // Payment
+    Route::get('/dashboard/payment/{registration}', [DashboardController::class, 'showPayment'])->name('dashboard.payment');
+    Route::post('/dashboard/payment/{registration}', [DashboardController::class, 'uploadPayment'])->name('dashboard.payment.upload');
+
+    // Transaction History
+    Route::get('/dashboard/transactions', [DashboardController::class, 'transactions'])->name('dashboard.transactions');
 });
