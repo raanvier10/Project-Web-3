@@ -27,14 +27,6 @@ class CoursePackage extends Model
     /**
      * A course package has many registrations.
      */
-    public function getFormattedPriceAttribute(): string
-    {
-        return 'Rp ' . number_format($this->price, 0, ',', '.');
-    }
-
-    /**
-     * A course package has many registrations.
-     */
     public function registrations()
     {
         return $this->hasMany(Registration::class);
