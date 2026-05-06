@@ -77,6 +77,14 @@ class AuthController extends Controller
         // Regenerate session to prevent session fixation attacks
         $request->session()->regenerate();
 
+        // Redirect based on role
+        if (Auth::user()->isOwner()) {
+            return redirect()->intended('/owner');
+        }
+        if (Auth::user()->isAdmin() || Auth::user()->isStaff()) {
+            return redirect()->intended('/admin');
+        }
+
         return redirect()->intended('/dashboard');
     }
 

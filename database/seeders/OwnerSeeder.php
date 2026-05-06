@@ -6,19 +6,19 @@ use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
-class AdminSeeder extends Seeder
+class OwnerSeeder extends Seeder
 {
     /**
-     * Seed the admin user for testing.
+     * Seed the owner user for testing.
      */
     public function run(): void
     {
         User::updateOrCreate(
-            ['email' => 'admin@efa.com'],
+            ['email' => 'owner@efa.com'],
             [
-                'name'              => 'Admin EFA',
-                'password'          => Hash::make('password123'),
-                'role'              => 'admin',
+                'name' => 'Owner EFA',
+                'password' => Hash::make('password123'),
+                'role' => 'owner',
                 'email_verified_at' => now(),
             ]
         );

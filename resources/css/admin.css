@@ -1,0 +1,195 @@
+/* ============================================ */
+/* ADMIN DASHBOARD CSS — EFA                    */
+/* Pink theme — matching peserta design system  */
+/* ============================================ */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+
+    /* ---------------------------------------- */
+    /* Admin Status Badges                       */
+    /* ---------------------------------------- */
+    .admin-badge {
+        @apply inline-flex items-center px-3 py-1.5 rounded-lg text-[11px] font-bold whitespace-nowrap;
+    }
+    .admin-badge-pending {
+        background: linear-gradient(135deg, rgba(251,191,36,0.08), rgba(245,158,11,0.04));
+        color: #B45309;
+        border: 1px solid rgba(245,158,11,0.15);
+    }
+    .admin-badge-valid {
+        background: linear-gradient(135deg, rgba(16,185,129,0.08), rgba(5,150,105,0.04));
+        color: #047857;
+        border: 1px solid rgba(16,185,129,0.15);
+    }
+    .admin-badge-rejected {
+        background: linear-gradient(135deg, rgba(239,68,68,0.08), rgba(220,38,38,0.04));
+        color: #B91C1C;
+        border: 1px solid rgba(239,68,68,0.15);
+    }
+    .admin-badge-active {
+        background: linear-gradient(135deg, rgba(232,105,159,0.08), rgba(199,78,131,0.04));
+        color: #C74E83;
+        border: 1px solid rgba(232,105,159,0.15);
+    }
+    .admin-badge-inactive {
+        background: linear-gradient(135deg, rgba(156,163,175,0.08), rgba(107,114,128,0.04));
+        color: #6B7280;
+        border: 1px solid rgba(156,163,175,0.15);
+    }
+
+    /* ---------------------------------------- */
+    /* Admin Buttons                              */
+    /* ---------------------------------------- */
+    .admin-btn {
+        @apply inline-flex items-center justify-center font-bold text-sm transition-all duration-300 transform hover:-translate-y-0.5;
+        border-radius: 14px;
+        padding: 10px 20px;
+        position: relative;
+        overflow: hidden;
+    }
+    .admin-btn::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+        transform: translateX(-100%);
+        transition: transform 0.6s ease;
+    }
+    .admin-btn:hover::after {
+        transform: translateX(100%);
+    }
+
+    .admin-btn-primary {
+        background: linear-gradient(135deg, #C74E83, #E8699F);
+        color: #fff;
+        box-shadow: 0 4px 16px rgba(199,78,131,0.25);
+    }
+    .admin-btn-primary:hover {
+        box-shadow: 0 8px 24px rgba(199,78,131,0.35);
+    }
+
+    .admin-btn-success {
+        background: linear-gradient(135deg, #059669, #10B981);
+        color: #fff;
+        box-shadow: 0 4px 16px rgba(5,150,105,0.25);
+    }
+
+    .admin-btn-danger {
+        background: linear-gradient(135deg, #DC2626, #EF4444);
+        color: #fff;
+        box-shadow: 0 4px 16px rgba(220,38,38,0.25);
+    }
+
+    .admin-btn-outline {
+        background: transparent;
+        color: #6B7280;
+        border: 1.5px solid rgba(0,0,0,0.08);
+    }
+    .admin-btn-outline:hover {
+        background: rgba(0,0,0,0.02);
+        border-color: rgba(232,105,159,0.2);
+        color: #C74E83;
+    }
+
+    .admin-btn-sm {
+        padding: 7px 14px;
+        font-size: 12px;
+        border-radius: 10px;
+    }
+
+    /* ---------------------------------------- */
+    /* Admin Form Elements                       */
+    /* ---------------------------------------- */
+    .admin-form-label {
+        @apply flex items-center text-sm font-semibold text-gray-700 mb-2;
+    }
+
+    .admin-form-input {
+        @apply w-full px-4 py-3 rounded-xl text-gray-900 placeholder-gray-400 text-sm transition-all duration-300;
+        background: rgba(249,250,251,0.6);
+        border: 1.5px solid rgba(0,0,0,0.08);
+    }
+    .admin-form-input:hover {
+        border-color: rgba(199,78,131,0.2);
+        background: rgba(255,240,246,0.3);
+    }
+    .admin-form-input:focus {
+        @apply outline-none;
+        border-color: #FF85BB;
+        background: #fff;
+        box-shadow: 0 0 0 4px rgba(255,133,187,0.1), 0 2px 8px rgba(199,78,131,0.06);
+    }
+
+    .admin-form-select {
+        @apply w-full px-4 py-3 rounded-xl text-gray-900 text-sm transition-all duration-300 appearance-none cursor-pointer;
+        background: rgba(249,250,251,0.6) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239CA3AF' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 16px center;
+        border: 1.5px solid rgba(0,0,0,0.08);
+    }
+    .admin-form-select:focus {
+        @apply outline-none;
+        border-color: #FF85BB;
+        background-color: #fff;
+        box-shadow: 0 0 0 4px rgba(255,133,187,0.1), 0 2px 8px rgba(199,78,131,0.06);
+    }
+
+    .admin-form-textarea {
+        @apply w-full px-4 py-3 rounded-xl text-gray-900 placeholder-gray-400 text-sm transition-all duration-300 resize-none;
+        background: rgba(249,250,251,0.6);
+        border: 1.5px solid rgba(0,0,0,0.08);
+        min-height: 100px;
+    }
+    .admin-form-textarea:focus {
+        @apply outline-none;
+        border-color: #FF85BB;
+        background: #fff;
+        box-shadow: 0 0 0 4px rgba(255,133,187,0.1), 0 2px 8px rgba(199,78,131,0.06);
+    }
+
+    /* ---------------------------------------- */
+    /* Admin Filter Tabs                         */
+    /* ---------------------------------------- */
+    .admin-filter-tab {
+        @apply px-4 py-2.5 rounded-xl text-sm font-semibold text-gray-500 transition-all duration-200 whitespace-nowrap cursor-pointer;
+        background: transparent;
+    }
+    .admin-filter-tab:hover {
+        @apply text-gray-700;
+        background: rgba(0,0,0,0.03);
+    }
+    .admin-filter-tab.active {
+        @apply text-white;
+        background: linear-gradient(135deg, #E8699F, #FF85BB);
+        box-shadow: 0 4px 16px rgba(199,78,131,0.25);
+    }
+
+    /* ---------------------------------------- */
+    /* Admin Search Input                        */
+    /* ---------------------------------------- */
+    .admin-search {
+        @apply pl-10 pr-4 py-2.5 rounded-xl text-sm text-gray-900 placeholder-gray-400 transition-all duration-300;
+        background: rgba(255,255,255,0.7);
+        border: 1.5px solid rgba(0,0,0,0.06);
+        backdrop-filter: blur(8px);
+    }
+    .admin-search:focus {
+        @apply outline-none;
+        border-color: #FF85BB;
+        background: #fff;
+        box-shadow: 0 0 0 4px rgba(255,133,187,0.08);
+    }
+
+    /* ---------------------------------------- */
+    /* Admin Image Viewer                        */
+    /* ---------------------------------------- */
+    .admin-img-viewer {
+        @apply rounded-2xl overflow-hidden shadow-lg ring-1 ring-gray-100 cursor-pointer transition-all duration-300;
+    }
+    .admin-img-viewer:hover {
+        @apply shadow-2xl ring-primary-200;
+        transform: scale(1.02);
+    }
+}
