@@ -25,7 +25,7 @@ class RegistrationDetail extends Model
     ];
 
     /**
-     * Belongs to a registration.
+     * A detail belongs to a registration.
      */
     public function registration()
     {

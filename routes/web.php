@@ -33,9 +33,7 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-    // ============================
-    // PESERTA (USER) DASHBOARD
-    // ============================
+    // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // Course Packages
@@ -97,4 +95,3 @@ Route::middleware('auth')->group(function () {
         Route::get('/reports', [OwnerDashboardController::class, 'reports'])->name('reports');
     });
 });
-

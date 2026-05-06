@@ -22,10 +22,18 @@ class Payment extends Model
     ];
 
     /**
-     * Belongs to a registration.
+     * A payment belongs to a registration.
      */
     public function registration()
     {
         return $this->belongsTo(Registration::class);
+    }
+
+    /**
+     * Get formatted amount (Rupiah).
+     */
+    public function getFormattedAmountAttribute(): string
+    {
+        return 'Rp ' . number_format($this->amount, 0, ',', '.');
     }
 }

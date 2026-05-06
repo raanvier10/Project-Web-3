@@ -13,6 +13,11 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <style>
+        /* ============================== */
+        /* CUSTOM DASHBOARD STYLES        */
+        /* ============================== */
+
+        /* Animated mesh gradient background */
         .dash-bg {
             background:
                 radial-gradient(ellipse 80% 50% at 20% 80%, rgba(255,133,187,0.08) 0%, transparent 60%),
@@ -22,6 +27,7 @@
             min-height: 100vh;
         }
 
+        /* Sidebar glass morphism */
         .sidebar-glass {
             background: linear-gradient(180deg, rgba(199,78,131,0.97) 0%, rgba(232,105,159,0.95) 50%, rgba(255,133,187,0.93) 100%);
             backdrop-filter: blur(20px);
@@ -48,6 +54,7 @@
             pointer-events: none;
         }
 
+        /* Sidebar nav link — premium hover */
         .nav-item {
             display: flex;
             align-items: center;
@@ -84,6 +91,7 @@
         }
         .nav-item.active::before { width: 0; }
 
+        /* Nav icon ring on active */
         .nav-item.active .nav-icon-wrap {
             background: rgba(255,255,255,0.25);
             box-shadow: 0 0 12px rgba(255,255,255,0.15);
@@ -98,6 +106,7 @@
             flex-shrink: 0;
         }
 
+        /* Header glass bar */
         .header-glass {
             background: rgba(255,255,255,0.72);
             backdrop-filter: blur(24px) saturate(1.8);
@@ -105,6 +114,7 @@
             border-bottom: 1px solid rgba(0,0,0,0.04);
         }
 
+        /* Floating card with depth */
         .float-card {
             background: rgba(255,255,255,0.85);
             backdrop-filter: blur(12px);
@@ -126,6 +136,7 @@
             transform: translateY(-2px);
         }
 
+        /* Glow stat card */
         .glow-stat {
             position: relative;
             overflow: hidden;
@@ -143,6 +154,32 @@
             opacity: 1;
         }
 
+        /* Animated gradient border on focus */
+        .gradient-border {
+            position: relative;
+        }
+        .gradient-border::after {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            border-radius: 22px;
+            background: linear-gradient(135deg, #FF85BB, #C74E83, #FF85BB);
+            background-size: 200% 200%;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            animation: borderShimmer 3s ease infinite;
+        }
+        .gradient-border:hover::after {
+            opacity: 1;
+        }
+
+        @keyframes borderShimmer {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        /* Pulse dot indicator */
         .pulse-dot {
             width: 8px; height: 8px;
             border-radius: 50%;
@@ -153,44 +190,90 @@
             50% { opacity: 0.8; box-shadow: 0 0 0 6px transparent; }
         }
 
+        /* Flash message animation */
+        @keyframes slideDown {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .flash-animate {
+            animation: slideDown 0.5s cubic-bezier(0.34,1.56,0.64,1) forwards;
+        }
+
+        /* Decorative floating orbs */
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        .orb-1 {
+            width: 280px; height: 280px;
+            background: radial-gradient(circle, rgba(255,133,187,0.08) 0%, transparent 70%);
+            top: -80px; right: -60px;
+            animation: float 8s ease-in-out infinite;
+        }
+        .orb-2 {
+            width: 200px; height: 200px;
+            background: radial-gradient(circle, rgba(199,78,131,0.06) 0%, transparent 70%);
+            bottom: 20%; left: -40px;
+            animation: float 10s ease-in-out infinite reverse;
+        }
+        .orb-3 {
+            width: 150px; height: 150px;
+            background: radial-gradient(circle, rgba(250,232,255,0.12) 0%, transparent 70%);
+            top: 40%; right: 10%;
+            animation: float 7s ease-in-out infinite;
+            animation-delay: -3s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            33% { transform: translateY(-15px) rotate(2deg); }
+            66% { transform: translateY(8px) rotate(-1deg); }
+        }
+
+        /* Smooth page transitions */
+        .page-enter {
+            animation: pageEnter 0.6s cubic-bezier(0.4,0,0.2,1) forwards;
+        }
         @keyframes pageEnter {
             from { opacity: 0; transform: translateY(16px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        .page-enter {
-            animation: pageEnter 0.6s cubic-bezier(0.4,0,0.2,1) forwards;
-        }
     </style>
 </head>
 <body class="overflow-x-hidden font-sans antialiased text-gray-800">
-<div class="min-h-screen bg-[#f8f9fc] lg:grid lg:grid-cols-[250px_minmax(0,1fr)] lg:items-stretch">
-<aside id="sidebar" class="relative z-10 w-full lg:w-[250px] lg:min-h-screen sidebar-glass flex flex-col shadow-2xl shadow-pink-900/10 lg:rounded-none">
-    <div class="relative z-10 px-6 pt-7 pb-5 border-b border-white/10">
-        <div class="flex items-center gap-3.5">
-            <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/18 backdrop-blur-sm shadow-lg shadow-black/5 ring-1 ring-white/20">
-                <img src="/images/LogoEFA.svg" alt="Logo EFA" class="h-8 w-8 object-contain" onerror="this.parentElement.innerHTML='<span class=\'text-white font-bold text-lg\'>E</span>'" />
-            </div>
-            <div class="min-w-0">
-                <span class="block font-extrabold text-[24px] leading-none text-white tracking-wide" style="font-family:'Oswald',sans-serif;">EFA</span>
-                <p class="mt-1 text-[10px] font-semibold uppercase tracking-[0.24em] text-white/45">Dashboard Peserta</p>
-            </div>
+
+{{-- ============================================ --}}
+{{-- SIDEBAR                                       --}}
+{{-- ============================================ --}}
+<aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-[280px] transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out sidebar-glass flex flex-col">
+    {{-- Logo --}}
+    <div class="relative z-10 flex items-center space-x-3.5 px-7 py-7">
+        <div class="w-11 h-11 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-lg shadow-black/5 ring-1 ring-white/20">
+            <img src="/images/LogoEFA.svg" alt="Logo EFA" class="w-6 h-6 object-contain" onerror="this.parentElement.innerHTML='<span class=\'text-white font-bold text-sm\'>E</span>'" />
+        </div>
+        <div>
+            <span class="font-extrabold text-[22px] text-white tracking-wide" style="font-family:'Oswald',sans-serif;">EFA</span>
+            <p class="text-white/40 text-[10px] tracking-[0.2em] uppercase font-medium -mt-0.5">Dashboard</p>
         </div>
     </div>
 
-    <div class="relative z-10 mx-5 mt-5 mb-6 rounded-2xl p-4" style="background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.12);">
-        <div class="flex items-center gap-3.5">
-            <div class="flex h-12 w-12 items-center justify-center rounded-full text-sm font-bold ring-2 ring-white/20" style="background: linear-gradient(135deg, #FFE0EC, #FFC2D9); color: #C74E83;">
+    {{-- User Profile Card --}}
+    <div class="relative z-10 mx-5 mb-6 p-4 rounded-2xl" style="background: rgba(255,255,255,0.1); backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.12);">
+        <div class="flex items-center space-x-3">
+            <div class="w-11 h-11 rounded-full flex items-center justify-center text-sm font-bold ring-2 ring-white/20" style="background: linear-gradient(135deg, #FFE0EC, #FFC2D9); color: #C74E83;">
                 {{ strtoupper(substr(Auth::user()->name, 0, 2)) }}
             </div>
-            <div class="min-w-0 flex-1">
-                <p class="truncate text-sm font-bold text-white">{{ Auth::user()->name }}</p>
-                <p class="truncate text-xs text-white/45">{{ Auth::user()->email }}</p>
+            <div class="flex-1 min-w-0">
+                <p class="text-white font-bold text-sm truncate">{{ Auth::user()->name }}</p>
+                <p class="text-white/40 text-xs truncate">{{ Auth::user()->email }}</p>
             </div>
         </div>
     </div>
 
-    <nav class="relative z-10 flex-1 px-5 space-y-2">
-        <p class="px-4 mb-3 text-[10px] font-bold uppercase tracking-[0.24em] text-white/35">Menu Utama</p>
+    {{-- Navigation --}}
+    <nav class="relative z-10 px-5 flex-1 space-y-1">
+        <p class="px-4 text-white/30 text-[10px] font-bold tracking-[0.2em] uppercase mb-4">Menu Utama</p>
 
         <a href="{{ route('dashboard') }}" class="nav-item {{ request()->routeIs('dashboard') && !request()->routeIs('dashboard.*') ? 'active' : '' }}" id="nav-overview">
             <div class="nav-icon-wrap"><i class="fas fa-th-large text-[13px]"></i></div>
@@ -207,8 +290,8 @@
             <span>Riwayat Transaksi</span>
         </a>
 
-        <div class="!mt-8 rounded-2xl border border-white/10 bg-white/5 p-3">
-            <p class="px-1 mb-3 text-[10px] font-bold uppercase tracking-[0.24em] text-white/35">Akun</p>
+        <div class="!mt-8">
+            <p class="px-4 text-white/30 text-[10px] font-bold tracking-[0.2em] uppercase mb-4">Akun</p>
             <a href="/" class="nav-item" id="nav-home">
                 <div class="nav-icon-wrap"><i class="fas fa-home text-[13px]"></i></div>
                 <span>Kembali ke Beranda</span>
@@ -223,29 +306,53 @@
         </div>
     </nav>
 
-    <div class="relative z-10 px-7 py-5 border-t border-white/10">
-        <p class="text-center text-[10px] tracking-wide text-white/28">© {{ date('Y') }} English For Akhwat</p>
+    {{-- Footer --}}
+    <div class="relative z-10 px-7 py-5 border-t border-white/8">
+        <p class="text-white/25 text-[10px] text-center tracking-wide">© {{ date('Y') }} English For Akhwat</p>
     </div>
 </aside>
 
-<div class="dash-bg relative min-w-0 lg:border-l lg:border-white/60">
+{{-- Sidebar overlay for mobile --}}
+<div id="sidebarOverlay" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 hidden lg:hidden transition-opacity duration-300" onclick="toggleSidebar()"></div>
+
+{{-- ============================================ --}}
+{{-- MAIN CONTENT                                  --}}
+{{-- ============================================ --}}
+<div class="lg:ml-[280px] dash-bg relative">
+    {{-- Decorative orbs --}}
     <div class="orb orb-1"></div>
     <div class="orb orb-2"></div>
     <div class="orb orb-3"></div>
 
+    {{-- Top Bar --}}
     <header class="sticky top-0 z-40 header-glass">
-        <div class="flex items-center justify-between px-6 sm:px-8 h-[76px]">
+        <div class="flex items-center justify-between px-5 sm:px-8 h-[68px]">
+            {{-- Mobile menu toggle --}}
+            <button onclick="toggleSidebar()" class="lg:hidden w-10 h-10 rounded-xl bg-white/60 border border-gray-100 flex items-center justify-center text-gray-500 hover:bg-primary-50 hover:text-primary-600 hover:border-primary-200 transition-all duration-200 shadow-sm" id="menu-toggle">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            {{-- Page Title + Breadcrumb --}}
             <div class="hidden sm:block">
                 <h2 class="text-base font-bold text-gray-900">@yield('page-title', 'Dashboard')</h2>
             </div>
 
-            <a href="{{ url('/') }}" class="inline-flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium text-gray-500 transition-colors hover:bg-white/70 hover:text-gray-700">
-                <i class="fas fa-home text-gray-400"></i>
-                <span>Beranda</span>
-            </a>
+            {{-- Right side --}}
+            <div class="flex items-center space-x-3">
+                {{-- Current date --}}
+                <div class="hidden md:flex items-center space-x-2 px-4 py-2 rounded-xl bg-white/60 border border-gray-100 text-xs text-gray-500">
+                    <i class="fas fa-calendar-day text-primary-400"></i>
+                    <span>{{ now()->locale('id')->isoFormat('dddd, D MMMM Y') }}</span>
+                </div>
+                {{-- User avatar --}}
+                <div class="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold ring-2 ring-primary-200 ring-offset-2 ring-offset-white/50" style="background: linear-gradient(135deg, #FFE0EC, #FFC2D9); color: #C74E83;">
+                    {{ strtoupper(substr(Auth::user()->name, 0, 2)) }}
+                </div>
+            </div>
         </div>
     </header>
 
+    {{-- Flash Messages --}}
     @if(session('success'))
     <div class="mx-5 sm:mx-8 mt-5" id="flash-success">
         <div class="p-4 rounded-2xl flex items-center space-x-3 flash-animate" style="background: linear-gradient(135deg, rgba(16,185,129,0.08), rgba(52,211,153,0.04)); border: 1px solid rgba(16,185,129,0.15);">
@@ -277,12 +384,22 @@
     </div>
     @endif
 
-    <main class="relative z-10 p-6 sm:p-8 lg:p-10 page-enter min-w-0 max-w-[1600px]">
+    {{-- Page Content --}}
+    <main class="relative z-10 p-5 sm:p-8 page-enter">
         @yield('dashboard-content')
     </main>
 </div>
 
+{{-- Scripts --}}
 <script>
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+        sidebar.classList.toggle('-translate-x-full');
+        overlay.classList.toggle('hidden');
+    }
+
+    // Auto-hide flash messages
     setTimeout(() => {
         const flash = document.getElementById('flash-success');
         if (flash) {
@@ -295,6 +412,5 @@
 </script>
 
 @yield('scripts')
-</div>
 </body>
 </html>

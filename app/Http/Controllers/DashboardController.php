@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\CoursePackage;
+use App\Models\Payment;
 use App\Models\Registration;
+use App\Models\RegistrationDetail;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
 class DashboardController extends Controller
@@ -14,18 +17,20 @@ class DashboardController extends Controller
      */
     public function index()
     {
-        $user = auth()->user();
-        $registrations = Registration::with(['coursePackage', 'payment', 'detail'])
+        $user = Auth::user();
+
+        $registrations = Registration::query()
             ->where('user_id', $user->id)
+            ->with(['coursePackage', 'payment', 'detail'])
             ->latest()
             ->get();
 
         $totalPackages = $registrations->count();
-        $pendingPayments = $registrations->filter(fn($r) => $r->display_status === 'Menunggu Pembayaran')->count();
-        $verifyingPayments = $registrations->filter(fn($r) => $r->display_status === 'Menunggu Verifikasi')->count();
-        $paidCount = $registrations->filter(fn($r) => $r->display_status === 'Lunas')->count();
+        $pendingPayments = $registrations->filter(fn ($registration) => $registration->display_status === 'Menunggu Pembayaran')->count();
+        $verifyingPayments = $registrations->filter(fn ($registration) => $registration->display_status === 'Menunggu Verifikasi')->count();
+        $paidCount = $registrations->filter(fn ($registration) => $registration->display_status === 'Lunas')->count();
 
-        return view('peserta.index', compact(
+        return view('dashboard.index', compact(
             'user',
             'registrations',
             'totalPackages',
@@ -35,119 +40,113 @@ class DashboardController extends Controller
         ));
     }
 
-    /**
-     * List available course packages.
-     */
     public function packages()
     {
-        $packages = CoursePackage::where('is_active', true)->get();
-        return view('peserta.packages', compact('packages'));
+        $packages = CoursePackage::active()
+            ->orderBy('category')
+            ->orderBy('price')
+            ->get();
+
+        return view('dashboard.packages', compact('packages'));
     }
 
-    /**
-     * Show registration form for a specific package.
-     */
     public function showRegistrationForm(CoursePackage $package)
     {
-        return view('peserta.register', compact('package'));
+        return view('dashboard.register', compact('package'));
     }
 
-    /**
-     * Process registration.
-     */
     public function register(Request $request, CoursePackage $package)
     {
-        $user = auth()->user();
+        $isKids = $package->category === 'kids';
+
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'age' => ['required', 'integer', 'min:1', 'max:100'],
+            'domicile' => ['required', 'string', 'max:255'],
+            'job' => ['required', 'string', 'max:255'],
+            'phone' => [$isKids ? 'nullable' : 'required', 'string', 'max:20'],
+            'parent_phone' => [$isKids ? 'required' : 'nullable', 'string', 'max:20'],
+        ], [
+            'name.required' => 'Nama wajib diisi.',
+            'age.required' => 'Usia wajib diisi.',
+            'age.integer' => 'Usia harus berupa angka.',
+            'age.min' => 'Usia minimal 1 tahun.',
+            'domicile.required' => 'Domisili wajib diisi.',
+            'job.required' => 'Pekerjaan wajib diisi.',
+            'phone.required' => 'No. WhatsApp wajib diisi.',
+            'parent_phone.required' => 'No. WhatsApp orang tua wajib diisi.',
+        ]);
 
         $registration = Registration::create([
             'registration_number' => 'EFA-' . strtoupper(Str::random(8)),
-            'user_id' => $user->id,
+            'user_id' => Auth::id(),
             'course_package_id' => $package->id,
             'program_category' => $package->category,
             'status' => 'pending',
         ]);
 
-        // Create registration detail based on form input
-        $rules = [
-            'name' => 'required|string|max:255',
-            'age' => 'required|integer|min:1|max:100',
-            'domicile' => 'required|string|max:255',
-            'job' => 'required|string|max:255',
-        ];
-
-        if ($package->category === 'kids') {
-            $rules['parent_phone'] = 'required|string|max:20';
-        } else {
-            $rules['phone'] = 'required|string|max:20';
-        }
-
-        $detailData = $request->validate($rules);
-
-        $detailData['registration_id'] = $registration->id;
-        $detailData['program_category'] = $package->category;
-
-        \App\Models\RegistrationDetail::create($detailData);
+        RegistrationDetail::create([
+            'registration_id' => $registration->id,
+            'program_category' => $package->category,
+            'name' => $request->name,
+            'age' => $request->age,
+            'domicile' => $request->domicile,
+            'job' => $request->job,
+            'phone' => $isKids ? null : $request->phone,
+            'parent_phone' => $isKids ? $request->parent_phone : null,
+        ]);
 
         return redirect()->route('dashboard.payment', $registration->id)
-            ->with('success', 'Pendaftaran berhasil! Silakan lakukan pembayaran.');
+            ->with('success', 'Pendaftaran berhasil! Silakan lanjutkan pembayaran.');
     }
 
-    /**
-     * Show payment page.
-     */
     public function showPayment(Registration $registration)
     {
         $this->authorizeRegistration($registration);
-        $registration->load(['coursePackage', 'payment']);
 
-        return view('peserta.payment', compact('registration'));
+        $registration->load(['coursePackage', 'payment', 'detail']);
+
+        return view('dashboard.payment', compact('registration'));
     }
 
-    /**
-     * Upload payment proof.
-     */
     public function uploadPayment(Request $request, Registration $registration)
     {
         $this->authorizeRegistration($registration);
 
         $request->validate([
-            'proof_of_payment' => 'required|image|mimes:jpeg,jpg,png,webp|max:2048',
+            'proof_of_payment' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+        ], [
+            'proof_of_payment.required' => 'Bukti pembayaran wajib diunggah.',
+            'proof_of_payment.image' => 'File harus berupa gambar.',
+            'proof_of_payment.mimes' => 'Format file harus JPG, JPEG, PNG, atau WebP.',
+            'proof_of_payment.max' => 'Ukuran file maksimal 2MB.',
         ]);
 
         $path = $request->file('proof_of_payment')->store('payments', 'public');
 
-        // Create or update payment record
-        $payment = $registration->payment;
-        if ($payment) {
-            $payment->update([
-                'proof_of_payment_path' => $path,
-                'payment_status' => 'pending',
-                'admin_notes' => null,
-            ]);
-        } else {
-            \App\Models\Payment::create([
-                'registration_id' => $registration->id,
+        Payment::updateOrCreate(
+            ['registration_id' => $registration->id],
+            [
                 'amount' => $registration->coursePackage->price,
                 'proof_of_payment_path' => $path,
                 'payment_status' => 'pending',
-            ]);
-        }
+                'admin_notes' => null,
+            ]
+        );
 
-        return redirect()->route('dashboard.payment', $registration->id)
-            ->with('success', 'Bukti pembayaran berhasil diunggah.');
+        return redirect()->route('dashboard.transactions')
+            ->with('success', 'Bukti pembayaran berhasil diunggah! Menunggu verifikasi admin.');
     }
 
-    /**
-     * Show transaction history.
-     */
     public function transactions()
     {
-        $registrations = Registration::with(['coursePackage', 'payment', 'detail'])
-            ->where('user_id', auth()->id())
+        $registrations = Registration::query()
+            ->where('user_id', Auth::id())
+            ->with(['coursePackage', 'payment', 'detail'])
             ->latest()
             ->get();
 
-        return view('peserta.transactions', compact('registrations'));
+        return view('dashboard.transactions', compact('registrations'));
     }
 
     /**
@@ -155,7 +154,7 @@ class DashboardController extends Controller
      */
     private function authorizeRegistration(Registration $registration): void
     {
-        if ($registration->user_id !== auth()->id()) {
+        if ($registration->user_id !== Auth::id()) {
             abort(403);
         }
     }

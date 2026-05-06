@@ -25,7 +25,7 @@ class CoursePackage extends Model
     ];
 
     /**
-     * Accessor: formatted price with Rupiah prefix.
+     * A course package has many registrations.
      */
     public function getFormattedPriceAttribute(): string
     {
@@ -33,18 +33,34 @@ class CoursePackage extends Model
     }
 
     /**
-     * Accessor: human-readable category label.
-     */
-    public function getCategoryLabelAttribute(): string
-    {
-        return $this->category === 'kids' ? 'Kids' : 'Dewasa';
-    }
-
-    /**
-     * A package has many registrations.
+     * A course package has many registrations.
      */
     public function registrations()
     {
         return $this->hasMany(Registration::class);
+    }
+
+    /**
+     * Scope: only active packages.
+     */
+    public function scopeActive($query)
+    {
+        return $query->where('is_active', true);
+    }
+
+    /**
+     * Get formatted price (Rupiah).
+     */
+    public function getFormattedPriceAttribute(): string
+    {
+        return 'Rp ' . number_format($this->price, 0, ',', '.');
+    }
+
+    /**
+     * Get category label.
+     */
+    public function getCategoryLabelAttribute(): string
+    {
+        return $this->category === 'kids' ? 'Kids' : 'Dewasa';
     }
 }

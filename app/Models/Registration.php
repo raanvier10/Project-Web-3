@@ -18,49 +18,21 @@ class Registration extends Model
     ];
 
     /**
-     * Accessor: human-readable display status.
+     * Boot: auto-generate registration_number on creating.
      */
-    public function getDisplayStatusAttribute(): string
+    protected static function boot()
     {
-        if ($this->payment && $this->payment->payment_status === 'rejected') {
-            return 'Ditolak';
-        }
+        parent::boot();
 
-        return match ($this->status) {
-            'pending' => $this->payment ? 'Menunggu Verifikasi' : 'Menunggu Pembayaran',
-            'active'  => 'Lunas',
-            'rejected' => 'Ditolak',
-            default   => ucfirst($this->status),
-        };
+        static::creating(function ($registration) {
+            if (empty($registration->registration_number)) {
+                $registration->registration_number = 'REG-' . strtoupper(uniqid());
+            }
+        });
     }
 
     /**
-     * Accessor: CSS class for the status badge.
-     */
-    public function getStatusBadgeClassAttribute(): string
-    {
-        return match ($this->display_status) {
-            'Menunggu Pembayaran' => 'status-pending',
-            'Menunggu Verifikasi' => 'status-verifying',
-            'Lunas'               => 'status-paid',
-            'Ditolak'             => 'status-rejected',
-            default               => 'status-pending',
-        };
-    }
-
-    /**
-     * Accessor: progress step number (1-4).
-     */
-    public function getProgressStepAttribute(): int
-    {
-        if ($this->display_status === 'Ditolak') return 3;
-        if ($this->display_status === 'Lunas') return 4;
-        if ($this->display_status === 'Menunggu Verifikasi') return 2;
-        return 1;
-    }
-
-    /**
-     * Belongs to a user.
+     * A registration belongs to a user.
      */
     public function user()
     {
@@ -68,7 +40,7 @@ class Registration extends Model
     }
 
     /**
-     * Belongs to a course package.
+     * A registration belongs to a course package.
      */
     public function coursePackage()
     {
@@ -76,7 +48,15 @@ class Registration extends Model
     }
 
     /**
-     * Has one payment.
+     * A registration has one detail (form data).
+     */
+    public function detail()
+    {
+        return $this->hasOne(RegistrationDetail::class);
+    }
+
+    /**
+     * A registration has one payment.
      */
     public function payment()
     {
@@ -84,10 +64,53 @@ class Registration extends Model
     }
 
     /**
-     * Has one registration detail.
+     * Get the combined status for display purposes.
+     * Priority: payment_status > registration status
      */
-    public function detail()
+    public function getDisplayStatusAttribute(): string
     {
-        return $this->hasOne(RegistrationDetail::class);
+        if ($this->payment) {
+            return match ($this->payment->payment_status) {
+                'valid', 'verified', 'paid' => 'Lunas',
+                'rejected' => 'Ditolak',
+                'pending' => 'Menunggu Verifikasi',
+                default => 'Menunggu Verifikasi',
+            };
+        }
+
+        return match ($this->status) {
+            'pending' => 'Menunggu Pembayaran',
+            'active' => 'Lunas',
+            'rejected' => 'Ditolak',
+            default => 'Menunggu Pembayaran',
+        };
+    }
+
+    /**
+     * Get status badge class.
+     */
+    public function getStatusBadgeClassAttribute(): string
+    {
+        return match ($this->display_status) {
+            'Lunas' => 'status-paid',
+            'Ditolak' => 'status-rejected',
+            'Menunggu Verifikasi' => 'status-verifying',
+            'Menunggu Pembayaran' => 'status-pending',
+            default => 'status-pending',
+        };
+    }
+
+    /**
+     * Get progress step (1-4).
+     */
+    public function getProgressStepAttribute(): int
+    {
+        return match ($this->display_status) {
+            'Menunggu Pembayaran' => 1,
+            'Menunggu Verifikasi' => 2,
+            'Lunas' => 4,
+            'Ditolak' => 3,
+            default => 1,
+        };
     }
 }
