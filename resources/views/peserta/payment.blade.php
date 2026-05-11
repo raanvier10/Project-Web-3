@@ -61,11 +61,15 @@
     </div>
 
     {{-- ============================================ --}}
-    {{-- ROW 1: Invoice (kiri) + Instruksi (kanan)    --}}
+    {{-- Main Layout: Kiri (Invoice & Instruksi) | Kanan (Upload) --}}
     {{-- ============================================ --}}
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-        {{-- KIRI: Invoice --}}
-        <div class="float-card h-full" style="animation: pageEnter 0.5s ease forwards; opacity: 0;">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-6">
+        
+        {{-- KIRI: Invoice & Instruksi --}}
+        <div class="lg:col-span-5 space-y-6 flex flex-col">
+            
+            {{-- Invoice --}}
+            <div class="float-card flex-1" style="animation: pageEnter 0.5s ease forwards; opacity: 0;">
             <div class="flex items-center space-x-2 mb-5">
                 <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: linear-gradient(135deg, #FFE0EC, #FFC2D9);">
                     <i class="fas fa-file-invoice text-xs text-primary-600"></i>
@@ -114,8 +118,8 @@
             </div>
         </div>
 
-        {{-- KANAN: Instruksi Pembayaran --}}
-        <div class="float-card h-full" style="animation: pageEnter 0.5s ease forwards; animation-delay: 0.1s; opacity: 0;">
+            {{-- Instruksi Pembayaran --}}
+            <div class="float-card flex-1" style="animation: pageEnter 0.5s ease forwards; animation-delay: 0.1s; opacity: 0;">
             <div class="flex items-center space-x-2 mb-5">
                 <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: linear-gradient(135deg, #DBEAFE, #BFDBFE);">
                     <i class="fas fa-info text-xs text-blue-600"></i>
@@ -160,13 +164,12 @@
                 @endforeach
             </div>
         </div>
-    </div>
+        </div> {{-- End Kiri --}}
 
-    {{-- ============================================ --}}
-    {{-- ROW 2: Upload Bukti Pembayaran (full width)  --}}
-    {{-- ============================================ --}}
-    <div class="float-card" style="animation: pageEnter 0.5s ease forwards; animation-delay: 0.2s; opacity: 0;">
-        <div class="flex items-center space-x-2 mb-5">
+        {{-- KANAN: Upload Bukti Pembayaran --}}
+        <div class="lg:col-span-7 flex flex-col">
+            <div class="float-card flex-1 flex flex-col" style="animation: pageEnter 0.5s ease forwards; animation-delay: 0.2s; opacity: 0;">
+                <div class="flex items-center space-x-2 mb-5">
             <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: linear-gradient(135deg, #D1FAE5, #A7F3D0);">
                 <i class="fas fa-cloud-upload-alt text-xs text-emerald-600"></i>
             </div>
@@ -208,16 +211,16 @@
             </div>
             @endif
 
-            <form method="POST" action="{{ route('dashboard.payment.upload', $registration->id) }}" enctype="multipart/form-data" id="paymentForm">
+            <form method="POST" action="{{ route('dashboard.payment.upload', $registration->id) }}" enctype="multipart/form-data" id="paymentForm" class="flex flex-col flex-1">
                 @csrf
 
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="flex flex-col flex-1 gap-6">
                     {{-- Upload Area --}}
-                    <div>
-                        <div class="relative" id="dropZone">
+                    <div class="flex-1">
+                        <div class="relative h-full min-h-[220px]" id="dropZone">
                             <input type="file" id="proof_of_payment" name="proof_of_payment" accept="image/jpeg,image/jpg,image/png,image/webp" required
                                 class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" />
-                            <div class="rounded-2xl p-8 text-center transition-all duration-300 hover:border-primary-300 h-full flex flex-col items-center justify-center" id="dropContent" style="border: 2px dashed rgba(199,78,131,0.2); background: linear-gradient(135deg, rgba(255,240,246,0.4), rgba(255,224,236,0.2)); min-height: 220px;">
+                            <div class="rounded-2xl p-8 text-center transition-all duration-300 hover:border-primary-300 h-full flex flex-col items-center justify-center" id="dropContent" style="border: 2px dashed rgba(199,78,131,0.2); background: linear-gradient(135deg, rgba(255,240,246,0.4), rgba(255,224,236,0.2));">
                                 <div class="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-3" style="background: linear-gradient(135deg, #FFE0EC, #FFC2D9); box-shadow: 0 8px 24px rgba(255,133,187,0.15);">
                                     <i class="fas fa-cloud-upload-alt text-xl text-primary-600"></i>
                                 </div>
@@ -227,27 +230,17 @@
                         </div>
                     </div>
 
-                    {{-- Preview + Submit --}}
-                    <div class="flex flex-col justify-between">
-                        {{-- Preview --}}
-                        <div id="previewContainer" class="hidden mb-4">
-                            <p class="text-sm font-bold text-gray-700 mb-2">Preview:</p>
-                            <div class="rounded-2xl overflow-hidden shadow-lg ring-2 ring-primary-200 inline-block bg-gray-50">
-                                <img id="previewImage" src="" alt="Preview" class="max-w-full max-h-[200px] object-contain" />
-                            </div>
-                            <p id="fileName" class="text-sm text-gray-500 mt-2 font-medium"></p>
+                    {{-- Preview --}}
+                    <div id="previewContainer" class="hidden">
+                        <p class="text-sm font-bold text-gray-700 mb-2 text-center">Preview:</p>
+                        <div class="rounded-2xl overflow-hidden shadow-lg ring-2 ring-primary-200 block bg-gray-50 text-center mx-auto w-full">
+                            <img id="previewImage" src="" alt="Preview" class="max-w-full max-h-[200px] object-contain mx-auto" />
                         </div>
+                        <p id="fileName" class="text-sm text-gray-500 mt-2 font-medium text-center"></p>
+                    </div>
 
-                        {{-- Empty state when no file selected --}}
-                        <div id="emptyPreview" class="flex-1 flex flex-col items-center justify-center text-center py-6 rounded-2xl mb-4" style="background: rgba(249,250,251,0.5); border: 1.5px dashed rgba(0,0,0,0.06);">
-                            <div class="w-12 h-12 rounded-full flex items-center justify-center mb-3" style="background: linear-gradient(135deg, #F3F4F6, #E5E7EB);">
-                                <i class="fas fa-image text-gray-300 text-lg"></i>
-                            </div>
-                            <p class="text-gray-400 text-xs font-medium">Preview akan muncul di sini</p>
-                            <p class="text-gray-300 text-[11px] mt-0.5">setelah Anda memilih file</p>
-                        </div>
-
-                        {{-- Submit --}}
+                    {{-- Submit --}}
+                    <div class="mt-auto">
                         <button type="submit" id="submitPayment"
                             class="w-full py-4 rounded-xl text-white font-bold text-sm transition-all duration-300 transform hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center relative overflow-hidden group"
                             style="background: linear-gradient(135deg, #E8699F 0%, #FF85BB 50%, #C74E83 100%); box-shadow: 0 4px 20px rgba(199,78,131,0.25);">
@@ -268,7 +261,10 @@
                 <span>Kembali ke Riwayat Transaksi</span>
             </a>
         </div>
-    </div>
+            </div>
+        </div> {{-- End Kanan --}}
+
+    </div> {{-- End Main Grid --}}
 </div>
 @endsection
 
@@ -308,9 +304,8 @@
                 reader.onload = function(ev) {
                     document.getElementById('previewImage').src = ev.target.result;
                     document.getElementById('previewContainer').classList.remove('hidden');
-                    document.getElementById('emptyPreview').classList.add('hidden');
                     document.getElementById('fileName').textContent = file.name + ' (' + (file.size / 1024).toFixed(1) + ' KB)';
-                    document.getElementById('dropContent').innerHTML = '<div class="flex items-center justify-center space-x-2 py-4" style="color: #C74E83;"><i class="fas fa-check-circle text-lg"></i><span class="font-bold text-sm">File berhasil dipilih. Klik untuk mengganti.</span></div>';
+                    document.getElementById('dropContent').innerHTML = '<div class="flex flex-col items-center justify-center space-y-2 py-4" style="color: #C74E83;"><i class="fas fa-check-circle text-3xl"></i><span class="font-bold text-sm">File berhasil dipilih. Klik untuk mengganti.</span></div>';
                 };
                 reader.readAsDataURL(file);
             }

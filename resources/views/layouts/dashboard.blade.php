@@ -168,7 +168,7 @@
     <div class="relative z-10 px-6 pt-7 pb-5 border-b border-white/10">
         <div class="flex items-center gap-3.5">
             <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/18 backdrop-blur-sm shadow-lg shadow-black/5 ring-1 ring-white/20">
-                <img src="/images/LogoEFA.svg" alt="Logo EFA" class="h-8 w-8 object-contain" onerror="this.parentElement.innerHTML='<span class=\'text-white font-bold text-lg\'>E</span>'" />
+                <img src="/images/EFA.svg" alt="Logo EFA" class="h-8 w-8 object-contain" onerror="this.parentElement.innerHTML='<span class=\'text-white font-bold text-lg\'>E</span>'" />
             </div>
             <div class="min-w-0">
                 <span class="block font-extrabold text-[24px] leading-none text-white tracking-wide" style="font-family:'Oswald',sans-serif;">EFA</span>

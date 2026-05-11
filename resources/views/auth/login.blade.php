@@ -16,7 +16,7 @@
     </div>
 
     {{-- Content --}}
-    <div class="relative z-10 flex flex-col justify-between w-full px-12 xl:px-16 2xl:px-20 py-14">
+    <div class="relative z-10 flex flex-col justify-center gap-12 w-full h-full min-h-screen px-12 xl:px-16 2xl:px-20 py-16">
       {{-- Top: Logo --}}
       <div class="flex items-center space-x-3">
           <img src="/images/EFA.svg" alt="Logo EFA" class="w-8 h-8 object-contain" />
@@ -24,7 +24,7 @@
       </div>
 
       {{-- Center: Hero text --}}
-      <div class="flex-1 flex flex-col justify-center -mt-4">
+      <div class="flex flex-col justify-center">
         <h2 class="text-4xl xl:text-[2.75rem] 2xl:text-5xl font-extrabold text-white leading-[1.15] mb-5">
           <span data-i18n="login_hero_1">Mulai Perjalanan</span><br>
           <span class="text-white/80" data-i18n="login_hero_2">Bahasa Inggrismu</span>
@@ -41,13 +41,13 @@
             @endfor
           </div>
           <p class="text-white/90 text-sm leading-relaxed italic mb-4" data-i18n="login_testi">
-            "Alhamdulillah, setelah ikut EFA selama 3 bulan, saya bisa percaya diri berbicara bahasa Inggris."
+            "Hampir 1 tahun belajar di English For Akhwat, saya mulai lagi dari dasar karena sudah lama tidak menggunakan bahasa Inggris dan banyak kosakata yang lupa. Materi disampaikan full English sehingga membantu saya terbiasa memahami. Penjelasannya juga mudah dipahami. Saya berharap bisa lebih percaya diri saat berbicara bahasa Inggris."
           </p>
           <div class="flex items-center space-x-3">
-            <div class="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold text-primary-700" style="background: linear-gradient(135deg, #FFE0EC, #FFC2D9);">FA</div>
+              <div class="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold text-primary-700" style="background: linear-gradient(135deg, #FFE0EC, #FFC2D9);">DW</div>
             <div>
-              <p class="text-white font-semibold text-sm">Fatimah A.</p>
-              <p class="text-white/50 text-xs" data-i18n="login_testi_role">Alumni Batch 12</p>
+              <p class="text-white font-semibold text-sm">Dian Wahyudi</p>
+              <p class="text-white/50 text-xs" data-i18n="login_testi_role">Pekanbaru</p>
             </div>
           </div>
         </div>
@@ -184,7 +184,7 @@
           </div>
         </div>
 
-        {{-- Remember Me --}}
+        {{-- Remember Me & Forgot Password --}}
         <div class="flex items-center justify-between pt-1">
           <label class="flex items-center cursor-pointer group select-none">
             <input
@@ -196,6 +196,7 @@
             />
             <span class="ml-2.5 text-sm text-gray-500 group-hover:text-gray-700 transition-colors" data-i18n="login_remember">Ingat saya</span>
           </label>
+          <a href="{{ route('password.request') }}" class="text-sm font-semibold text-primary-600 hover:text-primary-700 transition-colors" data-i18n="login_forgot">Lupa password?</a>
         </div>
 
         {{-- Submit --}}
@@ -241,13 +242,14 @@
     en: {
       login_hero_1: "Start Your", login_hero_2: "English Journey",
       login_hero_desc: "Join hundreds of akhwat who have improved their English skills with EFA.",
-      login_testi: "\"Alhamdulillah, after joining EFA for 3 months, I can confidently speak English.\"",
-      login_testi_role: "Alumni Batch 12",
+        login_testi: "\"It's been almost 1 year studying at English For Akhwat. I started from the basics again because I hadn't used English in a long time and forgot a lot of vocabulary. The material is delivered fully in English so it helps me get used to understanding it. The explanations are also easy to grasp. I hope to be more confident when speaking English.\"",
+      login_testi_role: "Pekanbaru",
       login_stat1: "Alumni", login_stat3: "Programs",
       auth_back: "Back to Home",
       login_title: "Welcome! 👋", login_subtitle: "Sign in to your EFA account to continue",
       login_remember: "Remember me",
       login_submit: "Sign In",
+      login_forgot: "Forgot password?",
       auth_or: "or",
       login_register_link: "Create New Account",
       auth_security: "Protected by encryption & secure authentication",
@@ -255,13 +257,14 @@
     id: {
       login_hero_1: "Mulai Perjalanan", login_hero_2: "Bahasa Inggrismu",
       login_hero_desc: "Bergabung dengan ratusan akhwat yang telah meningkatkan kemampuan bahasa Inggris mereka bersama EFA.",
-      login_testi: "\"Alhamdulillah, setelah ikut EFA selama 3 bulan, saya bisa percaya diri berbicara bahasa Inggris.\"",
-      login_testi_role: "Alumni Batch 12",
+        login_testi: "\"Hampir 1 tahun belajar di English For Akhwat, saya mulai lagi dari dasar karena sudah lama tidak menggunakan bahasa Inggris dan banyak kosakata yang lupa. Materi disampaikan full English sehingga membantu saya terbiasa memahami. Penjelasannya juga mudah dipahami. Saya berharap bisa lebih percaya diri saat berbicara bahasa Inggris.\"",
+      login_testi_role: "Pekanbaru",
       login_stat1: "Alumni", login_stat3: "Program",
       auth_back: "Kembali ke Beranda",
       login_title: "Selamat Datang! 👋", login_subtitle: "Masuk ke akun EFA Anda untuk melanjutkan",
       login_remember: "Ingat saya",
       login_submit: "Masuk ke Akun",
+      login_forgot: "Lupa password?",
       auth_or: "atau",
       login_register_link: "Buat Akun Baru",
       auth_security: "Dilindungi enkripsi & autentikasi aman",

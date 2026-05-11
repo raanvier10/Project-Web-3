@@ -13,7 +13,7 @@
     </div>
 
     <!-- Content -->
-    <div class="relative z-10 flex flex-col justify-center px-12 xl:px-20 w-full">
+    <div class="relative z-10 flex flex-col justify-center gap-10 min-h-screen px-12 xl:px-20 py-16 w-full">
       <!-- Logo -->
       <div class="flex items-center space-x-3 mb-12">
         <img src="/images/EFA.svg" alt="Logo EFA" class="w-14 h-14 object-contain drop-shadow-lg" />

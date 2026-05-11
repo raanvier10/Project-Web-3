@@ -148,13 +148,28 @@
             </div>
             @endif
 
+            {{-- Terms Notice --}}
+            <label class="mt-7 p-4 rounded-2xl flex items-start space-x-3 cursor-pointer transition-all duration-300 hover:shadow-md" style="background: linear-gradient(135deg, rgba(255,133,187,0.04), rgba(199,78,131,0.02)); border: 1px solid rgba(255,133,187,0.2);">
+                <div class="flex items-center h-5 mt-1 relative">
+                    <input id="terms-checkbox" type="checkbox" name="terms" required
+                           class="w-5 h-5 text-primary-600 bg-white border-primary-300 rounded focus:ring-primary-500 focus:ring-2 cursor-pointer transition-colors"
+                           onchange="document.getElementById('submitRegistration').disabled = !this.checked; if(this.checked){ document.getElementById('submitRegistration').classList.remove('opacity-60', 'cursor-not-allowed'); document.getElementById('submitRegistration').classList.add('hover:-translate-y-0.5', 'active:translate-y-0'); } else { document.getElementById('submitRegistration').classList.add('opacity-60', 'cursor-not-allowed'); document.getElementById('submitRegistration').classList.remove('hover:-translate-y-0.5', 'active:translate-y-0'); }">
+                </div>
+                <div>
+                    <p class="text-sm font-bold text-gray-700 mb-1">Saya menyetujui Syarat dan Ketentuan</p>
+                    <p class="text-[11px] text-gray-500 leading-relaxed">
+                        Dengan mendaftar, Anda menyetujui bahwa data yang Anda masukkan digunakan untuk keperluan administrasi kursus dan Anda akan diarahkan ke halaman pembayaran.
+                    </p>
+                </div>
+            </label>
+
             {{-- Submit --}}
             <div class="pt-5 flex flex-col sm:flex-row items-center gap-3" style="border-top: 1px dashed rgba(0,0,0,0.06);">
                 <a href="{{ route('dashboard.packages') }}" class="w-full sm:w-auto px-6 py-3.5 rounded-xl border border-gray-200 text-gray-600 font-semibold text-sm hover:bg-gray-50 hover:border-gray-300 transition-all text-center">
                     <i class="fas fa-arrow-left mr-1.5"></i> Kembali
                 </a>
-                <button type="submit" id="submitRegistration"
-                    class="w-full sm:flex-1 py-4 rounded-xl text-white font-bold text-sm transition-all duration-300 transform hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center space-x-2 relative overflow-hidden group"
+                <button type="submit" id="submitRegistration" disabled
+                    class="w-full sm:flex-1 py-4 rounded-xl text-white font-bold text-sm transition-all duration-300 transform flex items-center justify-center space-x-2 relative overflow-hidden group opacity-60 cursor-not-allowed"
                     style="background: linear-gradient(135deg, #E8699F 0%, #FF85BB 50%, #C74E83 100%); box-shadow: 0 4px 20px rgba(199,78,131,0.25);">
                     <span class="relative z-10 flex items-center">
                         <span>Daftar & Lanjut Bayar</span>

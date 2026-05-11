@@ -170,17 +170,19 @@
             </div>
 
             {{-- Terms Notice --}}
-            <div class="mt-7 p-4 rounded-2xl flex items-start space-x-3" style="background: linear-gradient(135deg, rgba(255,133,187,0.04), rgba(199,78,131,0.02)); border: 1px solid rgba(255,133,187,0.1);">
-                <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5" style="background: linear-gradient(135deg, #FFE0EC, #FFC2D9);">
-                    <i class="fas fa-shield-halved text-[10px] text-primary-600"></i>
+            <label class="mt-7 p-4 rounded-2xl flex items-start space-x-3 cursor-pointer transition-all duration-300 hover:shadow-md" style="background: linear-gradient(135deg, rgba(255,133,187,0.04), rgba(199,78,131,0.02)); border: 1px solid rgba(255,133,187,0.2);">
+                <div class="flex items-center h-5 mt-1 relative">
+                    <input id="terms-checkbox" type="checkbox" name="terms" required
+                           class="w-5 h-5 text-primary-600 bg-white border-primary-300 rounded focus:ring-primary-500 focus:ring-2 cursor-pointer transition-colors"
+                           onchange="document.getElementById('btn-submit').disabled = !this.checked; if(this.checked){ document.getElementById('btn-submit').classList.remove('opacity-60', 'cursor-not-allowed'); document.getElementById('btn-submit').classList.add('hover:-translate-y-0.5', 'active:translate-y-0'); } else { document.getElementById('btn-submit').classList.add('opacity-60', 'cursor-not-allowed'); document.getElementById('btn-submit').classList.remove('hover:-translate-y-0.5', 'active:translate-y-0'); }">
                 </div>
                 <div>
-                    <p class="text-xs font-semibold text-gray-600 mb-0.5">Keamanan Data</p>
-                    <p class="text-[11px] text-gray-400 leading-relaxed">
-                        Dengan mendaftar, Anda akan diarahkan ke halaman pembayaran. Data yang Anda masukkan hanya digunakan untuk keperluan administrasi kursus dan tidak akan dibagikan ke pihak lain.
+                    <p class="text-sm font-bold text-gray-700 mb-1">Saya menyetujui Syarat dan Ketentuan</p>
+                    <p class="text-[11px] text-gray-500 leading-relaxed">
+                        Dengan mendaftar, Anda menyetujui bahwa data yang Anda masukkan digunakan untuk keperluan administrasi kursus dan Anda akan diarahkan ke halaman pembayaran.
                     </p>
                 </div>
-            </div>
+            </label>
 
             {{-- Submit Buttons --}}
             <div class="flex items-center space-x-3 mt-7">
@@ -189,8 +191,8 @@
                    id="btn-back">
                     <i class="fas fa-arrow-left mr-2 text-xs"></i> Kembali
                 </a>
-                <button type="submit"
-                        class="flex-1 py-3.5 rounded-xl text-white font-bold text-sm transition-all duration-300 transform hover:-translate-y-0.5 active:translate-y-0 relative overflow-hidden group flex items-center justify-center"
+                <button type="submit" disabled
+                        class="flex-1 py-3.5 rounded-xl text-white font-bold text-sm transition-all duration-300 transform relative overflow-hidden group flex items-center justify-center opacity-60 cursor-not-allowed"
                         style="background: linear-gradient(135deg, #E8699F 0%, #FF85BB 50%, #C74E83 100%); box-shadow: 0 4px 20px rgba(199,78,131,0.25);"
                         id="btn-submit">
                     <span class="relative z-10 flex items-center">
