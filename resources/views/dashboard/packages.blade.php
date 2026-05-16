@@ -44,9 +44,13 @@
                     {{ $package->category_label }}
                 </span>
                 @if($package->amount > 0)
-                <div class="flex items-center space-x-1.5 text-xs text-gray-400">
-                    <div class="w-1.5 h-1.5 rounded-full bg-green-400"></div>
-                    <span>{{ $package->amount }} slot</span>
+                @php
+                    $activeCount = $package->active_registrations ?? $package->active_registrations_count;
+                    $remaining = max(0, $package->amount - $activeCount);
+                @endphp
+                <div class="flex items-center space-x-1.5 text-xs {{ $remaining <= 0 ? 'text-red-500' : ($remaining <= 3 ? 'text-amber-500' : 'text-gray-400') }}">
+                    <div class="w-1.5 h-1.5 rounded-full {{ $remaining <= 0 ? 'bg-red-400' : ($remaining <= 3 ? 'bg-amber-400' : 'bg-green-400') }}"></div>
+                    <span>{{ $remaining <= 0 ? 'PENUH' : $remaining . '/' . $package->amount . ' slot' }}</span>
                 </div>
                 @endif
             </div>
@@ -83,6 +87,13 @@
             @endif
 
             {{-- CTA Button --}}
+            @if($package->amount > 0 && ($package->active_registrations ?? $package->active_registrations_count) >= $package->amount)
+            <div class="w-full inline-flex items-center justify-center px-6 py-4 rounded-2xl text-gray-500 font-bold text-sm bg-gray-100 cursor-not-allowed opacity-70"
+               id="register-pkg-{{ $package->id }}">
+                <i class="fas fa-ban mr-2"></i>
+                Kuota Penuh
+            </div>
+            @else
             <a href="{{ route('dashboard.register', $package->id) }}"
                class="w-full inline-flex items-center justify-center px-6 py-4 rounded-2xl text-white font-bold text-sm transition-all duration-300 transform hover:-translate-y-0.5 active:translate-y-0 group/btn relative overflow-hidden"
                style="background: linear-gradient(135deg, #E8699F 0%, #FF85BB 50%, #C74E83 100%); box-shadow: 0 4px 20px rgba(199,78,131,0.25);"
@@ -94,6 +105,7 @@
                 </span>
                 <div class="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 translate-x-[-100%] group-hover/btn:translate-x-[100%] transition-transform duration-700"></div>
             </a>
+            @endif
         </div>
     </div>
     @endforeach

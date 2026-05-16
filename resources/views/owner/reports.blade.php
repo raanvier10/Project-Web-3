@@ -72,9 +72,14 @@
                     <td>
                         <div class="flex justify-center">
                             @if($payment->proof_of_payment_path)
-                                <a href="{{ asset('storage/' . $payment->proof_of_payment_path) }}" target="_blank" class="w-8 h-8 rounded-lg flex items-center justify-center bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors" title="Lihat Bukti">
-                                    <i class="fas fa-image text-xs"></i>
-                                </a>
+                                <div class="flex items-center space-x-1.5">
+                                    <a href="{{ asset('storage/' . $payment->proof_of_payment_path) }}" target="_blank" class="w-8 h-8 rounded-lg flex items-center justify-center bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors" title="Lihat Bukti">
+                                        <i class="fas fa-image text-xs"></i>
+                                    </a>
+                                    <a href="{{ asset('storage/' . $payment->proof_of_payment_path) }}" download class="w-8 h-8 rounded-lg flex items-center justify-center bg-emerald-50 text-emerald-600 hover:bg-emerald-100 transition-colors" title="Download Bukti">
+                                        <i class="fas fa-download text-xs"></i>
+                                    </a>
+                                </div>
                             @else
                                 <span class="text-gray-400 text-xs italic">Tanpa bukti</span>
                             @endif

@@ -58,6 +58,7 @@
                     <th>Email</th>
                     <th>Asal Instansi / Domisili</th>
                     <th>Paket Kursus</th>
+                    <th>Kuota</th>
                     <th>Tgl Daftar</th>
                     <th class="text-center">Detail</th>
                 </tr>
@@ -91,6 +92,33 @@
                             <span class="text-sm font-semibold text-gray-700">{{ $reg->coursePackage->name }}</span>
                         </div>
                     </td>
+                    <td>
+                        @php
+                            $pkgAmount = $reg->coursePackage->amount;
+                            $pkgActive = $reg->coursePackage->active_registrations_count;
+                        @endphp
+                        @if($pkgAmount > 0)
+                        @php
+                            $remaining = max(0, $pkgAmount - $pkgActive);
+                            $pctUsed = ($pkgActive / $pkgAmount) * 100;
+                        @endphp
+                        <div class="space-y-1">
+                            <div class="flex items-center justify-between text-xs">
+                                <span class="{{ $remaining <= 0 ? 'text-red-600 font-bold' : ($remaining <= 3 ? 'text-amber-600 font-semibold' : 'text-gray-500') }}">
+                                    {{ $pkgActive }}/{{ $pkgAmount }} peserta
+                                </span>
+                                @if($remaining <= 0)
+                                <span class="text-[9px] font-bold text-red-600 uppercase">Penuh</span>
+                                @endif
+                            </div>
+                            <div class="w-full h-1.5 rounded-full bg-gray-100 overflow-hidden">
+                                <div class="h-full rounded-full transition-all duration-500" style="width: {{ min(100, $pctUsed) }}%; background: {{ $remaining <= 0 ? 'linear-gradient(90deg, #EF4444, #F87171)' : ($remaining <= 3 ? 'linear-gradient(90deg, #F59E0B, #FCD34D)' : 'linear-gradient(90deg, #10B981, #34D399)') }};"></div>
+                            </div>
+                        </div>
+                        @else
+                        <span class="text-xs text-gray-400">{{ $pkgActive }} peserta <span class="text-gray-300">(unlimited)</span></span>
+                        @endif
+                    </td>
                     <td class="text-gray-500 text-sm">{{ $reg->created_at->format('d M Y') }}</td>
                     <td class="text-center">
                         <button onclick="openParticipantDetail({{ json_encode([
@@ -114,7 +142,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="7" class="text-center py-16">
+                    <td colspan="8" class="text-center py-16">
                         <div class="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4" style="background: linear-gradient(135deg, #FFE0EC, #FFC2D9);">
                             <i class="fas fa-users text-2xl text-primary-300"></i>
                         </div>

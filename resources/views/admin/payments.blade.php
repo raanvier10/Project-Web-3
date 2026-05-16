@@ -168,8 +168,18 @@
             {{-- Proof of Payment --}}
             <div class="mb-4" id="detail-proof-section">
                 <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-3">Bukti Pembayaran</p>
-                <div class="admin-img-viewer inline-block" id="detail-proof-container">
-                    <img src="" alt="Bukti Pembayaran" class="max-w-full max-h-64 object-contain" id="detail-proof-image">
+                <div class="rounded-2xl overflow-hidden border border-gray-100 inline-block" id="detail-proof-container">
+                    <a href="" target="_blank" id="detail-proof-link" title="Klik untuk melihat ukuran penuh">
+                        <img src="" alt="Bukti Pembayaran" class="max-w-full max-h-64 object-contain cursor-pointer hover:opacity-80 transition-opacity" id="detail-proof-image">
+                    </a>
+                </div>
+                <div class="flex items-center space-x-2 mt-3" id="detail-proof-actions">
+                    <a href="" target="_blank" id="detail-proof-view-btn" class="inline-flex items-center px-4 py-2 rounded-xl text-sm font-semibold text-blue-700 transition-all duration-200 hover:shadow-md" style="background: linear-gradient(135deg, #DBEAFE, #BFDBFE);">
+                        <i class="fas fa-external-link-alt mr-2 text-xs"></i>Lihat Penuh
+                    </a>
+                    <a href="" download id="detail-proof-download-btn" class="inline-flex items-center px-4 py-2 rounded-xl text-sm font-semibold text-emerald-700 transition-all duration-200 hover:shadow-md" style="background: linear-gradient(135deg, #D1FAE5, #A7F3D0);">
+                        <i class="fas fa-download mr-2 text-xs"></i>Download
+                    </a>
                 </div>
             </div>
 
@@ -255,6 +265,10 @@
             if (data.proof_of_payment_path) {
                 document.getElementById('detail-proof-section').classList.remove('hidden');
                 document.getElementById('detail-proof-image').src = data.proof_of_payment_path;
+                document.getElementById('detail-proof-link').href = data.proof_of_payment_path;
+                document.getElementById('detail-proof-view-btn').href = data.proof_of_payment_path;
+                document.getElementById('detail-proof-download-btn').href = data.proof_of_payment_path;
+                document.getElementById('detail-proof-actions').classList.remove('hidden');
             } else {
                 document.getElementById('detail-proof-section').classList.add('hidden');
             }

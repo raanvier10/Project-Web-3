@@ -3,6 +3,7 @@
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Session\TokenMismatchException;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -26,5 +27,20 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
             //
         });
+    }
+
+    /**
+     * Render an exception into an HTTP response.
+     * Custom handling for 419 (CSRF token expired) to show a friendly message.
+     */
+    public function render($request, Throwable $e)
+    {
+        if ($e instanceof TokenMismatchException) {
+            return redirect()->back()
+                ->with('error', 'Sesi Anda telah kedaluwarsa karena terlalu lama tidak aktif. Silakan muat ulang halaman dan coba lagi.')
+                ->withInput($request->except($this->dontFlash));
+        }
+
+        return parent::render($request, $e);
     }
 }

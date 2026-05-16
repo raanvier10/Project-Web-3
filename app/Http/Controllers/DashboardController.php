@@ -8,7 +8,7 @@ use App\Models\Registration;
 use App\Models\RegistrationDetail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 class DashboardController extends Controller
 {
@@ -43,6 +43,9 @@ class DashboardController extends Controller
     public function packages()
     {
         $packages = CoursePackage::active()
+            ->withCount(['registrations as active_registrations' => function ($q) {
+                $q->where('status', 'active');
+            }])
             ->orderBy('category')
             ->orderBy('price')
             ->get();
@@ -52,16 +55,68 @@ class DashboardController extends Controller
 
     public function showRegistrationForm(CoursePackage $package)
     {
+        // FIX: Cek apakah paket masih aktif
+        if (!$package->is_active) {
+            return redirect()->route('dashboard.packages')
+                ->with('error', 'Paket kursus ini sudah tidak tersedia.');
+        }
+
+        // FIX: Cek apakah kuota masih ada
+        if ($package->is_full) {
+            return redirect()->route('dashboard.packages')
+                ->with('error', 'Kuota paket kursus ini sudah penuh.');
+        }
+
+        // FIX: Cek duplikasi registrasi (pending/active)
+        $existingRegistration = Registration::where('user_id', Auth::id())
+            ->where('course_package_id', $package->id)
+            ->whereIn('status', ['pending', 'active'])
+            ->first();
+
+        if ($existingRegistration) {
+            // Redirect ke payment jika masih pending, atau ke transactions jika sudah aktif
+            if ($existingRegistration->status === 'pending') {
+                return redirect()->route('dashboard.payment', $existingRegistration->id)
+                    ->with('error', 'Anda sudah terdaftar di paket ini. Silakan selesaikan pembayaran.');
+            }
+
+            return redirect()->route('dashboard.transactions')
+                ->with('error', 'Anda sudah aktif di paket kursus ini.');
+        }
+
         return view('dashboard.register', compact('package'));
     }
 
     public function register(Request $request, CoursePackage $package)
     {
+        // FIX: Re-validate paket aktif di sisi server
+        if (!$package->is_active) {
+            return redirect()->route('dashboard.packages')
+                ->with('error', 'Paket kursus ini sudah tidak tersedia.');
+        }
+
+        // FIX: Re-validate kuota di sisi server
+        if ($package->is_full) {
+            return redirect()->route('dashboard.packages')
+                ->with('error', 'Kuota paket kursus ini sudah penuh.');
+        }
+
+        // FIX: Re-validate duplikasi di sisi server (mencegah race condition form submit ganda)
+        $existingRegistration = Registration::where('user_id', Auth::id())
+            ->where('course_package_id', $package->id)
+            ->whereIn('status', ['pending', 'active'])
+            ->exists();
+
+        if ($existingRegistration) {
+            return redirect()->route('dashboard.transactions')
+                ->with('error', 'Anda sudah terdaftar di paket kursus ini.');
+        }
+
         $isKids = $package->category === 'kids';
 
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'age' => ['required', 'integer', 'min:1', 'max:100'],
+            'age' => ['required', 'integer', 'min:1', 'max:' . ($isKids ? '17' : '100')],
             'domicile' => ['required', 'string', 'max:255'],
             'job' => ['required', 'string', 'max:255'],
             'phone' => [$isKids ? 'nullable' : 'required', 'string', 'max:20'],
@@ -71,14 +126,15 @@ class DashboardController extends Controller
             'age.required' => 'Usia wajib diisi.',
             'age.integer' => 'Usia harus berupa angka.',
             'age.min' => 'Usia minimal 1 tahun.',
+            'age.max' => $isKids ? 'Usia maksimal 17 tahun untuk kategori Kids.' : 'Usia maksimal 100 tahun.',
             'domicile.required' => 'Domisili wajib diisi.',
             'job.required' => 'Pekerjaan wajib diisi.',
             'phone.required' => 'No. WhatsApp wajib diisi.',
             'parent_phone.required' => 'No. WhatsApp orang tua wajib diisi.',
         ]);
 
+        // FIX: Gunakan model boot untuk generate registration number (anti-collision)
         $registration = Registration::create([
-            'registration_number' => 'EFA-' . strtoupper(Str::random(8)),
             'user_id' => Auth::id(),
             'course_package_id' => $package->id,
             'program_category' => $package->category,
@@ -113,26 +169,62 @@ class DashboardController extends Controller
     {
         $this->authorizeRegistration($registration);
 
+        // FIX: Cegah re-upload jika pembayaran sudah valid (race condition dengan admin)
+        if ($registration->payment && $registration->payment->payment_status === 'valid') {
+            return redirect()->route('dashboard.transactions')
+                ->with('success', 'Pembayaran Anda sudah diverifikasi. Tidak perlu upload ulang.');
+        }
+
         $request->validate([
-            'proof_of_payment' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'proof_of_payment' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048', 'min:1'],
         ], [
             'proof_of_payment.required' => 'Bukti pembayaran wajib diunggah.',
             'proof_of_payment.image' => 'File harus berupa gambar.',
             'proof_of_payment.mimes' => 'Format file harus JPG, JPEG, PNG, atau WebP.',
             'proof_of_payment.max' => 'Ukuran file maksimal 2MB.',
+            'proof_of_payment.min' => 'File tidak valid atau kosong.',
         ]);
 
-        $path = $request->file('proof_of_payment')->store('payments', 'public');
+        // Validasi tambahan: pastikan file benar-benar gambar valid (bukan file rename)
+        $uploadedFile = $request->file('proof_of_payment');
+        $realMime = $uploadedFile->getMimeType();
+        $allowedMimes = ['image/jpeg', 'image/png', 'image/webp'];
 
-        Payment::updateOrCreate(
-            ['registration_id' => $registration->id],
-            [
-                'amount' => $registration->coursePackage->price,
-                'proof_of_payment_path' => $path,
-                'payment_status' => 'pending',
-                'admin_notes' => null,
-            ]
-        );
+        if (!in_array($realMime, $allowedMimes)) {
+            return back()->withErrors(['proof_of_payment' => 'File yang diunggah bukan gambar yang valid.']);
+        }
+
+        // FIX: Bungkus dalam transaction agar file + database konsisten
+        $path = null;
+
+        try {
+            \Illuminate\Support\Facades\DB::transaction(function () use ($registration, $uploadedFile, &$path) {
+                // Hapus file bukti pembayaran lama agar tidak bocor storage
+                if ($registration->payment && $registration->payment->proof_of_payment_path) {
+                    Storage::disk('public')->delete($registration->payment->proof_of_payment_path);
+                }
+
+                // Simpan dengan nama hash agar nama file asli tidak bisa dieksploitasi
+                $path = $uploadedFile->store('payments', 'public');
+
+                Payment::updateOrCreate(
+                    ['registration_id' => $registration->id],
+                    [
+                        'amount' => $registration->coursePackage->price,
+                        'proof_of_payment_path' => $path,
+                        'payment_status' => 'pending',
+                        'admin_notes' => null,
+                    ]
+                );
+            });
+        } catch (\Throwable $e) {
+            // Jika gagal, hapus file yang sudah terlanjur diupload
+            if ($path) {
+                Storage::disk('public')->delete($path);
+            }
+
+            return back()->with('error', 'Terjadi kesalahan saat mengunggah bukti pembayaran. Silakan coba lagi.');
+        }
 
         return redirect()->route('dashboard.transactions')
             ->with('success', 'Bukti pembayaran berhasil diunggah! Menunggu verifikasi admin.');

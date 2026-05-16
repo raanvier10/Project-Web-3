@@ -55,4 +55,51 @@ class CoursePackage extends Model
     {
         return $this->category === 'kids' ? 'Kids' : 'Dewasa';
     }
+
+    /**
+     * Count active registrations (paid/valid) for this package.
+     */
+    public function getActiveRegistrationsCountAttribute(): int
+    {
+        return $this->registrations()
+            ->where('status', 'active')
+            ->count();
+    }
+
+    /**
+     * Get remaining available slots.
+     * Returns null if amount is 0 (unlimited).
+     */
+    public function getRemainingSlotsAttribute(): ?int
+    {
+        if ($this->amount <= 0) {
+            return null; // unlimited
+        }
+
+        return max(0, $this->amount - $this->active_registrations_count);
+    }
+
+    /**
+     * Check if this package is fully booked.
+     */
+    public function getIsFullAttribute(): bool
+    {
+        if ($this->amount <= 0) {
+            return false; // unlimited slots
+        }
+
+        return $this->active_registrations_count >= $this->amount;
+    }
+
+    /**
+     * Scope: only active packages that still have available slots.
+     */
+    public function scopeAvailable($query)
+    {
+        return $query->where('is_active', true)
+            ->where(function ($q) {
+                $q->where('amount', 0) // unlimited
+                  ->orWhereRaw('amount > (SELECT COUNT(*) FROM registrations WHERE registrations.course_package_id = course_packages.id AND registrations.status = ?)' , ['active']);
+            });
+    }
 }

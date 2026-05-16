@@ -1,4 +1,5 @@
 @extends('layouts.dashboard')
+@php use Illuminate\Support\Facades\Storage; @endphp
 
 @section('page-title', 'Pembayaran')
 
@@ -161,9 +162,13 @@
                         <h4 class="text-lg font-bold text-gray-900 mb-1">Bukti Pembayaran Diunggah</h4>
                         <span class="status-badge {{ $registration->status_badge_class }} mb-4 inline-flex">{{ $registration->display_status }}</span>
 
-                        @if($registration->payment->proof_of_payment_path)
+                        @if($registration->payment->proof_of_payment_path && Storage::disk('public')->exists($registration->payment->proof_of_payment_path))
                         <div class="my-5 inline-block rounded-2xl overflow-hidden shadow-lg ring-1 ring-gray-100">
                             <img src="{{ asset('storage/' . $registration->payment->proof_of_payment_path) }}" alt="Bukti Pembayaran" class="max-w-xs max-h-64 object-contain" />
+                        </div>
+                        @elseif($registration->payment->proof_of_payment_path)
+                        <div class="my-5 p-4 rounded-2xl" style="background: linear-gradient(135deg, rgba(251,191,36,0.06), rgba(245,158,11,0.03)); border: 1px solid rgba(251,191,36,0.12);">
+                            <p class="text-amber-600 text-sm"><i class="fas fa-exclamation-triangle mr-1.5"></i>File bukti pembayaran tidak ditemukan di server.</p>
                         </div>
                         @endif
 
@@ -173,6 +178,22 @@
                         </p>
                     </div>
                 @else
+                    {{-- Show rejection reason if payment was rejected --}}
+                    @if($registration->payment && $registration->payment->payment_status === 'rejected')
+                    <div class="mb-6 p-4 rounded-2xl flex items-start space-x-3" style="background: linear-gradient(135deg, rgba(239,68,68,0.06), rgba(252,165,165,0.03)); border: 1px solid rgba(239,68,68,0.15);">
+                        <div class="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5" style="background: linear-gradient(135deg, #FEE2E2, #FECACA);">
+                            <i class="fas fa-times-circle text-red-500"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-bold text-red-700 mb-1">Pembayaran Ditolak</p>
+                            @if($registration->payment->admin_notes)
+                            <p class="text-sm text-red-600">Alasan: {{ $registration->payment->admin_notes }}</p>
+                            @else
+                            <p class="text-sm text-red-500">Silakan upload ulang bukti pembayaran yang valid.</p>
+                            @endif
+                        </div>
+                    </div>
+                    @endif
                     <form method="POST" action="{{ route('dashboard.payment.upload', $registration->id) }}" enctype="multipart/form-data" id="paymentForm">
                         @csrf
 

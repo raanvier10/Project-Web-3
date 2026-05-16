@@ -11,14 +11,17 @@
     <nav class="flex-1">
       <ul class="space-y-2 text-sm">
         <li><a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 {{ request()->routeIs('admin.dashboard') ? 'bg-gray-50' : '' }}"><i class="fa fa-tachometer-alt w-4"></i><span>Dashboard</span></a></li>
-        <li><a href="{{ route('admin.packages.index') }}" class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 {{ request()->routeIs('admin.packages.*') ? 'bg-gray-50' : '' }}"><i class="fa fa-box w-4"></i><span>Manajemen Paket</span></a></li>
-        <li><a href="{{ route('admin.payments.index') }}" class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 {{ request()->routeIs('admin.payments.*') ? 'bg-gray-50' : '' }}"><i class="fa fa-receipt w-4"></i><span>Verifikasi Pembayaran</span></a></li>
-        <li><a href="{{ route('admin.registrations.index') }}" class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 {{ request()->routeIs('admin.registrations.*') ? 'bg-gray-50' : '' }}"><i class="fa fa-users w-4"></i><span>Manajemen Peserta</span></a></li>
-        <li><a href="{{ route('admin.reports.index') }}" class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 {{ request()->routeIs('admin.reports.*') ? 'bg-gray-50' : '' }}"><i class="fa fa-file-alt w-4"></i><span>Laporan / Cetak</span></a></li>
+        <li><a href="{{ route('admin.packages') }}" class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 {{ request()->routeIs('admin.packages') ? 'bg-gray-50' : '' }}"><i class="fa fa-box w-4"></i><span>Manajemen Paket</span></a></li>
+        <li><a href="{{ route('admin.payments') }}" class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 {{ request()->routeIs('admin.payments') ? 'bg-gray-50' : '' }}"><i class="fa fa-receipt w-4"></i><span>Verifikasi Pembayaran</span></a></li>
+        <li><a href="{{ route('admin.participants') }}" class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 {{ request()->routeIs('admin.participants') ? 'bg-gray-50' : '' }}"><i class="fa fa-users w-4"></i><span>Manajemen Peserta</span></a></li>
+        <li><a href="{{ route('admin.reports') }}" class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 {{ request()->routeIs('admin.reports') ? 'bg-gray-50' : '' }}"><i class="fa fa-file-alt w-4"></i><span>Laporan / Cetak</span></a></li>
       </ul>
     </nav>
     <div>
-      <a href="{{ route('logout') }}" class="btn-secondary w-full text-center py-2.5">Keluar</a>
+      <form method="POST" action="{{ route('logout') }}">
+        @csrf
+        <button type="submit" class="btn-secondary w-full text-center py-2.5">Keluar</button>
+      </form>
     </div>
   </aside>
 
