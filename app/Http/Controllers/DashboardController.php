@@ -43,9 +43,6 @@ class DashboardController extends Controller
     public function packages()
     {
         $packages = CoursePackage::active()
-            ->withCount(['registrations as active_registrations' => function ($q) {
-                $q->where('status', 'active');
-            }])
             ->orderBy('category')
             ->orderBy('price')
             ->get();
@@ -61,11 +58,7 @@ class DashboardController extends Controller
                 ->with('error', 'Paket kursus ini sudah tidak tersedia.');
         }
 
-        // FIX: Cek apakah kuota masih ada
-        if ($package->is_full) {
-            return redirect()->route('dashboard.packages')
-                ->with('error', 'Kuota paket kursus ini sudah penuh.');
-        }
+
 
         // FIX: Cek duplikasi registrasi (pending/active)
         $existingRegistration = Registration::where('user_id', Auth::id())
@@ -95,11 +88,7 @@ class DashboardController extends Controller
                 ->with('error', 'Paket kursus ini sudah tidak tersedia.');
         }
 
-        // FIX: Re-validate kuota di sisi server
-        if ($package->is_full) {
-            return redirect()->route('dashboard.packages')
-                ->with('error', 'Kuota paket kursus ini sudah penuh.');
-        }
+
 
         // FIX: Re-validate duplikasi di sisi server (mencegah race condition form submit ganda)
         $existingRegistration = Registration::where('user_id', Auth::id())
