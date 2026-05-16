@@ -64,10 +64,10 @@
         </div>
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-5 gap-5">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 items-stretch">
         {{-- Invoice --}}
-        <div class="lg:col-span-2 space-y-4">
-            <div class="float-card">
+        <div class="space-y-4">
+            <div class="float-card h-full">
                 <div class="flex items-center space-x-2 mb-5">
                     <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: linear-gradient(135deg, #FFE0EC, #FFC2D9);">
                         <i class="fas fa-file-invoice text-xs text-primary-600"></i>
@@ -112,8 +112,11 @@
                 </div>
             </div>
 
-            {{-- Payment Instructions --}}
-            <div class="float-card">
+        </div>
+
+        {{-- Payment Instructions --}}
+        <div class="space-y-4">
+            <div class="float-card h-full">
                 <div class="flex items-center space-x-2 mb-4">
                     <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: linear-gradient(135deg, #DBEAFE, #BFDBFE);">
                         <i class="fas fa-info text-xs text-blue-600"></i>
@@ -124,7 +127,7 @@
                     @php $steps = [
                         ['icon' => 'fa-university', 'text' => 'Transfer ke rekening <strong class="text-gray-700">BCA 1234567890</strong> a.n. <strong class="text-gray-700">EFA Course</strong>'],
                         ['icon' => 'fa-money-bill', 'text' => 'Transfer sesuai nominal: <strong class="text-gray-700">' . $registration->coursePackage->formatted_price . '</strong>'],
-                        ['icon' => 'fa-camera', 'text' => 'Screenshot bukti transfer dan upload di form samping'],
+                        ['icon' => 'fa-camera', 'text' => 'Screenshot bukti transfer dan upload di form di bawah'],
                         ['icon' => 'fa-clock', 'text' => 'Tunggu verifikasi admin <strong class="text-gray-700">(max 1x24 jam)</strong>'],
                     ]; @endphp
                     @foreach($steps as $i => $step)
@@ -140,7 +143,7 @@
         </div>
 
         {{-- Upload Payment Proof --}}
-        <div class="lg:col-span-3">
+        <div class="lg:col-span-2">
             <div class="float-card">
                 <div class="flex items-center space-x-2 mb-5">
                     <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: linear-gradient(135deg, #D1FAE5, #A7F3D0);">

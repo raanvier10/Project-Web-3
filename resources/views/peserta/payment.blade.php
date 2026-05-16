@@ -61,120 +61,120 @@
     </div>
 
     {{-- ============================================ --}}
-    {{-- Main Layout: Kiri (Invoice & Instruksi) | Kanan (Upload) --}}
+    {{-- Main Layout: Invoice kiri | Instruksi kanan | Upload di bawah --}}
     {{-- ============================================ --}}
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-6">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-6 items-start">
         
-        {{-- KIRI: Invoice & Instruksi --}}
-        <div class="lg:col-span-5 space-y-6 flex flex-col">
-            
-            {{-- Invoice --}}
-            <div class="float-card flex-1" style="animation: pageEnter 0.5s ease forwards; opacity: 0;">
-            <div class="flex items-center space-x-2 mb-5">
-                <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: linear-gradient(135deg, #FFE0EC, #FFC2D9);">
-                    <i class="fas fa-file-invoice text-xs text-primary-600"></i>
-                </div>
-                <h3 class="text-base font-bold text-gray-900">Invoice</h3>
-            </div>
-
-            <div class="space-y-3.5 mb-5">
-                <div class="flex justify-between items-start">
-                    <span class="text-sm text-gray-400">ID Transaksi</span>
-                    <span class="text-sm font-mono font-bold text-gray-800 bg-gray-50 px-2.5 py-1 rounded-lg">{{ $registration->registration_number }}</span>
-                </div>
-                <div class="flex justify-between items-start">
-                    <span class="text-sm text-gray-400">Paket</span>
-                    <span class="text-sm font-semibold text-gray-800 text-right max-w-[55%]">{{ $registration->coursePackage->name }}</span>
-                </div>
-                <div class="flex justify-between items-center">
-                    <span class="text-sm text-gray-400">Kategori</span>
-                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase {{ $registration->coursePackage->category === 'kids' ? 'text-purple-700' : 'text-primary-700' }}" style="background: {{ $registration->coursePackage->category === 'kids' ? 'linear-gradient(135deg, #F3E8FF, #E9D5FF)' : 'linear-gradient(135deg, #FFE0EC, #FFC2D9)' }};">
-                        {{ $registration->coursePackage->category_label }}
-                    </span>
-                </div>
-                <div class="flex justify-between items-start">
-                    <span class="text-sm text-gray-400">Pertemuan</span>
-                    <span class="text-sm text-gray-600">{{ $registration->coursePackage->amount }}x pertemuan</span>
-                </div>
-                <div class="flex justify-between items-start">
-                    <span class="text-sm text-gray-400">Tanggal Daftar</span>
-                    <span class="text-sm text-gray-600">{{ $registration->created_at->format('d M Y, H:i') }}</span>
-                </div>
-                <div class="flex justify-between items-center">
-                    <span class="text-sm text-gray-400">Status</span>
-                    <span class="status-badge {{ $registration->status_badge_class }}">
-                        {{ $registration->display_status }}
-                    </span>
-                </div>
-            </div>
-
-            <div class="pt-4" style="border-top: 2px dashed rgba(0,0,0,0.06);">
-                <div class="flex justify-between items-center">
-                    <span class="text-sm font-bold text-gray-600">Total Bayar</span>
-                    <span class="text-2xl font-extrabold" style="background: linear-gradient(135deg, #C74E83, #FF85BB); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
-                        {{ $registration->coursePackage->formatted_price }}
-                    </span>
-                </div>
-            </div>
-        </div>
-
-            {{-- Instruksi Pembayaran --}}
-            <div class="float-card flex-1" style="animation: pageEnter 0.5s ease forwards; animation-delay: 0.1s; opacity: 0;">
-            <div class="flex items-center space-x-2 mb-5">
-                <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: linear-gradient(135deg, #DBEAFE, #BFDBFE);">
-                    <i class="fas fa-info text-xs text-blue-600"></i>
-                </div>
-                <h4 class="text-base font-bold text-gray-900">Instruksi Pembayaran</h4>
-            </div>
-
-            {{-- Rekening Center --}}
-            <div class="rounded-2xl p-5 text-center mb-5 relative overflow-hidden" style="background: linear-gradient(135deg, rgba(255,240,246,0.6), rgba(255,224,236,0.3)); border: 1.5px solid rgba(199,78,131,0.1);">
-                <p class="text-[10px] text-gray-400 mb-2 font-bold uppercase tracking-widest">Transfer ke Rekening</p>
-                <div class="inline-flex items-center px-3 py-1 rounded-lg text-[11px] font-bold uppercase tracking-wider text-blue-700 mb-2" style="background: linear-gradient(135deg, #DBEAFE, #BFDBFE);">
-                    BCA
-                </div>
-                <div class="flex items-center justify-center space-x-2">
-                    <p class="text-3xl font-mono font-extrabold tracking-[0.15em] text-gray-900" id="rek-number">1234567890</p>
-                    <button type="button" onclick="copyRekening()" class="w-9 h-9 rounded-xl flex items-center justify-center text-gray-400 hover:text-primary-600 hover:bg-primary-50 focus:outline-none transition-all duration-200" title="Salin" id="btn-copy-rek">
-                        <i class="far fa-copy text-lg"></i>
-                    </button>
-                </div>
-                <p class="text-sm text-gray-600 mt-1.5 font-bold">a.n. EFA Course</p>
-                <div id="copyTooltip" class="hidden absolute top-3 right-3 px-3 py-1.5 rounded-lg text-xs font-bold text-white" style="background: linear-gradient(135deg, #10B981, #34D399);">
-                    <i class="fas fa-check mr-1"></i> Tersalin!
-                </div>
-            </div>
-
-            {{-- Langkah-langkah --}}
-            <div class="space-y-3 text-sm text-gray-500">
-                @php $steps = [
-                    'Transfer sesuai nominal <strong class="text-gray-700">Total Bayar</strong> pada invoice.',
-                    'Screenshot atau foto bukti transfer Anda.',
-                    'Upload bukti transfer pada form di bawah.',
-                    'Tunggu verifikasi admin <strong class="text-gray-700">(maks 1x24 jam)</strong>.',
-                ]; @endphp
-
-                @foreach($steps as $i => $text)
-                <div class="flex items-start space-x-3">
-                    <div class="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5" style="background: linear-gradient(135deg, #FFE0EC, #FFC2D9);">
-                        <span class="text-[10px] font-bold text-primary-700">{{ $i + 1 }}</span>
-                    </div>
-                    <p class="leading-relaxed mt-0.5">{!! $text !!}</p>
-                </div>
-                @endforeach
-            </div>
-        </div>
-        </div> {{-- End Kiri --}}
-
-        {{-- KANAN: Upload Bukti Pembayaran --}}
-        <div class="lg:col-span-7 flex flex-col">
-            <div class="float-card flex-1 flex flex-col" style="animation: pageEnter 0.5s ease forwards; animation-delay: 0.2s; opacity: 0;">
+        {{-- Invoice --}}
+        <div class="lg:col-span-5 space-y-6">
+            <div class="float-card" style="animation: pageEnter 0.5s ease forwards; opacity: 0;">
                 <div class="flex items-center space-x-2 mb-5">
-            <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: linear-gradient(135deg, #D1FAE5, #A7F3D0);">
-                <i class="fas fa-cloud-upload-alt text-xs text-emerald-600"></i>
+                    <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: linear-gradient(135deg, #FFE0EC, #FFC2D9);">
+                        <i class="fas fa-file-invoice text-xs text-primary-600"></i>
+                    </div>
+                    <h3 class="text-base font-bold text-gray-900">Invoice</h3>
+                </div>
+
+                <div class="space-y-3.5 mb-5">
+                    <div class="flex justify-between items-start">
+                        <span class="text-sm text-gray-400">ID Transaksi</span>
+                        <span class="text-sm font-mono font-bold text-gray-800 bg-gray-50 px-2.5 py-1 rounded-lg">{{ $registration->registration_number }}</span>
+                    </div>
+                    <div class="flex justify-between items-start">
+                        <span class="text-sm text-gray-400">Paket</span>
+                        <span class="text-sm font-semibold text-gray-800 text-right max-w-[55%]">{{ $registration->coursePackage->name }}</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm text-gray-400">Kategori</span>
+                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase {{ $registration->coursePackage->category === 'kids' ? 'text-purple-700' : 'text-primary-700' }}" style="background: {{ $registration->coursePackage->category === 'kids' ? 'linear-gradient(135deg, #F3E8FF, #E9D5FF)' : 'linear-gradient(135deg, #FFE0EC, #FFC2D9)' }};">
+                            {{ $registration->coursePackage->category_label }}
+                        </span>
+                    </div>
+                    <div class="flex justify-between items-start">
+                        <span class="text-sm text-gray-400">Pertemuan</span>
+                        <span class="text-sm text-gray-600">{{ $registration->coursePackage->amount }}x pertemuan</span>
+                    </div>
+                    <div class="flex justify-between items-start">
+                        <span class="text-sm text-gray-400">Tanggal Daftar</span>
+                        <span class="text-sm text-gray-600">{{ $registration->created_at->format('d M Y, H:i') }}</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm text-gray-400">Status</span>
+                        <span class="status-badge {{ $registration->status_badge_class }}">
+                            {{ $registration->display_status }}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="pt-4" style="border-top: 2px dashed rgba(0,0,0,0.06);">
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm font-bold text-gray-600">Total Bayar</span>
+                        <span class="text-2xl font-extrabold" style="background: linear-gradient(135deg, #C74E83, #FF85BB); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                            {{ $registration->coursePackage->formatted_price }}
+                        </span>
+                    </div>
+                </div>
             </div>
-            <h3 class="text-base font-bold text-gray-900">Upload Bukti Pembayaran</h3>
         </div>
+
+        {{-- Instruksi Pembayaran --}}
+        <div class="lg:col-span-7 space-y-6">
+            <div class="float-card" style="animation: pageEnter 0.5s ease forwards; animation-delay: 0.1s; opacity: 0;">
+                <div class="flex items-center space-x-2 mb-5">
+                    <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: linear-gradient(135deg, #DBEAFE, #BFDBFE);">
+                        <i class="fas fa-info text-xs text-blue-600"></i>
+                    </div>
+                    <h4 class="text-base font-bold text-gray-900">Instruksi Pembayaran</h4>
+                </div>
+
+                {{-- Rekening Center --}}
+                <div class="rounded-2xl p-5 text-center mb-5 relative overflow-hidden" style="background: linear-gradient(135deg, rgba(255,240,246,0.6), rgba(255,224,236,0.3)); border: 1px solid rgba(199,78,131,0.1);">
+                    <p class="text-[10px] text-gray-400 mb-2 font-bold uppercase tracking-widest">Transfer ke Rekening</p>
+                    <div class="inline-flex items-center px-3 py-1 rounded-lg text-[11px] font-bold uppercase tracking-wider text-blue-700 mb-2" style="background: linear-gradient(135deg, #DBEAFE, #BFDBFE);">
+                        BCA
+                    </div>
+                    <div class="flex items-center justify-center space-x-2">
+                        <p class="text-3xl font-mono font-extrabold tracking-[0.15em] text-gray-900" id="rek-number">1234567890</p>
+                        <button type="button" onclick="copyRekening()" class="w-9 h-9 rounded-xl flex items-center justify-center text-gray-400 hover:text-primary-600 hover:bg-primary-50 focus:outline-none transition-all duration-200" title="Salin" id="btn-copy-rek">
+                            <i class="far fa-copy text-lg"></i>
+                        </button>
+                    </div>
+                    <p class="text-sm text-gray-600 mt-1.5 font-bold">a.n. EFA Course</p>
+                    <div id="copyTooltip" class="hidden absolute top-3 right-3 px-3 py-1.5 rounded-lg text-xs font-bold text-white" style="background: linear-gradient(135deg, #10B981, #34D399);">
+                        <i class="fas fa-check mr-1"></i> Tersalin!
+                    </div>
+                </div>
+
+                {{-- Langkah-langkah --}}
+                <div class="space-y-3 text-sm text-gray-500">
+                    @php $steps = [
+                        'Transfer sesuai nominal <strong class="text-gray-700">Total Bayar</strong> pada invoice.',
+                        'Screenshot atau foto bukti transfer Anda.',
+                        'Upload bukti transfer pada form di bawah.',
+                        'Tunggu verifikasi admin <strong class="text-gray-700">(maks 1x24 jam)</strong>.',
+                    ]; @endphp
+
+                    @foreach($steps as $i => $text)
+                    <div class="flex items-start space-x-3">
+                        <div class="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5" style="background: linear-gradient(135deg, #FFE0EC, #FFC2D9);">
+                            <span class="text-[10px] font-bold text-primary-700">{{ $i + 1 }}</span>
+                        </div>
+                        <p class="leading-relaxed mt-0.5">{!! $text !!}</p>
+                    </div>
+                    @endforeach
+                </div>
+            </div>
+        </div>
+
+        {{-- Upload Bukti Pembayaran --}}
+        <div class="lg:col-span-12">
+            <div class="float-card" style="animation: pageEnter 0.5s ease forwards; animation-delay: 0.2s; opacity: 0;">
+                <div class="flex items-center space-x-2 mb-5">
+                    <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: linear-gradient(135deg, #D1FAE5, #A7F3D0);">
+                        <i class="fas fa-cloud-upload-alt text-xs text-emerald-600"></i>
+                    </div>
+                    <h3 class="text-base font-bold text-gray-900">Upload Bukti Pembayaran</h3>
+                </div>
 
         @if($registration->payment && $registration->payment->payment_status !== 'rejected')
             {{-- Already uploaded --}}
@@ -211,13 +211,13 @@
             </div>
             @endif
 
-            <form method="POST" action="{{ route('dashboard.payment.upload', $registration->id) }}" enctype="multipart/form-data" id="paymentForm" class="flex flex-col flex-1">
+            <form method="POST" action="{{ route('dashboard.payment.upload', $registration->id) }}" enctype="multipart/form-data" id="paymentForm">
                 @csrf
 
-                <div class="flex flex-col flex-1 gap-6">
+                <div class="gap-6">
                     {{-- Upload Area --}}
-                    <div class="flex-1">
-                        <div class="relative h-full min-h-[220px]" id="dropZone">
+                    <div class="mb-6">
+                        <div class="relative min-h-[220px]" id="dropZone">
                             <input type="file" id="proof_of_payment" name="proof_of_payment" accept="image/jpeg,image/jpg,image/png,image/webp" required
                                 class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" />
                             <div class="rounded-2xl p-8 text-center transition-all duration-300 hover:border-primary-300 h-full flex flex-col items-center justify-center" id="dropContent" style="border: 2px dashed rgba(199,78,131,0.2); background: linear-gradient(135deg, rgba(255,240,246,0.4), rgba(255,224,236,0.2));">
@@ -240,7 +240,7 @@
                     </div>
 
                     {{-- Submit --}}
-                    <div class="mt-auto">
+                    <div class="mt-4">
                         <button type="submit" id="submitPayment"
                             class="w-full py-4 rounded-xl text-white font-bold text-sm transition-all duration-300 transform hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center relative overflow-hidden group"
                             style="background: linear-gradient(135deg, #E8699F 0%, #FF85BB 50%, #C74E83 100%); box-shadow: 0 4px 20px rgba(199,78,131,0.25);">
@@ -255,14 +255,14 @@
             </form>
         @endif
 
-        <div class="mt-6 text-center border-t border-gray-100 pt-4">
+        <div class="mt-auto text-center border-t border-gray-100 pt-5 self-center w-full">
             <a href="{{ route('dashboard.transactions') }}" class="text-sm text-gray-400 hover:text-primary-600 transition-colors inline-flex items-center space-x-1.5 font-medium">
                 <i class="fas fa-arrow-left text-xs"></i>
                 <span>Kembali ke Riwayat Transaksi</span>
             </a>
         </div>
             </div>
-        </div> {{-- End Kanan --}}
+        </div>
 
     </div> {{-- End Main Grid --}}
 </div>

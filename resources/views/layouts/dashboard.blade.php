@@ -164,7 +164,7 @@
 </head>
 <body class="overflow-x-hidden font-sans antialiased text-gray-800">
 <div class="min-h-screen bg-[#f8f9fc] lg:grid lg:grid-cols-[250px_minmax(0,1fr)] lg:items-stretch">
-<aside id="sidebar" class="relative z-10 w-full lg:w-[250px] lg:min-h-screen sidebar-glass flex flex-col shadow-2xl shadow-pink-900/10 lg:rounded-none">
+<aside id="sidebar" class="relative z-10 w-full lg:w-[250px] lg:h-screen lg:sticky lg:top-0 sidebar-glass flex flex-col shadow-2xl shadow-pink-900/10 lg:rounded-none overflow-y-auto">
     <div class="relative z-10 px-6 pt-7 pb-5 border-b border-white/10">
         <div class="flex items-center gap-3.5">
             <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/18 backdrop-blur-sm shadow-lg shadow-black/5 ring-1 ring-white/20">
