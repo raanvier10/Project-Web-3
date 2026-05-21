@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="min-h-screen flex flex-col lg:flex-row">
+<div class="min-h-screen flex flex-col lg:flex-row overflow-x-hidden">
   {{-- ============================================ --}}
   {{-- LEFT PANEL – Branding & Decorative            --}}
   {{-- ============================================ --}}
@@ -76,7 +76,7 @@
   {{-- ============================================ --}}
   {{-- RIGHT PANEL – Login Form                      --}}
   {{-- ============================================ --}}
-  <div class="w-full lg:w-[48%] flex items-center justify-center relative bg-white">
+  <div class="w-full lg:w-[48%] flex items-center justify-center relative bg-white min-h-screen overflow-hidden">
     {{-- Subtle decorative blobs (mobile + desktop) --}}
     <div class="absolute -top-32 -right-32 w-80 h-80 rounded-full opacity-40 pointer-events-none" style="background: radial-gradient(circle, #FFF0F6 0%, transparent 70%);"></div>
     <div class="absolute -bottom-32 -left-32 w-80 h-80 rounded-full opacity-30 pointer-events-none" style="background: radial-gradient(circle, #FFE0EC 0%, transparent 70%);"></div>

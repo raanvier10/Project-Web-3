@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="min-h-screen flex">
+<div class="min-h-screen flex flex-col lg:flex-row overflow-x-hidden">
   <!-- Left Panel: Branding -->
   <div class="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-gradient-to-br from-primary-600 via-primary-700 to-primary-900">
     <!-- Decorative elements -->
@@ -80,7 +80,7 @@
   </div>
 
   <!-- Right Panel: Register Form -->
-  <div class="w-full lg:w-1/2 flex items-center justify-center bg-gradient-to-br from-gray-50 to-white relative overflow-y-auto">
+  <div class="w-full lg:w-1/2 flex items-center justify-center bg-gradient-to-br from-gray-50 to-white relative overflow-hidden overflow-y-auto min-h-screen">
     <!-- Mobile decorative -->
     <div class="absolute top-0 right-0 w-72 h-72 bg-primary-100/40 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 lg:hidden"></div>
 

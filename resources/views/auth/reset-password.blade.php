@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="min-h-screen flex flex-col lg:flex-row">
+<div class="min-h-screen flex flex-col lg:flex-row overflow-x-hidden">
   {{-- LEFT PANEL --}}
   <div class="hidden lg:flex lg:w-[52%] relative overflow-hidden" style="background: linear-gradient(135deg, #C74E83 0%, #E8699F 30%, #FF85BB 60%, #FFA3C7 100%);">
     <div class="absolute inset-0 pointer-events-none">
@@ -36,7 +36,7 @@
   </div>
 
   {{-- RIGHT PANEL --}}
-  <div class="w-full lg:w-[48%] flex items-center justify-center relative bg-white">
+  <div class="w-full lg:w-[48%] flex items-center justify-center relative bg-white min-h-screen overflow-hidden">
     <div class="absolute -top-32 -right-32 w-80 h-80 rounded-full opacity-40 pointer-events-none" style="background: radial-gradient(circle, #FFF0F6 0%, transparent 70%);"></div>
     <div class="absolute -bottom-32 -left-32 w-80 h-80 rounded-full opacity-30 pointer-events-none" style="background: radial-gradient(circle, #FFE0EC 0%, transparent 70%);"></div>
 
