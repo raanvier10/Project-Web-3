@@ -36,11 +36,12 @@ class AuthController extends Controller
     {
         // Validate input
         $request->validate([
-            'email'    => ['required', 'string', 'email', 'max:255'],
+            'email'    => ['required', 'string', 'email', 'max:255', 'ends_with:@gmail.com'],
             'password' => ['required', 'string', 'min:8'],
         ], [
             'email.required'    => 'Email wajib diisi.',
             'email.email'       => 'Format email tidak valid.',
+            'email.ends_with'   => 'Email harus menggunakan domain @gmail.com.',
             'password.required' => 'Password wajib diisi.',
             'password.min'      => 'Password minimal 8 karakter.',
         ]);
@@ -96,8 +97,14 @@ class AuthController extends Controller
         // Validate input with strong password rules
         $request->validate([
             'name'     => ['required', 'string', 'max:255'],
-            'email'    => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'email'    => ['required', 'string', 'email', 'max:255', 'unique:users,email', 'ends_with:@gmail.com'],
+            'password' => [
+                'required', 
+                'string', 
+                'min:8', 
+                'confirmed', 
+                Password::min(8)->mixedCase()->symbols()
+            ],
             'terms'    => ['required', 'accepted'],
         ], [
             'name.required'       => 'Nama lengkap wajib diisi.',
@@ -105,8 +112,11 @@ class AuthController extends Controller
             'email.required'      => 'Email wajib diisi.',
             'email.email'         => 'Format email tidak valid.',
             'email.unique'        => 'Email sudah terdaftar.',
+            'email.ends_with'     => 'Email harus menggunakan domain @gmail.com.',
             'password.required'   => 'Password wajib diisi.',
             'password.min'        => 'Password minimal 8 karakter.',
+            'password.mixed'      => 'Password harus mengandung huruf besar dan huruf kecil.',
+            'password.symbols'    => 'Password harus mengandung karakter simbol.',
             'password.confirmed'  => 'Konfirmasi password tidak cocok.',
             'terms.required'      => 'Anda harus menyetujui syarat & ketentuan.',
             'terms.accepted'      => 'Anda harus menyetujui syarat & ketentuan.',
@@ -132,16 +142,10 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        // Auto login after registration
-        Auth::login($user);
-
-        // Regenerate session
-        $request->session()->regenerate();
-
         // Clear rate limiter
         RateLimiter::clear($throttleKey);
 
-        return redirect('/dashboard');
+        return redirect()->route('login')->with('status', 'Registrasi berhasil! Silakan login untuk melanjutkan.');
     }
 
     /**
@@ -171,7 +175,11 @@ class AuthController extends Controller
      */
     public function sendResetLinkEmail(Request $request)
     {
-        $request->validate(['email' => 'required|email']);
+        $request->validate([
+            'email' => 'required|email|ends_with:@gmail.com'
+        ], [
+            'email.ends_with' => 'Email harus menggunakan domain @gmail.com.',
+        ]);
 
         $status = \Illuminate\Support\Facades\Password::sendResetLink(
             $request->only('email')
@@ -199,8 +207,12 @@ class AuthController extends Controller
     {
         $request->validate([
             'token' => 'required',
-            'email' => 'required|email',
-            'password' => ['required', 'confirmed', \Illuminate\Validation\Rules\Password::defaults()],
+            'email' => 'required|email|ends_with:@gmail.com',
+            'password' => ['required', 'confirmed', Password::min(8)->mixedCase()->symbols()],
+        ], [
+            'email.ends_with' => 'Email harus menggunakan domain @gmail.com.',
+            'password.mixed'  => 'Password harus mengandung huruf besar dan huruf kecil.',
+            'password.symbols' => 'Password harus mengandung karakter simbol.',
         ]);
 
         $status = \Illuminate\Support\Facades\Password::reset(

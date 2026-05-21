@@ -14,7 +14,7 @@ class OwnerSeeder extends Seeder
     public function run(): void
     {
         User::updateOrCreate(
-            ['email' => 'owner@efa.com'],
+            ['email' => 'owner@gmail.com'],
             [
                 'name' => 'Owner EFA',
                 'password' => Hash::make('password123'),

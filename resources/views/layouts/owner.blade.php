@@ -387,6 +387,15 @@
                 <i class="fas fa-exclamation-circle mr-2"></i>{{ session('error') }}
             </div>
             @endif
+            @if($errors->any())
+            <div class="admin-toast error" id="validationToast">
+                <ul class="list-none p-0 m-0">
+                    @foreach($errors->all() as $error)
+                        <li><i class="fas fa-exclamation-circle mr-2"></i>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+            @endif
 
             {{-- Page Content --}}
             <main class="flex-1 px-4 sm:px-8 py-6">

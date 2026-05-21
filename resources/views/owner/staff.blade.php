@@ -124,29 +124,43 @@
             <div class="space-y-4">
                 <div>
                     <label class="admin-form-label"><i class="fas fa-user mr-2 text-blue-400 text-xs"></i> Nama</label>
-                    <input type="text" name="name" class="admin-form-input" placeholder="Nama staff" required>
+                    <input type="text" name="name" class="admin-form-input @error('name') border-red-500 @enderror" placeholder="Nama staff" value="{{ old('name') }}" required>
+                    @error('name')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror
                 </div>
                 <div>
                     <label class="admin-form-label"><i class="fas fa-envelope mr-2 text-blue-400 text-xs"></i> Email</label>
-                    <input type="email" name="email" class="admin-form-input" placeholder="email@contoh.com" required>
+                    <input type="email" name="email" class="admin-form-input @error('email') border-red-500 @enderror" placeholder="email@contoh.com" value="{{ old('email') }}" required>
+                    @error('email')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <label class="admin-form-label"><i class="fas fa-user-tag mr-2 text-blue-400 text-xs"></i> Peran (Role)</label>
-                        <select name="role" class="admin-form-input" required>
-                            <option value="staff">Staff</option>
-                            <option value="admin">Admin</option>
+                        <select name="role" class="admin-form-input @error('role') border-red-500 @enderror" required>
+                            <option value="admin" {{ old('role') == 'admin' ? 'selected' : '' }}>Admin</option>
                         </select>
+                        @error('role')
+                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
                     <div>
                         <label class="admin-form-label"><i class="fas fa-phone mr-2 text-blue-400 text-xs"></i> Telepon</label>
-                        <input type="text" name="phone" class="admin-form-input" placeholder="08xxxxxxxxxx">
+                        <input type="text" name="phone" class="admin-form-input @error('phone') border-red-500 @enderror" placeholder="08xxxxxxxxxx" value="{{ old('phone') }}">
+                        @error('phone')
+                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <label class="admin-form-label"><i class="fas fa-lock mr-2 text-blue-400 text-xs"></i> Password</label>
-                        <input type="password" name="password" class="admin-form-input" placeholder="Minimal 8 karakter" required>
+                        <input type="password" name="password" class="admin-form-input @error('password') border-red-500 @enderror" placeholder="Minimal 8 karakter" required>
+                        @error('password')
+                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
                     <div>
                         <label class="admin-form-label"><i class="fas fa-lock mr-2 text-blue-400 text-xs"></i> Konfirmasi Password</label>
@@ -197,7 +211,6 @@
                     <div>
                         <label class="admin-form-label"><i class="fas fa-user-tag mr-2 text-blue-400 text-xs"></i> Peran (Role)</label>
                         <select name="role" class="admin-form-input" id="edit-role" required>
-                            <option value="staff">Staff</option>
                             <option value="admin">Admin</option>
                         </select>
                     </div>
@@ -263,6 +276,17 @@
 
 @section('scripts')
 <script>
+    // Keep modal open if there are validation errors
+    @if($errors->any())
+        @if(old('_method') == 'PUT')
+            // If it was an edit attempt, we might need more logic to identify which record,
+            // but for now, simple open is often enough if we only have one edit modal.
+            openModal('editStaffModal');
+        @else
+            openModal('addStaffModal');
+        @endif
+    @endif
+
     const updateUrlTemplate = "{{ route('owner.staff.update', ['user' => '__id__']) }}";
     const deleteUrlTemplate = "{{ route('owner.staff.delete', ['user' => '__id__']) }}";
 
@@ -282,7 +306,7 @@
         document.getElementById('edit-name').value = staff.name || '';
         document.getElementById('edit-email').value = staff.email || '';
         document.getElementById('edit-phone').value = staff.phone || '';
-        document.getElementById('edit-role').value = staff.role || 'staff';
+        document.getElementById('edit-role').value = 'admin';
         document.getElementById('edit-password').value = '';
         document.getElementById('edit-password-confirmation').value = '';
 

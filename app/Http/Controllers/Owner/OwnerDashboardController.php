@@ -9,6 +9,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Password;
 
 class OwnerDashboardController extends Controller
 {
@@ -66,17 +67,20 @@ class OwnerDashboardController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email',
+            'email' => 'required|string|email|max:255|unique:users,email|ends_with:@gmail.com',
             'phone' => 'nullable|string|max:20',
             'role' => 'required|string|in:admin,staff',
-            'password' => 'required|string|min:8|confirmed',
+            'password' => ['required', 'string', 'confirmed', Password::min(8)->mixedCase()->symbols()],
         ], [
             'name.required' => 'Nama wajib diisi.',
             'email.required' => 'Email wajib diisi.',
             'email.email' => 'Format email tidak valid.',
             'email.unique' => 'Email sudah terdaftar.',
+            'email.ends_with' => 'Email harus menggunakan domain @gmail.com.',
             'password.required' => 'Password wajib diisi.',
             'password.min' => 'Password minimal 8 karakter.',
+            'password.mixed' => 'Password harus mengandung huruf besar dan huruf kecil.',
+            'password.symbols' => 'Password harus mengandung karakter simbol.',
             'password.confirmed' => 'Konfirmasi password tidak cocok.',
         ]);
 
@@ -103,16 +107,20 @@ class OwnerDashboardController extends Controller
                 'email',
                 'max:255',
                 Rule::unique('users', 'email')->ignore($user->id),
+                'ends_with:@gmail.com',
             ],
             'phone' => 'nullable|string|max:20',
             'role' => 'required|string|in:admin,staff',
-            'password' => 'nullable|string|min:8|confirmed',
+            'password' => ['nullable', 'string', 'confirmed', Password::min(8)->mixedCase()->symbols()],
         ], [
             'name.required' => 'Nama wajib diisi.',
             'email.required' => 'Email wajib diisi.',
             'email.email' => 'Format email tidak valid.',
             'email.unique' => 'Email sudah terdaftar.',
+            'email.ends_with' => 'Email harus menggunakan domain @gmail.com.',
             'password.min' => 'Password minimal 8 karakter.',
+            'password.mixed' => 'Password harus mengandung huruf besar dan huruf kecil.',
+            'password.symbols' => 'Password harus mengandung karakter simbol.',
             'password.confirmed' => 'Konfirmasi password tidak cocok.',
         ]);
 
@@ -146,11 +154,18 @@ class OwnerDashboardController extends Controller
      */
     public function reports(Request $request)
     {
-        // Simple financial query
-        $payments = Payment::with(['registration.user', 'registration.coursePackage'])
-            ->where('payment_status', 'valid')
-            ->orderBy('created_at', 'desc')
-            ->paginate(15);
+        $query = Payment::with(['registration.user', 'registration.coursePackage'])
+            ->where('payment_status', 'valid');
+
+        // Date filter
+        if ($request->filled('date_from')) {
+            $query->whereDate('created_at', '>=', $request->date_from);
+        }
+        if ($request->filled('date_to')) {
+            $query->whereDate('created_at', '<=', $request->date_to);
+        }
+
+        $payments = $query->orderBy('created_at', 'desc')->paginate(15);
 
         $totalRevenue = Payment::where('payment_status', 'valid')->sum('amount');
         $thisMonthRevenue = Payment::where('payment_status', 'valid')
@@ -159,6 +174,55 @@ class OwnerDashboardController extends Controller
             ->sum('amount');
 
         return view('owner.reports', compact('payments', 'totalRevenue', 'thisMonthRevenue'));
+    }
+
+    /**
+     * Export owner reports as CSV (Excel-compatible).
+     */
+    public function exportExcel(Request $request)
+    {
+        $query = Payment::with(['registration.user', 'registration.coursePackage'])
+            ->where('payment_status', 'valid');
+
+        if ($request->filled('date_from')) {
+            $query->whereDate('created_at', '>=', $request->date_from);
+        }
+        if ($request->filled('date_to')) {
+            $query->whereDate('created_at', '<=', $request->date_to);
+        }
+
+        $payments = $query->orderBy('created_at', 'desc')->get();
+
+        $headers = [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => 'attachment; filename="laporan_keuangan_efa_' . date('Y-m-d') . '.csv"',
+        ];
+
+        $callback = function () use ($payments) {
+            $file = fopen('php://output', 'w');
+            // BOM for Excel UTF-8
+            fprintf($file, chr(0xEF) . chr(0xBB) . chr(0xBF));
+            fputcsv($file, [
+                'No',
+                'Tanggal Bayar',
+                'Peserta',
+                'Paket Kursus',
+                'Jumlah (Rp)',
+            ]);
+
+            foreach ($payments as $i => $payment) {
+                fputcsv($file, [
+                    $i + 1,
+                    $payment->created_at->format('Y-m-d H:i:s'),
+                    $payment->registration->user->name ?? 'User dihapus',
+                    $payment->registration->coursePackage->name ?? 'Paket dihapus',
+                    $payment->amount,
+                ]);
+            }
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
     }
 
     private function ensureStaff(User $user): void

@@ -98,5 +98,6 @@ Route::middleware('auth')->group(function () {
 
         // Laporan Keuangan
         Route::get('/reports', [OwnerDashboardController::class, 'reports'])->name('reports');
+        Route::get('/reports/export/excel', [OwnerDashboardController::class, 'exportExcel'])->name('reports.export.excel');
     });
 });

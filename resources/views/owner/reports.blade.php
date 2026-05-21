@@ -13,6 +13,39 @@
         <h1 class="text-2xl sm:text-3xl font-extrabold text-gray-900">Laporan & Analitik</h1>
         <p class="text-gray-400 mt-1.5 text-sm">Pantau aliran dana dan pendapatan dari setiap transaksi pendaftaran.</p>
     </div>
+    <div class="flex items-center gap-3">
+        <a href="{{ route('owner.reports.export.excel', request()->all()) }}" class="admin-btn !bg-emerald-50 !text-emerald-600 hover:!bg-emerald-100 hover:-translate-y-0.5 border border-emerald-100">
+            <i class="fas fa-file-excel mr-2"></i> Export Excel
+        </a>
+    </div>
+</div>
+
+{{-- Search & Filter --}}
+<div class="admin-float-card !p-4 mb-6" style="animation: pageEnter 0.5s ease forwards; opacity: 0;">
+    <form method="GET" action="{{ route('owner.reports') }}" class="flex flex-col md:flex-row gap-4 items-end">
+        <div class="flex-1 w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {{-- Dates --}}
+            <div>
+                <label class="admin-form-label text-xs mb-1.5">Dari Tanggal</label>
+                <input type="date" name="date_from" value="{{ request('date_from') }}" class="admin-form-input !py-2 max-w-[200px]">
+            </div>
+            <div>
+                <label class="admin-form-label text-xs mb-1.5">Sampai Tanggal</label>
+                <input type="date" name="date_to" value="{{ request('date_to') }}" class="admin-form-input !py-2 max-w-[200px]">
+            </div>
+        </div>
+        
+        <div class="flex gap-2 w-full md:w-auto">
+            <button type="submit" class="admin-btn admin-btn-primary flex-1 md:flex-none">
+                <i class="fas fa-filter mr-1.5"></i> Filter
+            </button>
+            @if(request()->hasAny(['date_from', 'date_to']))
+            <a href="{{ route('owner.reports') }}" class="admin-btn admin-btn-outline flex-1 md:flex-none justify-center">
+                <i class="fas fa-times"></i>
+            </a>
+            @endif
+        </div>
+    </form>
 </div>
 
 {{-- Summary Cards --}}
