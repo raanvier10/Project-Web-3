@@ -108,8 +108,8 @@ class DashboardController extends Controller
             'age' => ['required', 'integer', 'min:1', 'max:' . ($isKids ? '17' : '100')],
             'domicile' => ['required', 'string', 'max:255'],
             'job' => ['required', 'string', 'max:255'],
-            'phone' => [$isKids ? 'nullable' : 'required', 'string', 'max:20'],
-            'parent_phone' => [$isKids ? 'required' : 'nullable', 'string', 'max:20'],
+            'phone' => [$isKids ? 'nullable' : 'required', 'string', 'regex:/^08[0-9]{8,11}$/'],
+            'parent_phone' => [$isKids ? 'required' : 'nullable', 'string', 'regex:/^08[0-9]{8,11}$/'],
         ], [
             'name.required' => 'Nama wajib diisi.',
             'age.required' => 'Usia wajib diisi.',
@@ -119,7 +119,9 @@ class DashboardController extends Controller
             'domicile.required' => 'Domisili wajib diisi.',
             'job.required' => 'Pekerjaan wajib diisi.',
             'phone.required' => 'No. WhatsApp wajib diisi.',
+            'phone.regex' => 'No. WhatsApp harus diawali "08" dan terdiri dari 10-13 digit angka.',
             'parent_phone.required' => 'No. WhatsApp orang tua wajib diisi.',
+            'parent_phone.regex' => 'No. WhatsApp orang tua harus diawali "08" dan terdiri dari 10-13 digit angka.',
         ]);
 
         // FIX: Gunakan model boot untuk generate registration number (anti-collision)
@@ -143,6 +145,38 @@ class DashboardController extends Controller
 
         return redirect()->route('dashboard.payment', $registration->id)
             ->with('success', 'Pendaftaran berhasil! Silakan lanjutkan pembayaran.');
+    }
+
+    public function cancelRegistration(Registration $registration)
+    {
+        $this->authorizeRegistration($registration);
+
+        // Hanya boleh batal jika status masih pending DAN belum upload bukti (atau bukti ditolak)
+        if ($registration->status !== 'pending' || ($registration->payment && !in_array($registration->payment->payment_status, ['pending', 'rejected']))) {
+            return redirect()->route('dashboard.transactions')
+                ->with('error', 'Pendaftaran ini tidak dapat dibatalkan.');
+        }
+
+        \Illuminate\Support\Facades\DB::transaction(function () use ($registration) {
+            // Hapus detail
+            if ($registration->detail) {
+                $registration->detail->delete();
+            }
+
+            // Hapus payment dan filenya
+            if ($registration->payment) {
+                if ($registration->payment->proof_of_payment_path) {
+                    Storage::disk('public')->delete($registration->payment->proof_of_payment_path);
+                }
+                $registration->payment->delete();
+            }
+
+            // Hapus registrasi
+            $registration->delete();
+        });
+
+        return redirect()->route('dashboard.packages')
+            ->with('success', 'Pendaftaran berhasil dibatalkan.');
     }
 
     public function showPayment(Registration $registration)

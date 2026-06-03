@@ -133,6 +133,11 @@
                     <label class="admin-form-label"><i class="fas fa-align-left mr-2 text-primary-400 text-xs"></i> Deskripsi</label>
                     <textarea name="descriptions" class="admin-form-textarea" placeholder="Tuliskan deskripsi paket kursus..."></textarea>
                 </div>
+                <div>
+                    <label class="admin-form-label"><i class="fas fa-list-check mr-2 text-primary-400 text-xs"></i> Fasilitas Program</label>
+                    <textarea name="features" class="admin-form-textarea" placeholder="Gunakan tanda | sebagai pemisah. Contoh: Sertifikat | Modul Belajar | Grup WhatsApp"></textarea>
+                    <p class="text-[10px] text-gray-400 mt-1">Gunakan pemisah pipa ( | ) untuk membuat daftar fasilitas.</p>
+                </div>
                 <div class="flex items-center space-x-3">
                     <input type="checkbox" name="is_active" value="1" checked class="w-4 h-4 text-primary-600 rounded border-gray-300 focus:ring-primary-500" id="add-is-active">
                     <label for="add-is-active" class="text-sm font-semibold text-gray-700">Aktifkan paket ini</label>
@@ -193,6 +198,10 @@
                 <div>
                     <label class="admin-form-label"><i class="fas fa-align-left mr-2 text-blue-400 text-xs"></i> Deskripsi</label>
                     <textarea name="descriptions" class="admin-form-textarea" id="edit-descriptions"></textarea>
+                </div>
+                <div>
+                    <label class="admin-form-label"><i class="fas fa-list-check mr-2 text-blue-400 text-xs"></i> Fasilitas Program</label>
+                    <textarea name="features" class="admin-form-textarea" id="edit-features" placeholder="Contoh: Sertifikat | Modul Belajar"></textarea>
                 </div>
             </div>
             <div class="flex space-x-3 mt-6">
@@ -260,6 +269,7 @@
         document.getElementById('edit-price').value = parseFloat(pkg.price);
         document.getElementById('edit-amount').value = pkg.amount;
         document.getElementById('edit-descriptions').value = pkg.descriptions || '';
+        document.getElementById('edit-features').value = pkg.features || '';
         document.getElementById('editPackageForm').action = '/admin/packages/' + pkg.id;
         openModal('editPackageModal');
     }

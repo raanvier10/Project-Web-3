@@ -126,8 +126,8 @@
                     <i class="fab fa-whatsapp text-xs mr-1.5 text-green-500"></i>
                     No. WhatsApp Orang Tua <span class="text-red-400 ml-0.5">*</span>
                 </label>
-                <input type="tel" id="parent_phone" name="parent_phone" value="{{ old('parent_phone') }}" required maxlength="20"
-                    placeholder="08xxxxxxxxxx"
+                <input type="tel" id="parent_phone" name="parent_phone" value="{{ old('parent_phone') }}" required maxlength="13"
+                    placeholder="Contoh: 081234567890"
                     class="form-input-premium @error('parent_phone') !border-red-300 !bg-red-50/30 @enderror" />
                 @error('parent_phone')
                 <p class="text-red-500 text-xs mt-1.5 flex items-center"><i class="fas fa-exclamation-circle mr-1"></i>{{ $message }}</p>
@@ -139,8 +139,8 @@
                     <i class="fab fa-whatsapp text-xs mr-1.5 text-green-500"></i>
                     No. WhatsApp <span class="text-red-400 ml-0.5">*</span>
                 </label>
-                <input type="tel" id="phone" name="phone" value="{{ old('phone') }}" required maxlength="20"
-                    placeholder="08xxxxxxxxxx"
+                <input type="tel" id="phone" name="phone" value="{{ old('phone') }}" required maxlength="13"
+                    placeholder="Contoh: 081234567890"
                     class="form-input-premium @error('phone') !border-red-300 !bg-red-50/30 @enderror" />
                 @error('phone')
                 <p class="text-red-500 text-xs mt-1.5 flex items-center"><i class="fas fa-exclamation-circle mr-1"></i>{{ $message }}</p>
@@ -165,7 +165,14 @@
 
             {{-- Submit --}}
             <div class="pt-5 flex flex-col sm:flex-row items-center gap-3" style="border-top: 1px dashed rgba(0,0,0,0.06);">
-                <a href="{{ route('dashboard.packages') }}" class="w-full sm:w-auto px-6 py-3.5 rounded-xl border border-gray-200 text-gray-600 font-semibold text-sm hover:bg-gray-50 hover:border-gray-300 transition-all text-center">
+                <a href="javascript:void(0)" 
+                   onclick="showUniversalModal({
+                       title: 'Batalkan Pesanan?',
+                       description: 'Apakah kamu yakin untuk membatalkan pendaftaran? Data yang Anda isi tidak akan disimpan.',
+                       confirmText: 'Ya, Batalkan',
+                       onConfirm: () => { window.location.href = '{{ route('dashboard.packages') }}'; }
+                   })"
+                   class="w-full sm:w-auto px-6 py-3.5 rounded-xl border border-gray-200 text-gray-600 font-semibold text-sm hover:bg-gray-50 hover:border-gray-300 transition-all text-center">
                     <i class="fas fa-arrow-left mr-1.5"></i> Kembali
                 </a>
                 <button type="submit" id="submitRegistration" disabled

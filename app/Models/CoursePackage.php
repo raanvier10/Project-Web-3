@@ -13,6 +13,7 @@ class CoursePackage extends Model
         'name',
         'category',
         'descriptions',
+        'features',
         'price',
         'amount',
         'is_active',

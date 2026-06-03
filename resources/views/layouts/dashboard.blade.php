@@ -163,6 +163,77 @@
     </style>
 </head>
 <body class="overflow-x-hidden font-sans antialiased text-gray-800">
+{{-- Universal Modal --}}
+<div id="universalModal" class="fixed inset-0 z-[9999] hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <div class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm transition-opacity" id="modalBackdrop"></div>
+        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+        <div class="inline-block align-bottom bg-white rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md sm:w-full border border-gray-100">
+            <div class="bg-white px-6 pt-8 pb-6 sm:px-8 sm:pb-8">
+                <div class="flex flex-col items-center text-center">
+                    
+                    <div id="modalIconContainer" class="mx-auto flex-shrink-0 flex items-center justify-center h-16 w-16 rounded-2xl bg-red-50 text-red-500 mb-5">
+                        <i id="modalIcon" class="fas fa-exclamation-triangle text-2xl"></i>
+                    </div>
+                    
+                    <div class="mt-3">
+                        <h3 class="text-xl font-extrabold text-gray-900" id="modalTitle">Konfirmasi</h3>
+                        <div class="mt-3">
+                            <p class="text-sm text-gray-500 leading-relaxed" id="modalDescription"></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-8 flex flex-col sm:flex-row-reverse gap-3">
+                    <button type="button" id="modalConfirmBtn" class="w-full inline-flex justify-center items-center px-6 py-3.5 rounded-xl text-white text-sm font-bold focus:outline-none transition-all shadow-lg"></button>
+                    <button type="button" id="modalCancelBtn" class="w-full inline-flex justify-center items-center px-6 py-3.5 rounded-xl bg-white border border-gray-200 text-gray-600 text-sm font-bold hover:bg-gray-50 focus:outline-none transition-all">Batal</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    window.showUniversalModal = function(options) {
+        const modal = document.getElementById('universalModal');
+        const title = document.getElementById('modalTitle');
+        const desc = document.getElementById('modalDescription');
+        const confirmBtn = document.getElementById('modalConfirmBtn');
+        const cancelBtn = document.getElementById('modalCancelBtn');
+        const backdrop = document.getElementById('modalBackdrop');
+        const icon = document.getElementById('modalIcon');
+        const iconContainer = document.getElementById('modalIconContainer');
+
+        title.innerText = options.title || 'Konfirmasi';
+        desc.innerText = options.description || '';
+        confirmBtn.innerText = options.confirmText || 'Ya, Lanjutkan';
+        
+        // Icon handling
+        icon.className = `fas ${options.icon || 'fa-exclamation-triangle'} text-2xl`;
+        
+        // MODIFIKASI JAVASCRIPT: Menghapus 'sm:mx-0' di sini juga agar saat fungsi dipanggil, class center-nya tidak tertimpa/hilang
+        iconContainer.className = `mx-auto flex-shrink-0 flex items-center justify-center h-16 w-16 rounded-2xl mb-5 ${options.iconClass || 'bg-red-50 text-red-500'}`;
+        
+        // Button class handling
+        confirmBtn.className = `w-full inline-flex justify-center items-center px-6 py-3.5 rounded-xl text-white text-sm font-bold focus:outline-none transition-all shadow-lg ${options.confirmClass || 'bg-red-500 hover:bg-red-600 shadow-red-200'}`;
+
+        modal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+
+        const closeModal = () => {
+            modal.classList.add('hidden');
+            document.body.style.overflow = '';
+        };
+
+        confirmBtn.onclick = () => {
+            if (options.onConfirm) options.onConfirm();
+            closeModal();
+        };
+
+        cancelBtn.onclick = closeModal;
+        backdrop.onclick = closeModal;
+    };
+</script>
+
 <div class="min-h-screen bg-[#f8f9fc] lg:grid lg:grid-cols-[250px_minmax(0,1fr)] lg:items-stretch">
 <aside id="sidebar" class="relative z-10 w-full lg:w-[250px] lg:h-screen lg:sticky lg:top-0 sidebar-glass flex flex-col shadow-2xl shadow-pink-900/10 lg:rounded-none overflow-y-auto">
     <div class="relative z-10 px-6 pt-7 pb-5 border-b border-white/10">

@@ -17,7 +17,7 @@ class OwnerSeeder extends Seeder
             ['email' => 'owner@gmail.com'],
             [
                 'name' => 'Owner EFA',
-                'password' => Hash::make('password123'),
+                'password' => Hash::make('Password123!'),
                 'role' => 'owner',
                 'email_verified_at' => now(),
             ]

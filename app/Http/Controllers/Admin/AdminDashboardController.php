@@ -67,6 +67,7 @@ class AdminDashboardController extends Controller
             'name'         => 'required|string|max:255',
             'category'     => 'required|in:kids,adult',
             'descriptions' => 'nullable|string',
+            'features'     => 'nullable|string',
             'price'        => 'required|numeric|min:0',
             'amount'       => 'required|integer|min:0',
             'is_active'    => 'sometimes|boolean',
@@ -88,6 +89,7 @@ class AdminDashboardController extends Controller
             'name'         => 'required|string|max:255',
             'category'     => 'required|in:kids,adult',
             'descriptions' => 'nullable|string',
+            'features'     => 'nullable|string',
             'price'        => 'required|numeric|min:0',
             'amount'       => 'required|integer|min:0',
         ]);

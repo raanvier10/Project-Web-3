@@ -232,11 +232,15 @@
                     </form>
                 @endif
 
-                <div class="mt-5 text-center">
-                    <a href="{{ route('dashboard.transactions') }}" class="text-sm text-gray-400 hover:text-primary-600 transition-colors inline-flex items-center space-x-1.5">
-                        <i class="fas fa-arrow-left text-xs"></i>
-                        <span>Kembali ke Riwayat Transaksi</span>
-                    </a>
+                <div class="mt-5 text-center px-4">
+                    <form id="cancelForm" action="{{ route('dashboard.registration.cancel', $registration->id) }}" method="POST" class="inline">
+                        @csrf
+                        @method('DELETE')
+                        <button type="button" onclick="confirmCancel()" class="text-sm text-gray-400 hover:text-red-500 transition-colors inline-flex items-center space-x-1.5 underline underline-offset-4 decoration-gray-200 hover:decoration-red-200">
+                            <i class="fas fa-times-circle text-[10px]"></i>
+                            <span>Batalkan Pendaftaran & Kembali</span>
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>
@@ -246,6 +250,15 @@
 
 @section('scripts')
 <script>
+    function confirmCancel() {
+        showUniversalModal({
+            title: 'Batalkan Pesanan?',
+            description: 'Apakah kamu yakin untuk membatalkan pendaftaran? Riwayat pembayaran ini akan dihapus.',
+            confirmText: 'Ya, Batalkan',
+            onConfirm: () => { document.getElementById('cancelForm').submit(); }
+        });
+    }
+
     const fileInput = document.getElementById('proof_of_payment');
     if (fileInput) {
         fileInput.addEventListener('change', function(e) {

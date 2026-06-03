@@ -47,6 +47,7 @@ Route::middleware('auth')->group(function () {
     // Registration
     Route::get('/dashboard/register/{package}', [DashboardController::class, 'showRegistrationForm'])->name('dashboard.register');
     Route::post('/dashboard/register/{package}', [DashboardController::class, 'register'])->name('dashboard.register.submit');
+    Route::delete('/dashboard/registration/{registration}/cancel', [DashboardController::class, 'cancelRegistration'])->name('dashboard.registration.cancel');
 
     // Payment
     Route::get('/dashboard/payment/{registration}', [DashboardController::class, 'showPayment'])->name('dashboard.payment');
