@@ -83,6 +83,7 @@
             @endif
 
             {{-- CTA Button --}}
+            @if($package->is_active)
             <a href="{{ route('dashboard.register', $package->id) }}"
                class="w-full inline-flex items-center justify-center px-6 py-4 rounded-2xl text-white font-bold text-sm transition-all duration-300 transform hover:-translate-y-0.5 active:translate-y-0 group/btn relative overflow-hidden"
                style="background: linear-gradient(135deg, #E8699F 0%, #FF85BB 50%, #C74E83 100%); box-shadow: 0 4px 20px rgba(199,78,131,0.25);"
@@ -94,6 +95,15 @@
                 </span>
                 <div class="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 translate-x-[-100%] group-hover/btn:translate-x-[100%] transition-transform duration-700"></div>
             </a>
+            @else
+            <button type="button" disabled
+                class="w-full inline-flex items-center justify-center px-6 py-4 rounded-2xl font-bold text-sm cursor-not-allowed"
+                style="background: linear-gradient(135deg, #E5E7EB, #D1D5DB); color: #9CA3AF; box-shadow: none;"
+                id="register-pkg-{{ $package->id }}">
+                <i class="fas fa-ban mr-2 opacity-60"></i>
+                Tidak Tersedia
+            </button>
+            @endif
         </div>
     </div>
     @endforeach

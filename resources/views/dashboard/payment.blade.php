@@ -117,26 +117,81 @@
 
         {{-- Payment Instructions --}}
         <div class="space-y-4">
-            <div class="float-card h-full">
+            <div class="float-card h-full flex flex-col">
                 <div class="flex items-center space-x-2 mb-4">
                     <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: linear-gradient(135deg, #DBEAFE, #BFDBFE);">
                         <i class="fas fa-info text-xs text-blue-600"></i>
                     </div>
                     <h4 class="text-sm font-bold text-gray-900">Instruksi Pembayaran</h4>
                 </div>
+
+                {{-- Rekening Display --}}
+                <div class="rounded-2xl p-4 mb-4 space-y-3" style="background: linear-gradient(135deg, rgba(255,240,246,0.6), rgba(255,224,236,0.3)); border: 1px solid rgba(199,78,131,0.12);">
+                    <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest text-center">Transfer ke Rekening</p>
+
+                    {{-- BSI --}}
+                    <div class="flex items-center justify-between rounded-xl px-4 py-3" style="background: rgba(255,255,255,0.85); border: 1px solid rgba(16,185,129,0.18);">
+                        <div class="flex items-center gap-3">
+                            <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-bold text-emerald-700 flex-shrink-0" style="background: linear-gradient(135deg, #D1FAE5, #A7F3D0);">
+                                <i class="fas fa-university text-emerald-600 text-[10px]"></i> BSI
+                            </div>
+                            <div>
+                                <p class="font-mono font-extrabold tracking-[0.05em] leading-tight"
+                                    id="rek-bsi"
+                                    style="font-size: 1.45rem; background: linear-gradient(135deg, #C74E83, #FF85BB); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                                    7285028277
+                                </p>
+                                <p class="text-[11px] text-gray-500 font-semibold">a.n. Siska Maya Fitri</p>
+                            </div>
+                        </div>
+                        <div class="flex flex-col items-center gap-1">
+                            <button type="button" onclick="copyRekeningById('rek-bsi','tip-bsi')"
+                                class="w-9 h-9 rounded-xl flex items-center justify-center text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 focus:outline-none transition-all duration-200" title="Salin BSI">
+                                <i class="far fa-copy"></i>
+                            </button>
+                            <span id="tip-bsi" class="hidden text-[10px] font-bold text-emerald-600">✓ Salin</span>
+                        </div>
+                    </div>
+
+                    {{-- BCA --}}
+                    <div class="flex items-center justify-between rounded-xl px-4 py-3" style="background: rgba(255,255,255,0.85); border: 1px solid rgba(59,130,246,0.18);">
+                        <div class="flex items-center gap-3">
+                            <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-bold text-blue-700 flex-shrink-0" style="background: linear-gradient(135deg, #DBEAFE, #BFDBFE);">
+                                <i class="fas fa-university text-blue-600 text-[10px]"></i> BCA
+                            </div>
+                            <div>
+                                <p class="font-mono font-extrabold tracking-[0.05em] leading-tight"
+                                    id="rek-bca"
+                                    style="font-size: 1.45rem; background: linear-gradient(135deg, #C74E83, #FF85BB); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                                    0344077645
+                                </p>
+                                <p class="text-[11px] text-gray-500 font-semibold">a.n. Siska Maya Fitri</p>
+                            </div>
+                        </div>
+                        <div class="flex flex-col items-center gap-1">
+                            <button type="button" onclick="copyRekeningById('rek-bca','tip-bca')"
+                                class="w-9 h-9 rounded-xl flex items-center justify-center text-gray-400 hover:text-blue-600 hover:bg-blue-50 focus:outline-none transition-all duration-200" title="Salin BCA">
+                                <i class="far fa-copy"></i>
+                            </button>
+                            <span id="tip-bca" class="hidden text-[10px] font-bold text-blue-600">✓ Salin</span>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Langkah-langkah --}}
                 <div class="space-y-3 text-sm text-gray-500">
                     @php $steps = [
-                        ['icon' => 'fa-university', 'text' => 'Transfer ke rekening <strong class="text-gray-700">BCA 1234567890</strong> a.n. <strong class="text-gray-700">EFA Course</strong>'],
-                        ['icon' => 'fa-money-bill', 'text' => 'Transfer sesuai nominal: <strong class="text-gray-700">' . $registration->coursePackage->formatted_price . '</strong>'],
-                        ['icon' => 'fa-camera', 'text' => 'Screenshot bukti transfer dan upload di form di bawah'],
-                        ['icon' => 'fa-clock', 'text' => 'Tunggu verifikasi admin <strong class="text-gray-700">(max 1x24 jam)</strong>'],
+                        'Transfer sesuai nominal <strong class="text-gray-700">Total Bayar</strong> pada invoice.',
+                        'Screenshot atau foto bukti transfer Anda.',
+                        'Upload bukti transfer pada form di bawah.',
+                        'Tunggu verifikasi admin <strong class="text-gray-700">(maks 1x24 jam)</strong>.',
                     ]; @endphp
-                    @foreach($steps as $i => $step)
+                    @foreach($steps as $i => $text)
                     <div class="flex items-start space-x-3">
                         <div class="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5" style="background: linear-gradient(135deg, #FFE0EC, #FFC2D9);">
                             <span class="text-[10px] font-bold text-primary-700">{{ $i + 1 }}</span>
                         </div>
-                        <p class="leading-relaxed">{!! $step['text'] !!}</p>
+                        <p class="leading-relaxed mt-0.5">{!! $text !!}</p>
                     </div>
                     @endforeach
                 </div>
@@ -250,6 +305,21 @@
 
 @section('scripts')
 <script>
+    function copyRekeningById(elId, tooltipId) {
+        const el = document.getElementById(elId);
+        if (!el) return;
+        const rek = el.innerText.replace(/\s/g, '');
+        const tip = document.getElementById(tooltipId);
+        const show = () => {
+            if (tip) { tip.classList.remove('hidden'); setTimeout(() => tip.classList.add('hidden'), 2000); }
+        };
+        navigator.clipboard.writeText(rek).then(show).catch(() => {
+            const ta = document.createElement('textarea');
+            ta.value = rek; document.body.appendChild(ta); ta.select();
+            document.execCommand('copy'); document.body.removeChild(ta); show();
+        });
+    }
+
     function confirmCancel() {
         showUniversalModal({
             title: 'Batalkan Pesanan?',

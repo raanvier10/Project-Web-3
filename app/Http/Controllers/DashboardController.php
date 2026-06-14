@@ -42,8 +42,7 @@ class DashboardController extends Controller
 
     public function packages()
     {
-        $packages = CoursePackage::active()
-            ->orderBy('category')
+        $packages = CoursePackage::orderBy('category')
             ->orderBy('price')
             ->get();
 

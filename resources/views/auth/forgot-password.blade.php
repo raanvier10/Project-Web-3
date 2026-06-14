@@ -48,7 +48,7 @@
     <div class="w-full max-w-[420px] mx-auto px-6 sm:px-8 py-10 relative z-10">
       <div class="flex items-center justify-center space-x-2.5 mb-10 lg:hidden">
         <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center shadow-lg shadow-primary-500/30">
-          <img src="/images/LogoEFA.svg" alt="Logo EFA" class="w-7 h-7 object-contain" />
+          <img src="/images/EFA.svg" alt="Logo EFA" class="w-7 h-7 object-contain" />
         </div>
         <span class="font-extrabold text-xl text-primary-700" style="font-family:'Oswald',sans-serif;">EFA</span>
       </div>

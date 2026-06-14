@@ -13,7 +13,7 @@
     <span class="text-gray-700 font-semibold">Pembayaran</span>
 </div>
 
-<div class="max-w-5xl mx-auto">
+<div class="max-w-4xl mx-auto">
     {{-- Progress Steps --}}
     <div class="float-card mb-6 !p-5">
         <div class="flex items-center justify-between relative px-4">
@@ -63,62 +63,120 @@
     {{-- ============================================ --}}
     {{-- Main Layout: Invoice kiri | Instruksi kanan | Upload di bawah --}}
     {{-- ============================================ --}}
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-6 items-start">
-        
-        {{-- Invoice --}}
-        <div class="lg:col-span-5 space-y-6">
-            <div class="float-card" style="animation: pageEnter 0.5s ease forwards; opacity: 0;">
-                <div class="flex items-center space-x-2 mb-5">
-                    <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: linear-gradient(135deg, #FFE0EC, #FFC2D9);">
-                        <i class="fas fa-file-invoice text-xs text-primary-600"></i>
-                    </div>
-                    <h3 class="text-base font-bold text-gray-900">Invoice</h3>
-                </div>
+    <div class="space-y-6 mb-6">
 
-                <div class="space-y-3.5 mb-5">
-                    <div class="flex justify-between items-start">
-                        <span class="text-sm text-gray-400">ID Transaksi</span>
-                        <span class="text-sm font-mono font-bold text-gray-800 bg-gray-50 px-2.5 py-1 rounded-lg">{{ $registration->registration_number }}</span>
+        {{-- Invoice Card (Full Width, Premium) --}}
+        <div class="float-card overflow-hidden !p-0" style="animation: pageEnter 0.5s ease forwards; opacity: 0;">
+            {{-- Invoice Header --}}
+            <div class="px-8 py-6 flex items-center justify-between" style="background: linear-gradient(135deg, #C74E83 0%, #E8699F 50%, #FF85BB 100%);">
+                <div class="flex items-center space-x-4">
+                    <div class="w-14 h-14 rounded-2xl flex items-center justify-center" style="background: rgba(255,255,255,0.2); backdrop-filter: blur(8px);">
+                        <i class="fas fa-file-invoice text-2xl text-white"></i>
                     </div>
-                    <div class="flex justify-between items-start">
-                        <span class="text-sm text-gray-400">Paket</span>
-                        <span class="text-sm font-semibold text-gray-800 text-right max-w-[55%]">{{ $registration->coursePackage->name }}</span>
-                    </div>
-                    <div class="flex justify-between items-center">
-                        <span class="text-sm text-gray-400">Kategori</span>
-                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase {{ $registration->coursePackage->category === 'kids' ? 'text-purple-700' : 'text-primary-700' }}" style="background: {{ $registration->coursePackage->category === 'kids' ? 'linear-gradient(135deg, #F3E8FF, #E9D5FF)' : 'linear-gradient(135deg, #FFE0EC, #FFC2D9)' }};">
-                            {{ $registration->coursePackage->category_label }}
-                        </span>
-                    </div>
-                    <div class="flex justify-between items-start">
-                        <span class="text-sm text-gray-400">Pertemuan</span>
-                        <span class="text-sm text-gray-600">{{ $registration->coursePackage->amount }}x pertemuan</span>
-                    </div>
-                    <div class="flex justify-between items-start">
-                        <span class="text-sm text-gray-400">Tanggal Daftar</span>
-                        <span class="text-sm text-gray-600">{{ $registration->created_at->format('d M Y, H:i') }}</span>
-                    </div>
-                    <div class="flex justify-between items-center">
-                        <span class="text-sm text-gray-400">Status</span>
-                        <span class="status-badge {{ $registration->status_badge_class }}">
-                            {{ $registration->display_status }}
-                        </span>
+                    <div>
+                        <h3 class="text-2xl font-extrabold text-white tracking-tight">INVOICE</h3>
+                        <p class="text-white/60 text-sm font-medium">English For Akhwat</p>
                     </div>
                 </div>
+                <div class="text-right">
+                    <p class="text-white/50 text-xs font-bold uppercase tracking-widest mb-1">No. Transaksi</p>
+                    <span class="font-mono font-extrabold text-white text-lg bg-white/15 px-4 py-1.5 rounded-xl">{{ $registration->registration_number }}</span>
+                </div>
+            </div>
 
-                <div class="pt-4" style="border-top: 2px dashed rgba(0,0,0,0.06);">
-                    <div class="flex justify-between items-center">
-                        <span class="text-sm font-bold text-gray-600">Total Bayar</span>
-                        <span class="text-2xl font-extrabold" style="background: linear-gradient(135deg, #C74E83, #FF85BB); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
-                            {{ $registration->coursePackage->formatted_price }}
-                        </span>
+            {{-- Invoice Body --}}
+            <div class="px-8 py-6">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-6">
+                    <div class="sm:col-span-2 space-y-4">
+                        <div class="flex justify-between items-center py-3" style="border-bottom: 1px solid rgba(0,0,0,0.05);">
+                            <span class="text-sm text-gray-400 font-medium">Nama Peserta</span>
+                            <span class="text-sm font-bold text-gray-800">{{ Auth::user()->name }}</span>
+                        </div>
+                        <div class="flex justify-between items-center py-3" style="border-bottom: 1px solid rgba(0,0,0,0.05);">
+                            <span class="text-sm text-gray-400 font-medium">Paket Kursus</span>
+                            <span class="text-sm font-bold text-gray-800 text-right max-w-[60%]">{{ $registration->coursePackage->name }}</span>
+                        </div>
+                        <div class="flex justify-between items-center py-3" style="border-bottom: 1px solid rgba(0,0,0,0.05);">
+                            <span class="text-sm text-gray-400 font-medium">Kategori</span>
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold uppercase {{ $registration->coursePackage->category === 'kids' ? 'text-purple-700' : 'text-primary-700' }}" style="background: {{ $registration->coursePackage->category === 'kids' ? 'linear-gradient(135deg, #F3E8FF, #E9D5FF)' : 'linear-gradient(135deg, #FFE0EC, #FFC2D9)' }};">
+                                {{ $registration->coursePackage->category_label }}
+                            </span>
+                        </div>
+                        <div class="flex justify-between items-center py-3" style="border-bottom: 1px solid rgba(0,0,0,0.05);">
+                            <span class="text-sm text-gray-400 font-medium">Jumlah Pertemuan</span>
+                            <span class="text-sm font-bold text-gray-800">{{ $registration->coursePackage->amount }}x Pertemuan</span>
+                        </div>
+                        <div class="flex justify-between items-center py-3" style="border-bottom: 1px solid rgba(0,0,0,0.05);">
+                            <span class="text-sm text-gray-400 font-medium">Tanggal Daftar</span>
+                            <span class="text-sm font-bold text-gray-800">{{ $registration->created_at->format('d M Y, H:i') }}</span>
+                        </div>
+                        <div class="flex justify-between items-center py-3">
+                            <span class="text-sm text-gray-400 font-medium">Status</span>
+                            <span class="status-badge {{ $registration->status_badge_class }}">{{ $registration->display_status }}</span>
+                        </div>
+                    </div>
+
+                    {{-- Rekening + Nominal Box --}}
+                    <div class="flex flex-col items-center justify-center rounded-2xl p-6 text-center space-y-3 relative overflow-hidden" style="background: linear-gradient(135deg, rgba(199,78,131,0.04), rgba(255,133,187,0.06)); border: 2px dashed rgba(199,78,131,0.2);">
+
+                        <p class="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400">Transfer ke Rekening</p>
+
+                        {{-- BSI --}}
+                        <div class="w-full rounded-xl p-3" style="background: rgba(255,255,255,0.7); border: 1px solid rgba(199,78,131,0.12);">
+                            <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg font-bold text-xs text-emerald-700 mb-2" style="background: linear-gradient(135deg, #D1FAE5, #A7F3D0);">
+                                <i class="fas fa-university text-emerald-600"></i> BSI
+                            </div>
+                            <div class="flex items-center justify-center gap-2">
+                                <span class="font-mono font-extrabold tracking-[0.08em]" id="rek-bsi"
+                                    style="font-size: 1.55rem; line-height: 1; background: linear-gradient(135deg, #C74E83, #FF85BB); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                                    7285028277
+                                </span>
+                                <button type="button" onclick="copyRekeningById('rek-bsi', 'tooltip-inv-bsi')"
+                                    class="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 transition-all duration-200" title="Salin BSI">
+                                    <i class="far fa-copy"></i>
+                                </button>
+                            </div>
+                            <p class="text-xs text-gray-500 font-semibold mt-1">a.n. Siska Maya Fitri</p>
+                            <div id="tooltip-inv-bsi" class="hidden mt-1 py-1 rounded-lg text-xs font-bold text-emerald-700" style="background: linear-gradient(135deg, #D1FAE5, #A7F3D0);"><i class="fas fa-check mr-1"></i>Tersalin!</div>
+                        </div>
+
+                        {{-- BCA --}}
+                        <div class="w-full rounded-xl p-3" style="background: rgba(255,255,255,0.7); border: 1px solid rgba(199,78,131,0.12);">
+                            <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg font-bold text-xs text-blue-700 mb-2" style="background: linear-gradient(135deg, #DBEAFE, #BFDBFE);">
+                                <i class="fas fa-university text-blue-600"></i> BCA
+                            </div>
+                            <div class="flex items-center justify-center gap-2">
+                                <span class="font-mono font-extrabold tracking-[0.08em]" id="rek-bca"
+                                    style="font-size: 1.55rem; line-height: 1; background: linear-gradient(135deg, #C74E83, #FF85BB); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                                    0344077645
+                                </span>
+                                <button type="button" onclick="copyRekeningById('rek-bca', 'tooltip-inv-bca')"
+                                    class="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-all duration-200" title="Salin BCA">
+                                    <i class="far fa-copy"></i>
+                                </button>
+                            </div>
+                            <p class="text-xs text-gray-500 font-semibold mt-1">a.n. Siska Maya Fitri</p>
+                            <div id="tooltip-inv-bca" class="hidden mt-1 py-1 rounded-lg text-xs font-bold text-blue-700" style="background: linear-gradient(135deg, #DBEAFE, #BFDBFE);"><i class="fas fa-check mr-1"></i>Tersalin!</div>
+                        </div>
+
+                        <div class="w-full h-px" style="background: rgba(199,78,131,0.1);"></div>
+
+                        <div>
+                            <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-1">Total Tagihan</p>
+                            <span class="text-3xl font-extrabold"
+                                style="background: linear-gradient(135deg, #C74E83, #FF85BB); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                                {{ $registration->coursePackage->formatted_price }}
+                            </span>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
         {{-- Instruksi Pembayaran --}}
-        <div class="lg:col-span-7 space-y-6">
+        <div class="lg:col-span-5 space-y-6">
             <div class="float-card" style="animation: pageEnter 0.5s ease forwards; animation-delay: 0.1s; opacity: 0;">
                 <div class="flex items-center space-x-2 mb-5">
                     <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: linear-gradient(135deg, #DBEAFE, #BFDBFE);">
@@ -128,20 +186,55 @@
                 </div>
 
                 {{-- Rekening Center --}}
-                <div class="rounded-2xl p-5 text-center mb-5 relative overflow-hidden" style="background: linear-gradient(135deg, rgba(255,240,246,0.6), rgba(255,224,236,0.3)); border: 1px solid rgba(199,78,131,0.1);">
-                    <p class="text-[10px] text-gray-400 mb-2 font-bold uppercase tracking-widest">Transfer ke Rekening</p>
-                    <div class="inline-flex items-center px-3 py-1 rounded-lg text-[11px] font-bold uppercase tracking-wider text-blue-700 mb-2" style="background: linear-gradient(135deg, #DBEAFE, #BFDBFE);">
-                        BCA
+                <div class="rounded-2xl p-5 mb-5 relative overflow-hidden space-y-3" style="background: linear-gradient(135deg, rgba(255,240,246,0.6), rgba(255,224,236,0.3)); border: 1px solid rgba(199,78,131,0.1);">
+                    <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest text-center">Transfer ke Rekening</p>
+
+                    {{-- BSI Row --}}
+                    <div class="flex items-center justify-between rounded-xl px-4 py-3" style="background: rgba(255,255,255,0.75); border: 1px solid rgba(16,185,129,0.15);">
+                        <div class="flex items-center gap-3">
+                            <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-bold text-emerald-700 flex-shrink-0" style="background: linear-gradient(135deg, #D1FAE5, #A7F3D0);">
+                                <i class="fas fa-university text-emerald-600 text-[10px]"></i> BSI
+                            </div>
+                            <div>
+                                <p class="font-mono font-extrabold tracking-[0.06em] leading-tight"
+                                    id="instr-rek-bsi"
+                                    style="font-size: 1.3rem; background: linear-gradient(135deg, #C74E83, #FF85BB); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                                    7285028277
+                                </p>
+                                <p class="text-[11px] text-gray-500 font-semibold">a.n. Siska Maya Fitri</p>
+                            </div>
+                        </div>
+                        <div class="flex flex-col items-center gap-1">
+                            <button type="button" onclick="copyRekeningById('instr-rek-bsi', 'tooltip-instr-bsi')"
+                                class="w-9 h-9 rounded-xl flex items-center justify-center text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 focus:outline-none transition-all duration-200" title="Salin BSI">
+                                <i class="far fa-copy"></i>
+                            </button>
+                            <span id="tooltip-instr-bsi" class="hidden text-[10px] font-bold text-emerald-600">✓ Salin</span>
+                        </div>
                     </div>
-                    <div class="flex items-center justify-center space-x-2">
-                        <p class="text-3xl font-mono font-extrabold tracking-[0.15em] text-gray-900" id="rek-number">1234567890</p>
-                        <button type="button" onclick="copyRekening()" class="w-9 h-9 rounded-xl flex items-center justify-center text-gray-400 hover:text-primary-600 hover:bg-primary-50 focus:outline-none transition-all duration-200" title="Salin" id="btn-copy-rek">
-                            <i class="far fa-copy text-lg"></i>
-                        </button>
-                    </div>
-                    <p class="text-sm text-gray-600 mt-1.5 font-bold">a.n. EFA Course</p>
-                    <div id="copyTooltip" class="hidden absolute top-3 right-3 px-3 py-1.5 rounded-lg text-xs font-bold text-white" style="background: linear-gradient(135deg, #10B981, #34D399);">
-                        <i class="fas fa-check mr-1"></i> Tersalin!
+
+                    {{-- BCA Row --}}
+                    <div class="flex items-center justify-between rounded-xl px-4 py-3" style="background: rgba(255,255,255,0.75); border: 1px solid rgba(59,130,246,0.15);">
+                        <div class="flex items-center gap-3">
+                            <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-bold text-blue-700 flex-shrink-0" style="background: linear-gradient(135deg, #DBEAFE, #BFDBFE);">
+                                <i class="fas fa-university text-blue-600 text-[10px]"></i> BCA
+                            </div>
+                            <div>
+                                <p class="font-mono font-extrabold tracking-[0.06em] leading-tight"
+                                    id="instr-rek-bca"
+                                    style="font-size: 1.3rem; background: linear-gradient(135deg, #C74E83, #FF85BB); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                                    0344077645
+                                </p>
+                                <p class="text-[11px] text-gray-500 font-semibold">a.n. Siska Maya Fitri</p>
+                            </div>
+                        </div>
+                        <div class="flex flex-col items-center gap-1">
+                            <button type="button" onclick="copyRekeningById('instr-rek-bca', 'tooltip-instr-bca')"
+                                class="w-9 h-9 rounded-xl flex items-center justify-center text-gray-400 hover:text-blue-600 hover:bg-blue-50 focus:outline-none transition-all duration-200" title="Salin BCA">
+                                <i class="far fa-copy"></i>
+                            </button>
+                            <span id="tooltip-instr-bca" class="hidden text-[10px] font-bold text-blue-600">✓ Salin</span>
+                        </div>
                     </div>
                 </div>
 
@@ -264,28 +357,33 @@
             </div>
         </div>
 
-    </div> {{-- End Main Grid --}}
+        </div> {{-- End Inner Grid --}}
+    </div> {{-- End Main Space --}}
 </div>
 @endsection
 
 @section('scripts')
 <script>
-    // Copy rekening
-    function copyRekening() {
-        const rek = document.getElementById('rek-number').innerText.replace(/\s/g, '');
-        const tooltip = document.getElementById('copyTooltip');
-        navigator.clipboard.writeText(rek).then(() => {
-            tooltip.classList.remove('hidden');
-            setTimeout(() => tooltip.classList.add('hidden'), 2000);
-        }).catch(() => {
+    // Copy rekening by element id
+    function copyRekeningById(elId, tooltipId) {
+        const el = document.getElementById(elId);
+        if (!el) return;
+        const rek = el.innerText.replace(/\s/g, '');
+        const tooltip = document.getElementById(tooltipId);
+        const show = () => {
+            if (tooltip) {
+                tooltip.classList.remove('hidden');
+                setTimeout(() => tooltip.classList.add('hidden'), 2000);
+            }
+        };
+        navigator.clipboard.writeText(rek).then(show).catch(() => {
             const ta = document.createElement('textarea');
             ta.value = rek;
             document.body.appendChild(ta);
             ta.select();
             document.execCommand('copy');
             document.body.removeChild(ta);
-            tooltip.classList.remove('hidden');
-            setTimeout(() => tooltip.classList.add('hidden'), 2000);
+            show();
         });
     }
 
