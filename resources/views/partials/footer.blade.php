@@ -8,10 +8,10 @@
     </div>
     <!-- Social Media -->
     <div class="reveal flex justify-center space-x-4 mt-12">
-      <a href="#" class="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-primary-100 hover:text-primary-600 transition"><i class="fab fa-instagram text-xl"></i></a>
-      <a href="#" class="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-primary-100 hover:text-primary-600 transition"><i class="fab fa-facebook text-xl"></i></a>
-      <a href="#" class="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-primary-100 hover:text-primary-600 transition"><i class="fab fa-youtube text-xl"></i></a>
-      <a href="#" class="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-primary-100 hover:text-primary-600 transition"><i class="fab fa-telegram text-xl"></i></a>
+      <a href=" https://www.instagram.com/englishforakhwat?igsh=MWkzajZxN2V1MXd0dA==" target="_blank" rel="noopener noreferrer" class="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-primary-100 hover:text-primary-600 transition"><i class="fab fa-instagram text-xl"></i></a>
+      <a href=" https://www.threads.com/@englishforakhwat" target="_blank" rel="noopener noreferrer" class="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-primary-100 hover:text-primary-600 transition"><i class="fab fa-threads text-xl"></i></a>
+      <a href=" https://wa.me/085129217454" target="_blank" rel="noopener noreferrer" class="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-primary-100 hover:text-primary-600 transition"><i class="fab fa-whatsapp text-xl"></i></a>
+      <a href="mailto:officialenglishforakhwat@gmail.com" target="_blank" rel="noopener noreferrer" class="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-primary-100 hover:text-primary-600 transition"><i class="fas fa-envelope text-xl"></i></a>
     </div>
   </div>
 </section>
@@ -52,8 +52,8 @@
       <div>
         <h4 class="font-semibold mb-4" data-i18n="nav_contact">Kontak</h4>
         <ul class="space-y-3 text-sm text-gray-400">
-          <li class="flex items-center space-x-2"><i class="fas fa-phone-alt text-primary-400"></i><span>+62 812-3456-7890</span></li>
-          <li class="flex items-center space-x-2"><i class="fas fa-envelope text-primary-400"></i><span>info@efacourse.com</span></li>
+          <li class="flex items-center space-x-2"><i class="fas fa-phone-alt text-primary-400"></i><span>+62-851-2921-7454</span></li>
+          <li class="flex items-center space-x-2"><i class="fas fa-envelope text-primary-400"></i><span>officialenglishforakhwat@gmail.com</span></li>
         </ul>
       </div>
     </div>
