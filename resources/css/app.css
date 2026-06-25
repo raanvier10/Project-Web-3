@@ -233,3 +233,9 @@
   background: rgba(255,133,187,0.2);
   color: #C74E83;
 }
+
+/* Hide default browser password reveal icon (Edge) */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+  display: none;
+}

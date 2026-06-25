@@ -33,10 +33,25 @@
                 </span>
                 <h2 class="text-xl sm:text-2xl font-extrabold text-white">{{ $package->name }}</h2>
                 <p class="text-white/60 text-sm mt-1 max-w-md">{{ $package->descriptions }}</p>
+                {{-- Price with discount --}}
+                @if($package->has_discount)
+                <div class="flex items-center space-x-2 mt-3">
+                    <span class="text-white/50 text-sm line-through font-medium">{{ $package->formatted_original_price }}</span>
+                    @php $discountPct = round((1 - $package->price / $package->original_price) * 100); @endphp
+                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-extrabold" style="background: rgba(255,255,255,0.2); color: #fff;">
+                        <i class="fas fa-bolt mr-0.5 text-[8px]"></i> HEMAT {{ $discountPct }}%
+                    </span>
+                </div>
+                <p class="text-2xl font-extrabold text-white mt-1">
+                    {{ $package->formatted_price }}
+                    <span class="text-white/40 text-sm font-normal">/program</span>
+                </p>
+                @else
                 <p class="text-2xl font-extrabold text-white mt-3">
                     {{ $package->formatted_price }}
                     <span class="text-white/40 text-sm font-normal">/program</span>
                 </p>
+                @endif
             </div>
         </div>
     </div>
@@ -65,6 +80,7 @@
                 </label>
                 <div class="relative group">
                     <input type="text" id="name" name="name" value="{{ old('name', Auth::user()->name) }}" required maxlength="255"
+                        pattern="[a-zA-Z\s]+" title="Hanya boleh berisi huruf dan spasi"
                         placeholder="{{ $package->category === 'kids' ? 'Masukkan nama anak' : 'Masukkan nama lengkap' }}"
                         class="form-input-premium @error('name') !border-red-300 !bg-red-50/30 @enderror" />
                     <div class="form-input-glow"></div>
@@ -81,9 +97,24 @@
                         <i class="fas fa-calendar-day text-xs mr-1.5 text-gray-400"></i>
                         Usia <span class="text-red-400 ml-0.5">*</span>
                     </label>
-                    <input type="number" id="age" name="age" value="{{ old('age') }}" required min="1" max="100"
+                    <input type="number" id="age" name="age" value="{{ old('age') }}" required
+                        min="{{ $package->category === 'kids' ? '4' : '16' }}"
+                        max="{{ $package->category === 'kids' ? '15' : '100' }}"
                         placeholder="Masukkan usia"
                         class="form-input-premium @error('age') !border-red-300 !bg-red-50/30 @enderror" />
+                    <p class="text-gray-400 text-[11px] mt-1.5 flex items-center">
+                        <i class="fas fa-info-circle mr-1 text-gray-300"></i>
+                        @if($package->category === 'kids')
+                            Rentang usia program Kids: <strong class="ml-1 text-gray-500">4 – 15 tahun</strong>
+                        @else
+                            Rentang usia program Dewasa: <strong class="ml-1 text-gray-500">16 tahun ke atas</strong>
+                        @endif
+                    </p>
+                    {{-- Age warning banner (shown by JS) --}}
+                    <div id="ageWarningBanner" class="hidden mt-2 p-3 rounded-xl flex items-start space-x-2.5" style="background: linear-gradient(135deg, rgba(239,68,68,0.06), rgba(252,165,165,0.04)); border: 1px solid rgba(239,68,68,0.15);">
+                        <i class="fas fa-exclamation-triangle text-red-400 text-sm mt-0.5 flex-shrink-0"></i>
+                        <p class="text-red-600 text-xs leading-relaxed" id="ageWarningText"></p>
+                    </div>
                     @error('age')
                     <p class="text-red-500 text-xs mt-1.5 flex items-center"><i class="fas fa-exclamation-circle mr-1"></i>{{ $message }}</p>
                     @enderror
@@ -192,8 +223,59 @@
 
 @section('scripts')
 <script>
+    const packageCategory = '{{ $package->category }}';
+    const minAge = packageCategory === 'kids' ? 4 : 16;
+    const maxAge = packageCategory === 'kids' ? 15 : 100;
+
+    const ageInput = document.getElementById('age');
+    const ageWarning = document.getElementById('ageWarningBanner');
+    const ageWarningText = document.getElementById('ageWarningText');
+    const submitBtn = document.getElementById('submitRegistration');
+    const termsCheckbox = document.getElementById('terms-checkbox');
+
+    function validateAge() {
+        const val = parseInt(ageInput.value);
+        if (!ageInput.value || isNaN(val)) {
+            ageWarning.classList.add('hidden');
+            ageInput.classList.remove('!border-red-300', '!bg-red-50/30');
+            return true;
+        }
+
+        let warning = '';
+        if (packageCategory === 'kids') {
+            if (val < 4) warning = 'Usia terlalu kecil. Program Kids untuk anak usia 4–15 tahun.';
+            else if (val > 15) warning = 'Usia melebihi batas program Kids (maks. 15 tahun). Silakan pilih paket Dewasa untuk usia 16 tahun ke atas.';
+        } else {
+            if (val < 16) warning = 'Usia di bawah 16 tahun tidak dapat mendaftar program Dewasa. Silakan pilih paket Kids untuk usia 4–15 tahun.';
+            else if (val > 100) warning = 'Usia tidak valid. Maksimal 100 tahun.';
+        }
+
+        if (warning) {
+            ageWarningText.textContent = warning;
+            ageWarning.classList.remove('hidden');
+            ageInput.classList.add('!border-red-300', '!bg-red-50/30');
+            return false;
+        } else {
+            ageWarning.classList.add('hidden');
+            ageInput.classList.remove('!border-red-300', '!bg-red-50/30');
+            return true;
+        }
+    }
+
+    ageInput.addEventListener('input', validateAge);
+    ageInput.addEventListener('change', validateAge);
+
+    // Validate on page load (in case old value is present)
+    validateAge();
+
     let submitting = false;
     document.getElementById('registrationForm').addEventListener('submit', function(e) {
+        // Check age validity before submit
+        if (!validateAge()) {
+            e.preventDefault();
+            ageInput.focus();
+            return;
+        }
         if (submitting) { e.preventDefault(); return; }
         submitting = true;
         const btn = document.getElementById('submitRegistration');

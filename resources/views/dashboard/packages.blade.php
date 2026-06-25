@@ -32,8 +32,8 @@
 @if($packages->count() > 0)
 <div class="grid grid-cols-1 md:grid-cols-2 gap-5" id="packagesGrid">
     @foreach($packages as $index => $package)
-    <div class="course-card-premium" data-category="{{ $package->category }}" style="animation: pageEnter 0.5s ease forwards; animation-delay: {{ $index * 0.12 }}s; opacity: 0;">
-        <div class="float-card relative overflow-hidden group">
+    <div class="course-card-premium h-full" data-category="{{ $package->category }}" style="animation: pageEnter 0.5s ease forwards; animation-delay: {{ $index * 0.12 }}s; opacity: 0;">
+        <div class="float-card relative overflow-hidden group flex flex-col h-full">
             {{-- Decorative corner gradient --}}
             <div class="absolute -top-20 -right-20 w-40 h-40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" style="background: radial-gradient(circle, {{ $package->category === 'kids' ? 'rgba(139,92,246,0.06)' : 'rgba(255,133,187,0.08)' }} 0%, transparent 70%);"></div>
 
@@ -55,9 +55,17 @@
             <h3 class="text-xl font-extrabold text-gray-900 mb-2 group-hover:text-primary-700 transition-colors">{{ $package->name }}</h3>
 
             {{-- Description --}}
-            <p class="text-gray-500 text-sm leading-relaxed mb-5">{{ $package->descriptions }}</p>
+            <p class="text-gray-500 text-sm leading-relaxed mb-5 flex-1">{{ $package->descriptions }}</p>
 
             {{-- Price --}}
+            @if($package->has_discount)
+            <div class="mb-1.5 flex items-center space-x-2">
+                <span class="text-sm text-gray-400 line-through font-medium">{{ $package->formatted_original_price }}</span>
+                <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold text-white bg-red-500 shadow-sm animate-pulse">
+                    <i class="fas fa-tag mr-1 text-[9px]"></i> PROMO
+                </span>
+            </div>
+            @endif
             <div class="mb-6 flex items-end space-x-2">
                 <p class="text-3xl font-extrabold" style="background: linear-gradient(135deg, #C74E83, #FF85BB); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
                     {{ $package->formatted_price }}

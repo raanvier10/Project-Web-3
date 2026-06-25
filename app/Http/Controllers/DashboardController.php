@@ -42,7 +42,8 @@ class DashboardController extends Controller
 
     public function packages()
     {
-        $packages = CoursePackage::orderBy('category')
+        $packages = CoursePackage::orderByRaw('CASE WHEN original_price IS NOT NULL AND original_price > price THEN 1 ELSE 0 END DESC')
+            ->orderBy('category')
             ->orderBy('price')
             ->get();
 
@@ -59,17 +60,22 @@ class DashboardController extends Controller
 
 
 
-        // FIX: Cek duplikasi registrasi (pending/active)
+        // FIX: Cek duplikasi registrasi (pending/active/rejected)
         $existingRegistration = Registration::where('user_id', Auth::id())
             ->where('course_package_id', $package->id)
-            ->whereIn('status', ['pending', 'active'])
+            ->whereIn('status', ['pending', 'active', 'rejected'])
             ->first();
 
         if ($existingRegistration) {
-            // Redirect ke payment jika masih pending, atau ke transactions jika sudah aktif
+            // Redirect ke payment jika masih pending, atau ke transactions jika sudah aktif/ditolak
             if ($existingRegistration->status === 'pending') {
                 return redirect()->route('dashboard.payment', $existingRegistration->id)
                     ->with('error', 'Anda sudah terdaftar di paket ini. Silakan selesaikan pembayaran.');
+            }
+
+            if ($existingRegistration->status === 'rejected') {
+                return redirect()->route('dashboard.transactions')
+                    ->with('error', 'Pendaftaran Anda sebelumnya ditolak. Silakan cek riwayat transaksi untuk mengunggah ulang bukti pembayaran.');
             }
 
             return redirect()->route('dashboard.transactions')
@@ -92,10 +98,14 @@ class DashboardController extends Controller
         // FIX: Re-validate duplikasi di sisi server (mencegah race condition form submit ganda)
         $existingRegistration = Registration::where('user_id', Auth::id())
             ->where('course_package_id', $package->id)
-            ->whereIn('status', ['pending', 'active'])
-            ->exists();
+            ->whereIn('status', ['pending', 'active', 'rejected'])
+            ->first();
 
         if ($existingRegistration) {
+            if ($existingRegistration->status === 'rejected') {
+                return redirect()->route('dashboard.transactions')
+                    ->with('error', 'Pendaftaran Anda sebelumnya ditolak. Silakan cek riwayat transaksi untuk mengunggah ulang bukti pembayaran.');
+            }
             return redirect()->route('dashboard.transactions')
                 ->with('error', 'Anda sudah terdaftar di paket kursus ini.');
         }
@@ -103,18 +113,23 @@ class DashboardController extends Controller
         $isKids = $package->category === 'kids';
 
         $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'age' => ['required', 'integer', 'min:1', 'max:' . ($isKids ? '17' : '100')],
+            'name' => ['required', 'string', 'max:255', 'regex:/^[a-zA-Z\s]+$/'],
+            'age' => ['required', 'integer', 'min:' . ($isKids ? '4' : '16'), 'max:' . ($isKids ? '15' : '100')],
             'domicile' => ['required', 'string', 'max:255'],
             'job' => ['required', 'string', 'max:255'],
             'phone' => [$isKids ? 'nullable' : 'required', 'string', 'regex:/^08[0-9]{8,11}$/'],
             'parent_phone' => [$isKids ? 'required' : 'nullable', 'string', 'regex:/^08[0-9]{8,11}$/'],
         ], [
             'name.required' => 'Nama wajib diisi.',
+            'name.regex' => 'Nama hanya boleh berisi huruf dan spasi (tanpa angka/karakter khusus).',
             'age.required' => 'Usia wajib diisi.',
             'age.integer' => 'Usia harus berupa angka.',
-            'age.min' => 'Usia minimal 1 tahun.',
-            'age.max' => $isKids ? 'Usia maksimal 17 tahun untuk kategori Kids.' : 'Usia maksimal 100 tahun.',
+            'age.min' => $isKids
+                ? 'Usia minimal 4 tahun untuk program Kids.'
+                : 'Usia minimal 16 tahun untuk program Dewasa. Silakan pilih paket Kids untuk usia di bawah 16 tahun.',
+            'age.max' => $isKids
+                ? 'Usia maksimal 15 tahun untuk program Kids. Silakan pilih paket Dewasa untuk usia 16 tahun ke atas.'
+                : 'Usia maksimal 100 tahun.',
             'domicile.required' => 'Domisili wajib diisi.',
             'job.required' => 'Pekerjaan wajib diisi.',
             'phone.required' => 'No. WhatsApp wajib diisi.',
@@ -150,8 +165,8 @@ class DashboardController extends Controller
     {
         $this->authorizeRegistration($registration);
 
-        // Hanya boleh batal jika status masih pending DAN belum upload bukti (atau bukti ditolak)
-        if ($registration->status !== 'pending' || ($registration->payment && !in_array($registration->payment->payment_status, ['pending', 'rejected']))) {
+        // Hanya boleh batal jika status masih pending atau rejected (ditolak admin)
+        if (!in_array($registration->status, ['pending', 'rejected']) || ($registration->payment && !in_array($registration->payment->payment_status, ['pending', 'rejected']))) {
             return redirect()->route('dashboard.transactions')
                 ->with('error', 'Pendaftaran ini tidak dapat dibatalkan.');
         }
@@ -184,12 +199,22 @@ class DashboardController extends Controller
 
         $registration->load(['coursePackage', 'payment', 'detail']);
 
+        if ($registration->coursePackage->trashed() || !$registration->coursePackage->is_active) {
+            return redirect()->route('dashboard.transactions')
+                ->with('error', 'Paket kursus ini sudah dihapus atau tidak aktif. Silakan batalkan pendaftaran.');
+        }
+
         return view('dashboard.payment', compact('registration'));
     }
 
     public function uploadPayment(Request $request, Registration $registration)
     {
         $this->authorizeRegistration($registration);
+
+        if ($registration->coursePackage->trashed() || !$registration->coursePackage->is_active) {
+            return redirect()->route('dashboard.transactions')
+                ->with('error', 'Pembayaran ditolak. Paket kursus ini sudah dihapus atau tidak aktif.');
+        }
 
         // FIX: Cegah re-upload jika pembayaran sudah valid (race condition dengan admin)
         if ($registration->payment && $registration->payment->payment_status === 'valid') {
@@ -238,6 +263,9 @@ class DashboardController extends Controller
                         'admin_notes' => null,
                     ]
                 );
+
+                // FIX: Sinkronisasi status registrasi kembali ke 'pending' jika sebelumnya 'rejected'
+                $registration->update(['status' => 'pending']);
             });
         } catch (\Throwable $e) {
             // Jika gagal, hapus file yang sudah terlanjur diupload

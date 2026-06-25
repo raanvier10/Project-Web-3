@@ -28,6 +28,10 @@ Route::middleware('guest')->group(function () {
     Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
     Route::post('/register', [AuthController::class, 'register']);
 
+    Route::get('/otp-verify', [AuthController::class, 'showOtpForm'])->name('otp.verify');
+    Route::post('/otp-verify', [AuthController::class, 'verifyOtp'])->name('otp.verify.submit');
+    Route::post('/otp-resend', [AuthController::class, 'resendOtp'])->name('otp.resend');
+
     Route::get('/forgot-password', [AuthController::class, 'showForgotPassword'])->name('password.request');
     Route::post('/forgot-password', [AuthController::class, 'sendResetLinkEmail'])->name('password.email');
     Route::get('/reset-password/{token}', [AuthController::class, 'showResetPassword'])->name('password.reset');
@@ -82,6 +86,7 @@ Route::middleware('auth')->group(function () {
         // Laporan & Export
         Route::get('/reports', [AdminDashboardController::class, 'reports'])->name('reports');
         Route::get('/reports/export/excel', [AdminDashboardController::class, 'exportExcel'])->name('reports.export.excel');
+        Route::get('/reports/export/pdf', [AdminDashboardController::class, 'exportPdf'])->name('reports.export.pdf');
     });
 
     // ============================

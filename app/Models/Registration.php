@@ -61,10 +61,11 @@ class Registration extends Model
 
     /**
      * A registration belongs to a course package.
+     * withTrashed: agar paket yang sudah dihapus tetap tampil di laporan/riwayat.
      */
     public function coursePackage()
     {
-        return $this->belongsTo(CoursePackage::class);
+        return $this->belongsTo(CoursePackage::class)->withTrashed();
     }
 
     /**

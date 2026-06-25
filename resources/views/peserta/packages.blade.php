@@ -59,10 +59,22 @@
                     <h3 class="text-lg font-extrabold text-gray-900 mb-1 group-hover:text-primary-700 transition-colors">{{ $package->name }}</h3>
 
                     {{-- Price --}}
+                    @if($package->has_discount)
+                    <div class="flex items-center space-x-2 mb-1">
+                        <span class="text-sm text-gray-400 line-through font-medium">{{ $package->formatted_original_price }}</span>
+                        @php
+                            $discountPct = round((1 - $package->price / $package->original_price) * 100);
+                        @endphp
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-extrabold text-white" style="background: linear-gradient(135deg, #EF4444, #F87171); box-shadow: 0 2px 8px rgba(239,68,68,0.3);">
+                            <i class="fas fa-bolt mr-0.5 text-[8px]"></i> DISKON {{ $discountPct }}%
+                        </span>
+                    </div>
+                    @endif
                     <div class="flex items-baseline space-x-1">
                         <span class="text-2xl font-extrabold" style="background: linear-gradient(135deg, #C74E83, #FF85BB); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
                             {{ $package->formatted_price }}
                         </span>
+                        <span class="text-xs text-gray-400 font-medium">/program</span>
                     </div>
                 </div>
 

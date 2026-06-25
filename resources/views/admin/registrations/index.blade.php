@@ -16,7 +16,7 @@
           <th class="py-3 pr-4">#</th>
           <th class="py-3 pr-4">Nama</th>
           <th class="py-3 pr-4">Email</th>
-          <th class="py-3 pr-4">Instansi</th>
+          <th class="py-3 pr-4">Domisili</th>
           <th class="py-3 pr-4">Paket</th>
           <th class="py-3 pr-4">Aksi</th>
         </tr>
@@ -27,7 +27,7 @@
           <td class="py-3 pr-4">{{ $loop->iteration }}</td>
           <td class="py-3 pr-4">{{ $r->name }}</td>
           <td class="py-3 pr-4">{{ $r->email }}</td>
-          <td class="py-3 pr-4">{{ $r->institution ?? '-' }}</td>
+          <td class="py-3 pr-4">{{ $r->detail ? $r->detail->domicile ?? '-' : '-' }}</td>
           <td class="py-3 pr-4">{{ $r->course_package->title ?? '-' }}</td>
           <td class="py-3 pr-4">
             <div class="flex items-center gap-2">

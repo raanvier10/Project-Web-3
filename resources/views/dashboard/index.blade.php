@@ -129,9 +129,16 @@
                                     <p class="truncate text-sm font-bold text-gray-900">{{ $registration->coursePackage->name }}</p>
                                     <p class="mt-0.5 text-xs text-gray-400">{{ $registration->created_at->format('d M Y') }} · <span class="font-mono text-gray-300">{{ $registration->registration_number }}</span></p>
                                 </div>
-                                <span class="status-badge {{ $registration->status_badge_class }}">
-                                    {{ $registration->display_status }}
-                                </span>
+                                <div class="flex items-center gap-2">
+                                    <span class="status-badge {{ $registration->status_badge_class }}">
+                                        {{ $registration->display_status }}
+                                    </span>
+                                    @if($registration->display_status === 'Lunas' && $registration->coursePackage->whatsapp_link)
+                                    <a href="{{ $registration->coursePackage->whatsapp_link }}" target="_blank" class="flex h-7 w-7 items-center justify-center rounded-lg text-white transition-all hover:scale-110 shadow-sm" style="background: linear-gradient(135deg, #10B981, #059669);" title="Grup WA">
+                                        <i class="fab fa-whatsapp text-sm"></i>
+                                    </a>
+                                    @endif
+                                </div>
                             </div>
                         @endforeach
                     </div>

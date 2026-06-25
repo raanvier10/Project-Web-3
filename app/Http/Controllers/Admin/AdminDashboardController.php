@@ -68,17 +68,25 @@ class AdminDashboardController extends Controller
             'category'     => 'required|in:kids,adult',
             'descriptions' => 'nullable|string',
             'features'     => 'nullable|string',
+            'original_price' => 'nullable|numeric|min:0',
             'price'        => 'required|numeric|min:0',
             'amount'       => 'required|integer|min:0',
             'is_active'    => 'sometimes|boolean',
+            'whatsapp_link' => 'nullable|url|max:255',
         ]);
 
         $validated['is_active'] = $request->has('is_active');
+
+        // Server-side guard: original_price must be greater than final price
+        if (!empty($validated['original_price']) && $validated['original_price'] <= $validated['price']) {
+            $validated['original_price'] = null;
+        }
 
         CoursePackage::create($validated);
 
         return redirect()->route('admin.packages')->with('success', 'Paket kursus berhasil ditambahkan.');
     }
+
 
     /**
      * Update an existing course package.
@@ -86,18 +94,29 @@ class AdminDashboardController extends Controller
     public function updatePackage(Request $request, CoursePackage $package)
     {
         $validated = $request->validate([
-            'name'         => 'required|string|max:255',
-            'category'     => 'required|in:kids,adult',
-            'descriptions' => 'nullable|string',
-            'features'     => 'nullable|string',
-            'price'        => 'required|numeric|min:0',
-            'amount'       => 'required|integer|min:0',
+            'name'           => 'required|string|max:255',
+            'category'       => 'required|in:kids,adult',
+            'descriptions'   => 'nullable|string',
+            'features'       => 'nullable|string',
+            'original_price' => 'nullable|numeric|min:0',
+            'price'          => 'required|numeric|min:0',
+            'amount'         => 'required|integer|min:0',
+            'is_active'      => 'sometimes|boolean',
+            'whatsapp_link'  => 'nullable|url|max:255',
         ]);
+
+        // Ensure original_price is greater than price when provided
+        if (!empty($validated['original_price']) && $validated['original_price'] <= $validated['price']) {
+            $validated['original_price'] = null;
+        }
+
+        $validated['is_active'] = $request->has('is_active');
 
         $package->update($validated);
 
         return redirect()->route('admin.packages')->with('success', 'Paket kursus berhasil diperbarui.');
     }
+
 
     /**
      * Toggle package active status.
@@ -118,13 +137,7 @@ class AdminDashboardController extends Controller
      */
     public function deletePackage(CoursePackage $package)
     {
-        // Check if package has registrations
-        if ($package->registrations()->exists()) {
-            return redirect()->route('admin.packages')
-                ->with('error', 'Paket tidak bisa dihapus karena sudah ada peserta terdaftar.');
-        }
-
-        $package->delete();
+        $package->delete(); // Soft delete — data tetap tersimpan di database
 
         return redirect()->route('admin.packages')->with('success', 'Paket kursus berhasil dihapus.');
     }
@@ -288,7 +301,7 @@ class AdminDashboardController extends Controller
 
         // Aggregate stats
         $totalAmount = $registrations->sum(function ($reg) {
-            return $reg->payment ? $reg->payment->amount : 0;
+            return ($reg->payment && $reg->payment->payment_status === 'valid') ? $reg->payment->amount : 0;
         });
         $validCount = $registrations->filter(function ($reg) {
             return $reg->payment && $reg->payment->payment_status === 'valid';
@@ -298,7 +311,7 @@ class AdminDashboardController extends Controller
     }
 
     /**
-     * Export reports as CSV (Excel-compatible).
+     * Export reports as Excel (.xls).
      */
     public function exportExcel(Request $request)
     {
@@ -330,37 +343,82 @@ class AdminDashboardController extends Controller
             fprintf($file, chr(0xEF) . chr(0xBB) . chr(0xBF));
             fputcsv($file, [
                 'No',
+                'Tanggal Daftar',
                 'No. Registrasi',
                 'Nama Peserta',
                 'Email',
                 'Telepon',
+                'Asal/Domisili',
                 'Paket Kursus',
                 'Kategori',
-                'Asal/Domisili',
-                'Jumlah Bayar',
-                'Status Pembayaran',
-                'Tanggal Daftar',
+                'Jumlah (Rp)',
             ]);
 
             foreach ($registrations as $i => $reg) {
                 fputcsv($file, [
                     $i + 1,
+                    $reg->created_at->format('Y-m-d H:i:s'),
                     $reg->registration_number,
                     $reg->detail ? $reg->detail->name : $reg->user->name,
                     $reg->user->email,
                     $reg->detail ? ($reg->detail->phone ?? $reg->detail->parent_phone) : $reg->user->phone,
+                    $reg->detail ? $reg->detail->domicile : '-',
                     $reg->coursePackage->name,
                     $reg->coursePackage->category === 'kids' ? 'Kids' : 'Dewasa',
-                    $reg->detail ? $reg->detail->domicile : '-',
                     $reg->payment ? $reg->payment->amount : 0,
-                    $reg->payment ? $reg->payment->payment_status : 'belum bayar',
-                    $reg->created_at->format('d/m/Y H:i'),
                 ]);
             }
-
             fclose($file);
         };
 
         return response()->stream($callback, 200, $headers);
+    }
+
+    /**
+     * Export reports as PDF.
+     */
+    public function exportPdf(Request $request)
+    {
+        $query = Registration::with(['user', 'coursePackage', 'detail', 'payment']);
+
+        if ($request->filled('date_from')) {
+            $query->whereDate('created_at', '>=', $request->date_from);
+        }
+        if ($request->filled('date_to')) {
+            $query->whereDate('created_at', '<=', $request->date_to);
+        }
+        if ($request->filled('package_id')) {
+            $query->where('course_package_id', $request->package_id);
+        }
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        $registrations = $query->latest()->get();
+
+        $dateFrom = $request->filled('date_from') ? \Carbon\Carbon::parse($request->date_from)->format('d/m/Y') : '';
+        $dateTo = $request->filled('date_to') ? \Carbon\Carbon::parse($request->date_to)->format('d/m/Y') : '';
+        $tanggalText = ($dateFrom || $dateTo) ? ($dateFrom ?: 'Awal') . ' s/d ' . ($dateTo ?: 'Sekarang') : 'Semua Waktu';
+        
+        $paketText = 'Semua Paket';
+        if ($request->filled('package_id')) {
+            $pkg = \App\Models\CoursePackage::find($request->package_id);
+            if ($pkg) $paketText = $pkg->name;
+        }
+        
+        $statusText = 'Semua Status';
+        if ($request->filled('status')) {
+            $statusMap = [
+                'pending' => 'Menunggu Pembayaran',
+                'active' => 'Aktif / Lunas',
+                'rejected' => 'Ditolak'
+            ];
+            $statusText = $statusMap[$request->status] ?? ucfirst($request->status);
+        }
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('admin.exports.pdf', compact('registrations', 'tanggalText', 'paketText', 'statusText'))
+            ->setPaper('a4', 'landscape');
+        
+        return $pdf->download('laporan_efa_' . date('Y-m-d') . '.pdf');
     }
 }

@@ -16,7 +16,7 @@ class CoursePackageSeeder extends Seeder
             [
                 'name'         => 'English for Kids - Basic',
                 'category'     => 'kids',
-                'descriptions' => 'Program dasar bahasa Inggris untuk anak-anak usia 5-10 tahun. Belajar dengan metode fun learning yang interaktif dan menyenangkan.',
+                'descriptions' => 'Program dasar bahasa Inggris untuk anak-anak usia 4-15 tahun. Belajar dengan metode fun learning yang interaktif dan menyenangkan.',
                 'features'     => 'Kelas interaktif 2x seminggu|Materi sesuai usia anak|Games & aktivitas seru|Sertifikat kelulusan|Grup WhatsApp orang tua|Free placement test',
                 'price'        => 350000,
                 'amount'       => 20,

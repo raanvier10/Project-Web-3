@@ -308,11 +308,10 @@
 
     {{-- ========================= --}}
     {{-- MAIN CONTENT              --}}
-    {{-- ========================= --}}
-    <div class="flex-1 flex flex-col min-h-screen overflow-hidden lg:ml-[250px]" id="mainContent">
+    <div class="flex-1 flex flex-col min-h-screen lg:ml-[250px]" id="mainContent">
 
         <header class="sticky top-0 z-30 header-glass">
-            <div class="flex items-center justify-between px-4 sm:px-8 h-[76px]">
+            <div class="flex items-center justify-between px-6 sm:px-8 lg:px-10 h-[76px]">
                 <div class="flex items-center gap-4">
                     {{-- Hamburger toggle (mobile only) --}}
                     <button onclick="togglePesertaSidebar()" class="lg:hidden w-10 h-10 rounded-xl flex items-center justify-center hover:bg-gray-100 transition-colors" id="btn-toggle-peserta-sidebar">
@@ -329,7 +328,7 @@
         </header>
 
         @if(session('success'))
-        <div class="mx-5 sm:mx-8 mt-5" id="flash-success">
+        <div class="mx-6 sm:mx-8 lg:mx-10 mt-5" id="flash-success">
             <div class="p-4 rounded-2xl flex items-center space-x-3 flash-animate" style="background: linear-gradient(135deg, rgba(16,185,129,0.08), rgba(52,211,153,0.04)); border: 1px solid rgba(16,185,129,0.15);">
                 <div class="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style="background: linear-gradient(135deg, #D1FAE5, #A7F3D0);">
                     <i class="fas fa-check-circle text-green-600"></i>
@@ -343,7 +342,7 @@
         @endif
 
         @if($errors->any())
-        <div class="mx-5 sm:mx-8 mt-5">
+        <div class="mx-6 sm:mx-8 lg:mx-10 mt-5">
             <div class="p-4 rounded-2xl flash-animate" style="background: linear-gradient(135deg, rgba(239,68,68,0.06), rgba(252,165,165,0.04)); border: 1px solid rgba(239,68,68,0.12);">
                 <div class="flex items-start space-x-3">
                     <div class="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5" style="background: linear-gradient(135deg, #FEE2E2, #FECACA);">

@@ -139,6 +139,8 @@
               autocomplete="name"
               autofocus
               maxlength="255"
+              pattern="[a-zA-Z\s]+"
+              title="Hanya boleh berisi huruf dan spasi"
               placeholder="Masukkan nama lengkap"
               data-placeholder-id="Masukkan nama lengkap"
               data-placeholder-en="Enter your full name"

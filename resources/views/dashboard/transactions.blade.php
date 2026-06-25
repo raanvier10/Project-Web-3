@@ -124,6 +124,10 @@
                         <a href="{{ route('dashboard.payment', $reg->id) }}" class="inline-flex items-center px-4 py-2 rounded-xl text-xs font-bold text-blue-600 transition-all hover:shadow-sm" style="background: linear-gradient(135deg, #EFF6FF, #DBEAFE);">
                             <i class="fas fa-eye mr-1.5"></i> Lihat
                         </a>
+                        @elseif($reg->display_status === 'Lunas' && $reg->coursePackage->whatsapp_link)
+                        <a href="{{ $reg->coursePackage->whatsapp_link }}" target="_blank" class="inline-flex items-center px-4 py-2 rounded-xl text-xs font-bold text-white transition-all hover:shadow-lg hover:-translate-y-0.5" style="background: linear-gradient(135deg, #10B981, #059669);">
+                            <i class="fab fa-whatsapp mr-1.5 text-sm"></i> Grup WA
+                        </a>
                         @endif
                     </div>
                 </div>

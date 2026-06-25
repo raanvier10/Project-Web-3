@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\OtpMail;
 
 class AuthController extends Controller
 {
@@ -78,6 +80,14 @@ class AuthController extends Controller
         // Regenerate session to prevent session fixation attacks
         $request->session()->regenerate();
 
+        // Check if user is verified
+        if (Auth::user()->email_verified_at === null) {
+            Auth::logout();
+            return back()->withErrors([
+                'email' => 'Akun Anda belum diverifikasi. Silakan verifikasi melalui kode OTP yang dikirim saat pendaftaran, atau daftar ulang untuk mendapatkan kode baru.'
+            ]);
+        }
+
         // Redirect based on role
         if (Auth::user()->isOwner()) {
             return redirect()->intended('/owner');
@@ -94,9 +104,47 @@ class AuthController extends Controller
      */
     public function register(Request $request)
     {
-        // Validate input with strong password rules
+        // First check if user exists and is unverified
+        $existingUser = User::where('email', $request->email)->first();
+
+        if ($existingUser && $existingUser->email_verified_at === null) {
+            // Validate without unique email
+            $request->validate([
+                'name'     => ['required', 'string', 'max:255', 'regex:/^[a-zA-Z\s]+$/'],
+                'email'    => ['required', 'string', 'email', 'max:255', 'ends_with:@gmail.com'],
+                'password' => [
+                    'required', 
+                    'string', 
+                    'min:8', 
+                    'confirmed', 
+                    Password::min(8)->mixedCase()->symbols()
+                ],
+                'terms'    => ['required', 'accepted'],
+            ], [
+                'name.required'       => 'Nama lengkap wajib diisi.',
+                'email.required'      => 'Email wajib diisi.',
+                'password.required'   => 'Password wajib diisi.',
+                'terms.required'      => 'Anda harus menyetujui syarat & ketentuan.',
+            ]);
+
+            // Update user details and generate new OTP
+            $otpCode = sprintf('%06d', mt_rand(100000, 999999));
+            $existingUser->update([
+                'name'     => $request->name,
+                'password' => Hash::make($request->password),
+                'otp_code' => $otpCode,
+                'otp_expires_at' => now()->addMinutes(10),
+            ]);
+
+            Mail::to($existingUser->email)->send(new OtpMail($otpCode));
+            session(['otp_email' => $existingUser->email]);
+
+            return redirect()->route('otp.verify')->with('success', 'Kode OTP baru telah dikirim ke email Anda. Silakan verifikasi untuk melanjutkan.');
+        }
+
+        // Validate input with strong password rules and unique email
         $request->validate([
-            'name'     => ['required', 'string', 'max:255'],
+            'name'     => ['required', 'string', 'max:255', 'regex:/^[a-zA-Z\s]+$/'],
             'email'    => ['required', 'string', 'email', 'max:255', 'unique:users,email', 'ends_with:@gmail.com'],
             'password' => [
                 'required', 
@@ -109,6 +157,7 @@ class AuthController extends Controller
         ], [
             'name.required'       => 'Nama lengkap wajib diisi.',
             'name.max'            => 'Nama maksimal 255 karakter.',
+            'name.regex'          => 'Nama hanya boleh berisi huruf dan spasi (tanpa angka/karakter khusus).',
             'email.required'      => 'Email wajib diisi.',
             'email.email'         => 'Format email tidak valid.',
             'email.unique'        => 'Email sudah terdaftar.',
@@ -135,17 +184,27 @@ class AuthController extends Controller
 
         RateLimiter::hit($throttleKey, 60);
 
+        $otpCode = sprintf('%06d', mt_rand(100000, 999999));
+
         // Create the user
         $user = User::create([
             'name'     => $request->name,
             'email'    => $request->email,
             'password' => Hash::make($request->password),
+            'otp_code' => $otpCode,
+            'otp_expires_at' => now()->addMinutes(10),
         ]);
+
+        // Send OTP via Email
+        Mail::to($user->email)->send(new OtpMail($otpCode));
 
         // Clear rate limiter
         RateLimiter::clear($throttleKey);
 
-        return redirect()->route('login')->with('status', 'Registrasi berhasil! Silakan login untuk melanjutkan.');
+        // Save email to session for OTP page
+        session(['otp_email' => $user->email]);
+
+        return redirect()->route('otp.verify')->with('success', 'Registrasi berhasil! Kode OTP telah dikirim ke email Anda.');
     }
 
     /**
@@ -160,6 +219,95 @@ class AuthController extends Controller
         $request->session()->regenerateToken();
 
         return redirect('/');
+    }
+
+    /**
+     * Show the OTP verification form.
+     */
+    public function showOtpForm()
+    {
+        if (!session('otp_email')) {
+            return redirect()->route('login');
+        }
+        return view('auth.verify-otp');
+    }
+
+    /**
+     * Verify the OTP code.
+     */
+    public function verifyOtp(Request $request)
+    {
+        $request->validate([
+            'otp' => 'required|numeric|digits:6',
+        ], [
+            'otp.required' => 'Kode OTP wajib diisi.',
+            'otp.numeric' => 'Kode OTP harus berupa angka.',
+            'otp.digits' => 'Kode OTP harus 6 digit.',
+        ]);
+
+        $email = session('otp_email');
+        if (!$email) {
+            return redirect()->route('login')->withErrors(['email' => 'Sesi Anda telah habis. Silakan login kembali.']);
+        }
+
+        $user = User::where('email', $email)->first();
+
+        if (!$user) {
+            return redirect()->route('login');
+        }
+
+        if ((string) $user->otp_code !== trim((string) $request->otp)) {
+            return back()->withErrors(['otp' => 'Kode OTP salah.']);
+        }
+
+        if ($user->otp_expires_at < now()) {
+            return back()->withErrors(['otp' => 'Kode OTP telah kadaluarsa. Silakan minta kode baru.']);
+        }
+
+        // Mark as verified
+        $user->email_verified_at = now();
+        $user->otp_code = null;
+        $user->otp_expires_at = null;
+        $user->save();
+
+        // Clear session
+        session()->forget('otp_email');
+
+        return redirect()->route('login')->with('status', 'Verifikasi berhasil! Silakan login untuk melanjutkan.');
+    }
+
+    /**
+     * Resend the OTP code.
+     */
+    public function resendOtp(Request $request)
+    {
+        $email = session('otp_email');
+        if (!$email) {
+            return redirect()->route('login')->withErrors(['email' => 'Sesi Anda telah habis. Silakan login kembali.']);
+        }
+
+        // Throttle resend OTP: 1 per minute
+        $throttleKey = 'resend_otp|' . $request->ip();
+        if (RateLimiter::tooManyAttempts($throttleKey, 1)) {
+            $seconds = RateLimiter::availableIn($throttleKey);
+            return back()->with('error', "Harap tunggu {$seconds} detik sebelum meminta kode baru.");
+        }
+        RateLimiter::hit($throttleKey, 60);
+
+        $user = User::where('email', $email)->first();
+        if (!$user) {
+            return redirect()->route('login');
+        }
+
+        $otpCode = sprintf('%06d', mt_rand(100000, 999999));
+        $user->update([
+            'otp_code' => $otpCode,
+            'otp_expires_at' => now()->addMinutes(10)
+        ]);
+
+        Mail::to($user->email)->send(new OtpMail($otpCode));
+
+        return back()->with('success', 'Kode OTP baru telah dikirim ke email Anda.');
     }
 
     /**

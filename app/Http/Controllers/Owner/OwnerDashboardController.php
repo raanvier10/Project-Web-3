@@ -66,13 +66,14 @@ class OwnerDashboardController extends Controller
     public function storeStaff(Request $request)
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
+            'name' => 'required|string|max:255|regex:/^[a-zA-Z\s]+$/',
             'email' => 'required|string|email|max:255|unique:users,email|ends_with:@gmail.com',
             'phone' => 'nullable|string|max:20',
             'role' => 'required|string|in:admin,staff',
             'password' => ['required', 'string', 'confirmed', Password::min(8)->mixedCase()->symbols()],
         ], [
             'name.required' => 'Nama wajib diisi.',
+            'name.regex' => 'Nama hanya boleh berisi huruf dan spasi (tanpa angka/karakter khusus).',
             'email.required' => 'Email wajib diisi.',
             'email.email' => 'Format email tidak valid.',
             'email.unique' => 'Email sudah terdaftar.',
@@ -100,7 +101,7 @@ class OwnerDashboardController extends Controller
         $this->ensureStaff($user);
 
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
+            'name' => 'required|string|max:255|regex:/^[a-zA-Z\s]+$/',
             'email' => [
                 'required',
                 'string',
@@ -114,6 +115,7 @@ class OwnerDashboardController extends Controller
             'password' => ['nullable', 'string', 'confirmed', Password::min(8)->mixedCase()->symbols()],
         ], [
             'name.required' => 'Nama wajib diisi.',
+            'name.regex' => 'Nama hanya boleh berisi huruf dan spasi (tanpa angka/karakter khusus).',
             'email.required' => 'Email wajib diisi.',
             'email.email' => 'Format email tidak valid.',
             'email.unique' => 'Email sudah terdaftar.',
@@ -164,6 +166,20 @@ class OwnerDashboardController extends Controller
         if ($request->filled('date_to')) {
             $query->whereDate('created_at', '<=', $request->date_to);
         }
+        
+        // Package filter
+        if ($request->filled('package_id')) {
+            $query->whereHas('registration', function($q) use ($request) {
+                $q->where('course_package_id', $request->package_id);
+            });
+        }
+        
+        // Status filter
+        if ($request->filled('status')) {
+            $query->whereHas('registration', function($q) use ($request) {
+                $q->where('status', $request->status);
+            });
+        }
 
         $payments = $query->orderBy('created_at', 'desc')->paginate(15);
 
@@ -173,7 +189,9 @@ class OwnerDashboardController extends Controller
             ->whereYear('created_at', now()->year)
             ->sum('amount');
 
-        return view('owner.reports', compact('payments', 'totalRevenue', 'thisMonthRevenue'));
+        $packages = \App\Models\CoursePackage::all();
+
+        return view('owner.reports', compact('payments', 'totalRevenue', 'thisMonthRevenue', 'packages'));
     }
 
     /**
@@ -189,6 +207,16 @@ class OwnerDashboardController extends Controller
         }
         if ($request->filled('date_to')) {
             $query->whereDate('created_at', '<=', $request->date_to);
+        }
+        if ($request->filled('package_id')) {
+            $query->whereHas('registration', function($q) use ($request) {
+                $q->where('course_package_id', $request->package_id);
+            });
+        }
+        if ($request->filled('status')) {
+            $query->whereHas('registration', function($q) use ($request) {
+                $q->where('status', $request->status);
+            });
         }
 
         $payments = $query->orderBy('created_at', 'desc')->get();

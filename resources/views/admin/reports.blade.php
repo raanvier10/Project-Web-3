@@ -4,8 +4,9 @@
 @section('page-subtitle', 'Filter, lihat, dan export laporan data')
 
 @section('admin-content')
+
 {{-- Page Header --}}
-<div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4">
+<div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4 no-print">
     <div>
         <div class="inline-flex items-center space-x-2 px-3 py-1.5 rounded-full mb-3" style="background: linear-gradient(135deg, rgba(59,130,246,0.08), rgba(37,99,235,0.04)); border: 1px solid rgba(59,130,246,0.12);">
             <i class="fas fa-chart-bar text-blue-500 text-xs"></i>
@@ -84,7 +85,7 @@
     </div>
     <div class="admin-float-card !p-5 text-center">
         <p class="text-[11px] text-gray-400 font-semibold uppercase tracking-wider mb-1">Total Pemasukan</p>
-        <p class="text-2xl font-extrabold tabular-nums" style="background: linear-gradient(135deg, #C74E83, #FF85BB); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+        <p class="text-2xl font-extrabold tabular-nums print-income" style="background: linear-gradient(135deg, #C74E83, #FF85BB); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
             Rp {{ number_format($totalAmount, 0, ',', '.') }}
         </p>
         <p class="text-xs text-gray-400">dari semua pembayaran</p>
@@ -180,13 +181,98 @@
     </div>
 </div>
 
+{{-- Layout Khusus Cetak (Hanya tampil saat diprint) --}}
+@php
+    $dateFrom = request()->filled('date_from') ? \Carbon\Carbon::parse(request()->date_from)->format('d/m/Y') : '';
+    $dateTo = request()->filled('date_to') ? \Carbon\Carbon::parse(request()->date_to)->format('d/m/Y') : '';
+    $tanggalText = ($dateFrom || $dateTo) ? ($dateFrom ?: 'Awal') . ' s/d ' . ($dateTo ?: 'Sekarang') : 'Semua Waktu';
+    
+    $paketText = 'Semua Paket';
+    if (request()->filled('package_id')) {
+        $pkg = \App\Models\CoursePackage::find(request()->package_id);
+        if ($pkg) $paketText = $pkg->name;
+    }
+    
+    $statusText = 'Semua Status';
+    if (request()->filled('status')) {
+        $statusMap = [
+            'pending' => 'Menunggu Pembayaran',
+            'active' => 'Aktif / Lunas',
+            'rejected' => 'Ditolak'
+        ];
+        $statusText = $statusMap[request()->status] ?? ucfirst(request()->status);
+    }
+@endphp
+<div class="print-only" style="display: none;">
+    <h2 class="print-title">LAPORAN PENDAFTARAN KURSUS EFA</h2>
+    
+    <table class="print-info-table">
+        <tr>
+            <td style="width: 100px;">Tanggal</td>
+            <td style="width: 10px;">:</td>
+            <td>{{ $tanggalText }}</td>
+        </tr>
+        <tr>
+            <td>Paket Kursus</td>
+            <td>:</td>
+            <td>{{ $paketText }}</td>
+        </tr>
+        <tr>
+            <td>Status</td>
+            <td>:</td>
+            <td>{{ $statusText }}</td>
+        </tr>
+    </table>
+
+    <table class="print-data-table">
+        <thead>
+            <tr>
+                <th width="3%">No</th>
+                <th width="12%">Tanggal Daftar</th>
+                <th width="12%">No. Registrasi</th>
+                <th width="15%">Nama Peserta</th>
+                <th width="15%">Email</th>
+                <th width="10%">Telepon</th>
+                <th width="10%">Asal/Domisili</th>
+                <th width="10%">Paket Kursus</th>
+                <th width="6%">Kategori</th>
+                <th width="7%">Jumlah (Rp)</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($registrations as $i => $reg)
+            <tr>
+                <td style="text-align: center;">{{ $i + 1 }}</td>
+                <td>{{ $reg->created_at->format('d/m/Y H:i') }}</td>
+                <td>{{ $reg->registration_number }}</td>
+                <td>{{ $reg->detail ? $reg->detail->name : $reg->user->name }}</td>
+                <td>{{ $reg->user->email }}</td>
+                <td>{{ $reg->detail ? ($reg->detail->phone ?? $reg->detail->parent_phone) : $reg->user->phone }}</td>
+                <td>{{ $reg->detail ? $reg->detail->domicile : '-' }}</td>
+                <td>{{ $reg->coursePackage->name }}</td>
+                <td>{{ $reg->coursePackage->category === 'kids' ? 'Kids' : 'Dewasa' }}</td>
+                <td>{{ $reg->payment ? 'Rp ' . number_format($reg->payment->amount, 0, ',', '.') : '-' }}</td>
+            </tr>
+            @endforeach
+            <tr>
+                <td colspan="9" style="text-align: right; font-weight: bold;">Total Pendapatan Filter Saat Ini:</td>
+                <td style="font-weight: bold;">Rp {{ number_format($registrations->filter(fn($reg) => $reg->payment && $reg->payment->payment_status === 'valid')->sum(fn($reg) => $reg->payment->amount), 0, ',', '.') }}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
 {{-- Print Styles --}}
 <style>
     @media print {
+        @page {
+            size: portrait;
+            margin: 1cm;
+        }
         .admin-sidebar, .admin-header, .admin-toast,
         [id="sidebarOverlay"], footer,
         form, .admin-btn, a.admin-btn,
-        [id="btn-export-excel"], [id="btn-print"] {
+        .admin-float-card, .no-print {
             display: none !important;
         }
         .admin-bg {
@@ -194,17 +280,42 @@
         }
         .lg\:ml-64 {
             margin-left: 0 !important;
+            padding: 0 !important;
         }
-        .admin-float-card {
-            box-shadow: none !important;
-            border: 1px solid #e5e7eb !important;
-            backdrop-filter: none !important;
+        
+        .print-only {
+            display: block !important;
         }
-        body {
+        .print-title {
+            text-align: center;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+        .print-info-table {
+            width: 100%;
+            margin-bottom: 15px;
+            font-size: 12px;
+        }
+        .print-info-table td {
+            padding: 2px 0;
+            border: none;
+        }
+        .print-data-table {
+            width: 100%;
+            border-collapse: collapse;
             font-size: 11px;
         }
-        .admin-table thead th {
-            background: #f3f4f6;
+        .print-data-table th, .print-data-table td {
+            border: 1px solid #000;
+            padding: 5px;
+            text-align: left;
+            vertical-align: top;
+        }
+        .print-data-table th {
+            text-align: center;
+            font-weight: bold;
         }
     }
 </style>

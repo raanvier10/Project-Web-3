@@ -14,10 +14,10 @@ class OwnerSeeder extends Seeder
     public function run(): void
     {
         User::updateOrCreate(
-            ['email' => 'owner@gmail.com'],
+            ['email' => 'forakhwatenglish@gmail.com'],
             [
                 'name' => 'Owner EFA',
-                'password' => Hash::make('Password123!'),
+                'password' => Hash::make('EnglishForAkhwat1010!'),
                 'role' => 'owner',
                 'email_verified_at' => now(),
             ]

@@ -14,8 +14,8 @@
         <p class="text-xs text-gray-500 mt-3">Email</p>
         <p id="rd_email">-</p>
 
-        <p class="text-xs text-gray-500 mt-3">Asal Instansi</p>
-        <p id="rd_institution">-</p>
+        <p class="text-xs text-gray-500 mt-3">Domisili</p>
+        <p id="rd_domicile">-</p>
       </div>
       <div>
         <p class="text-xs text-gray-500">Paket Kursus</p>

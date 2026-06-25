@@ -56,7 +56,7 @@
                     <th>No</th>
                     <th>Peserta</th>
                     <th>Email</th>
-                    <th>Asal Instansi / Domisili</th>
+                    <th>Domisili</th>
                     <th>Paket Kursus</th>
                     <th>Pertemuan</th>
                     <th>Tgl Daftar</th>

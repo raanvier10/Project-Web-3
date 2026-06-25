@@ -252,26 +252,47 @@
                     <form method="POST" action="{{ route('dashboard.payment.upload', $registration->id) }}" enctype="multipart/form-data" id="paymentForm">
                         @csrf
 
-                        {{-- Upload Area --}}
-                        <div class="relative mb-6" id="dropZone">
-                            <input type="file" id="proof_of_payment" name="proof_of_payment" accept="image/jpeg,image/jpg,image/png,image/webp" required
-                                class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" />
-                            <div class="rounded-2xl p-10 text-center transition-all duration-300 hover:border-primary-300" id="dropContent" style="border: 2px dashed rgba(199,78,131,0.2); background: linear-gradient(135deg, rgba(255,240,246,0.4), rgba(255,224,236,0.2));">
-                                <div class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style="background: linear-gradient(135deg, #FFE0EC, #FFC2D9); box-shadow: 0 8px 24px rgba(255,133,187,0.15);">
-                                    <i class="fas fa-cloud-upload-alt text-2xl text-primary-600"></i>
+                        {{-- Premium Upload Area & Preview --}}
+                        <div class="mb-6">
+                            <div class="relative w-full rounded-2xl overflow-hidden transition-all duration-300 group" id="uploadWrapper" style="border: 2px dashed rgba(199,78,131,0.3); background: linear-gradient(135deg, rgba(255,240,246,0.6), rgba(255,224,236,0.3));">
+                                <input type="file" id="proof_of_payment" name="proof_of_payment" accept="image/jpeg,image/jpg,image/png,image/webp" required
+                                    class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20" title="Klik untuk pilih file" />
+                                
+                                {{-- State: Empty --}}
+                                <div id="dropContent" class="flex flex-col items-center justify-center py-12 px-6 transition-all duration-300 relative z-10 group-hover:bg-white/40">
+                                    <div class="w-16 h-16 rounded-full flex items-center justify-center mb-4 transition-transform duration-500 group-hover:scale-110 group-hover:-translate-y-1" style="background: linear-gradient(135deg, #FFE0EC, #FFC2D9); box-shadow: 0 8px 24px rgba(255,133,187,0.25);">
+                                        <i class="fas fa-cloud-upload-alt text-2xl text-primary-600"></i>
+                                    </div>
+                                    <p class="text-gray-800 font-extrabold text-sm mb-1.5">Klik atau seret gambar ke sini</p>
+                                    <p class="text-gray-500 text-[11px] font-semibold bg-white/60 px-3 py-1 rounded-full border border-gray-100">Format: JPG, PNG, WEBP (Maks 2MB)</p>
                                 </div>
-                                <p class="text-gray-700 font-bold mb-1">Klik atau seret file ke sini</p>
-                                <p class="text-gray-400 text-sm">JPG, JPEG, PNG, atau WebP (Maks. 2MB)</p>
-                            </div>
-                        </div>
 
-                        {{-- Preview --}}
-                        <div id="previewContainer" class="hidden mb-6">
-                            <p class="text-sm font-bold text-gray-700 mb-3">Preview:</p>
-                            <div class="rounded-2xl overflow-hidden shadow-lg ring-2 ring-primary-200 inline-block">
-                                <img id="previewImage" src="" alt="Preview" class="max-w-full max-h-64 object-contain" />
+                                {{-- State: Preview --}}
+                                <div id="previewContainer" class="hidden w-full relative h-[280px]">
+                                    {{-- Background blur --}}
+                                    <div class="absolute inset-0 z-0 overflow-hidden bg-gray-900">
+                                        <img id="previewImageBg" src="" class="w-full h-full object-cover opacity-40 blur-lg scale-110" alt="">
+                                    </div>
+
+                                    {{-- Image Content --}}
+                                    <div class="relative z-10 w-full h-full flex flex-col items-center justify-center p-4">
+                                        <div class="relative max-h-[190px] mb-3 transform transition-all duration-500 group-hover:scale-105">
+                                            <div class="absolute inset-0 bg-white/20 rounded-xl blur-md translate-y-2"></div>
+                                            <img id="previewImageMain" src="" alt="Preview" class="relative z-10 max-h-[190px] rounded-xl object-contain border-2 border-white/80 shadow-2xl" />
+                                        </div>
+                                        
+                                        {{-- File Info Badge --}}
+                                        <div class="inline-flex items-center gap-2 bg-white/95 backdrop-blur-sm shadow-xl px-4 py-2 rounded-full border border-white">
+                                            <div class="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0">
+                                                <i class="fas fa-check text-[10px] text-emerald-600"></i>
+                                            </div>
+                                            <span id="fileName" class="text-xs font-bold text-gray-800 truncate max-w-[120px] sm:max-w-[200px]"></span>
+                                            <div class="h-4 w-px bg-gray-200 mx-1"></div>
+                                            <span class="text-[10px] font-extrabold text-primary-600 uppercase tracking-wider bg-primary-50 px-2 py-0.5 rounded-md flex-shrink-0 group-hover:bg-primary-100 transition-colors">Ganti</span>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <p id="fileName" class="text-sm text-gray-400 mt-2"></p>
                         </div>
 
                         {{-- Submit --}}
@@ -287,16 +308,18 @@
                     </form>
                 @endif
 
-                <div class="mt-5 text-center px-4">
-                    <form id="cancelForm" action="{{ route('dashboard.registration.cancel', $registration->id) }}" method="POST" class="inline">
+                @if(!$registration->payment || $registration->payment->payment_status === 'rejected')
+                <div class="mt-5 text-center">
+                    <form id="cancelForm" action="{{ route('dashboard.registration.cancel', $registration->id) }}" method="POST" class="block">
                         @csrf
                         @method('DELETE')
-                        <button type="button" onclick="confirmCancel()" class="text-sm text-gray-400 hover:text-red-500 transition-colors inline-flex items-center space-x-1.5 underline underline-offset-4 decoration-gray-200 hover:decoration-red-200">
-                            <i class="fas fa-times-circle text-[10px]"></i>
-                            <span>Batalkan Pendaftaran & Kembali</span>
+                        <button type="button" onclick="confirmCancel()" class="w-full py-3.5 rounded-xl text-gray-500 font-bold text-sm bg-gray-50 border border-gray-200 transition-all duration-300 hover:bg-red-50 hover:text-red-600 hover:border-red-200 flex items-center justify-center group">
+                            <i class="fas fa-times-circle mr-2 text-gray-400 group-hover:text-red-500 transition-colors"></i>
+                            Batalkan Pendaftaran & Kembali
                         </button>
                     </form>
                 </div>
+                @endif
             </div>
         </div>
     </div>
@@ -341,10 +364,17 @@
                 }
                 const reader = new FileReader();
                 reader.onload = function(ev) {
-                    document.getElementById('previewImage').src = ev.target.result;
+                    const res = ev.target.result;
+                    document.getElementById('previewImageBg').src = res;
+                    document.getElementById('previewImageMain').src = res;
+                    document.getElementById('dropContent').classList.add('hidden');
                     document.getElementById('previewContainer').classList.remove('hidden');
-                    document.getElementById('fileName').textContent = file.name + ' (' + (file.size / 1024).toFixed(1) + ' KB)';
-                    document.getElementById('dropContent').innerHTML = '<div class="flex items-center justify-center space-x-2 py-4" style="color: #C74E83;"><i class="fas fa-check-circle text-lg"></i><span class="font-bold text-sm">File dipilih — klik untuk mengganti</span></div>';
+                    const wrapper = document.getElementById('uploadWrapper');
+                    if(wrapper) {
+                        wrapper.style.border = '1px solid rgba(0,0,0,0.05)';
+                        wrapper.style.boxShadow = '0 10px 30px -10px rgba(0,0,0,0.15)';
+                    }
+                    document.getElementById('fileName').textContent = file.name;
                 };
                 reader.readAsDataURL(file);
             }
