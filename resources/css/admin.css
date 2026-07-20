@@ -192,4 +192,36 @@
         @apply shadow-2xl ring-primary-200;
         transform: scale(1.02);
     }
+
+    /* ---------------------------------------- */
+    /* Tom Select Customization (SearchDropdown)*/
+    /* ---------------------------------------- */
+    .ts-wrapper.admin-form-select {
+        @apply p-0 border-0 bg-transparent shadow-none;
+    }
+    .ts-wrapper.admin-form-select .ts-control {
+        @apply w-full px-4 py-3 rounded-xl text-gray-900 text-sm transition-all duration-300;
+        background: rgba(249,250,251,0.6);
+        border: 1.5px solid rgba(0,0,0,0.08);
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+    }
+    .ts-wrapper.admin-form-select.focus .ts-control {
+        border-color: #FF85BB;
+        background-color: #fff;
+        box-shadow: 0 0 0 4px rgba(255,133,187,0.1), 0 2px 8px rgba(199,78,131,0.06);
+    }
+    .ts-dropdown {
+        @apply rounded-xl border border-gray-100 shadow-2xl overflow-hidden mt-1;
+        background: #fff;
+        z-index: 9999 !important;
+    }
+    .ts-dropdown .option {
+        @apply px-4 py-2.5 text-sm text-gray-700 transition-colors cursor-pointer;
+    }
+    .ts-dropdown .option:hover,
+    .ts-dropdown .option.active {
+        @apply bg-primary-50 text-primary-700 font-medium;
+    }
 }

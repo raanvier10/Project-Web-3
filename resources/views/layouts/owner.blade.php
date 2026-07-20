@@ -11,6 +11,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Tom Select (Searchable Dropdown) -->
+    <link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
+
     @vite(['resources/css/app.css', 'resources/css/admin.css', 'resources/js/app.js'])
 
     <style>
@@ -431,6 +436,19 @@
                 toast.style.transform = 'translateX(100%)';
                 setTimeout(() => toast.remove(), 400);
             }, 4000);
+        });
+
+        // Initialize Search Dropdown (Tom Select)
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.searchdropdown, .admin-form-select').forEach((el) => {
+                new TomSelect(el, {
+                    create: false,
+                    dropdownParent: 'body',
+                    sortField: { field: "text", direction: "asc" },
+                    placeholder: el.getAttribute('data-placeholder') || 'Pilih opsi...',
+                    plugins: ['clear_button']
+                });
+            });
         });
     </script>
     @yield('scripts')
