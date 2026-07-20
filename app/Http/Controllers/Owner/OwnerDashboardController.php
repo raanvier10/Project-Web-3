@@ -434,10 +434,10 @@ class OwnerDashboardController extends Controller
         return response()->stream($callback, 200, $headers);
     }
 
-    private function ensureStaff(User $user): void
+    private function ensureStaff(User $user)
     {
         if (!in_array($user->role, ['admin', 'staff'])) {
-            abort(404);
+            return redirect()->route('owner.staff')->with('error', 'Pengguna tidak ditemukan atau bukan merupakan staff/admin.')->send();
         }
     }
 }

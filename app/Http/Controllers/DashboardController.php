@@ -298,7 +298,7 @@ class DashboardController extends Controller
      */
     private function authorizeRegistration(Registration $registration): void
     {
-        if ($registration->user_id !== Auth::id()) {
+        if ((int) $registration->user_id !== (int) Auth::id()) {
             abort(403);
         }
     }

@@ -49,13 +49,33 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard/packages', [DashboardController::class, 'packages'])->name('dashboard.packages');
 
     // Registration
-    Route::get('/dashboard/register/{package}', [DashboardController::class, 'showRegistrationForm'])->name('dashboard.register');
-    Route::post('/dashboard/register/{package}', [DashboardController::class, 'register'])->name('dashboard.register.submit');
-    Route::delete('/dashboard/registration/{registration}/cancel', [DashboardController::class, 'cancelRegistration'])->name('dashboard.registration.cancel');
+    Route::get('/dashboard/register/{package}', [DashboardController::class, 'showRegistrationForm'])
+        ->name('dashboard.register')
+        ->missing(function () {
+            return redirect()->route('dashboard.packages')->with('error', 'Paket kursus tidak ditemukan atau sudah tidak tersedia.');
+        });
+    Route::post('/dashboard/register/{package}', [DashboardController::class, 'register'])
+        ->name('dashboard.register.submit')
+        ->missing(function () {
+            return redirect()->route('dashboard.packages')->with('error', 'Paket kursus tidak ditemukan atau sudah tidak tersedia.');
+        });
+    Route::delete('/dashboard/registration/{registration}/cancel', [DashboardController::class, 'cancelRegistration'])
+        ->name('dashboard.registration.cancel')
+        ->missing(function () {
+            return redirect()->route('dashboard.transactions')->with('error', 'Pendaftaran tidak ditemukan atau sudah dibatalkan.');
+        });
 
     // Payment
-    Route::get('/dashboard/payment/{registration}', [DashboardController::class, 'showPayment'])->name('dashboard.payment');
-    Route::post('/dashboard/payment/{registration}', [DashboardController::class, 'uploadPayment'])->name('dashboard.payment.upload');
+    Route::get('/dashboard/payment/{registration}', [DashboardController::class, 'showPayment'])
+        ->name('dashboard.payment')
+        ->missing(function () {
+            return redirect()->route('dashboard.transactions')->with('error', 'Data pendaftaran tidak ditemukan.');
+        });
+    Route::post('/dashboard/payment/{registration}', [DashboardController::class, 'uploadPayment'])
+        ->name('dashboard.payment.upload')
+        ->missing(function () {
+            return redirect()->route('dashboard.transactions')->with('error', 'Data pendaftaran tidak ditemukan.');
+        });
 
     // Transaction History
     Route::get('/dashboard/transactions', [DashboardController::class, 'transactions'])->name('dashboard.transactions');
