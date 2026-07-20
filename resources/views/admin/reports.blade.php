@@ -54,6 +54,7 @@
                     <option value="">Semua Status</option>
                     <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>Pending</option>
                     <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Aktif / Lunas</option>
+                    <option value="completed" {{ request('status') === 'completed' ? 'selected' : '' }}>Selesai</option>
                     <option value="rejected" {{ request('status') === 'rejected' ? 'selected' : '' }}>Ditolak</option>
                 </select>
             </div>
@@ -198,6 +199,7 @@
         $statusMap = [
             'pending' => 'Menunggu Pembayaran',
             'active' => 'Aktif / Lunas',
+            'completed' => 'Selesai',
             'rejected' => 'Ditolak'
         ];
         $statusText = $statusMap[request()->status] ?? ucfirst(request()->status);

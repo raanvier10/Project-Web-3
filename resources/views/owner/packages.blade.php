@@ -1,9 +1,9 @@
-@extends('layouts.admin')
+@extends('layouts.owner')
 
 @section('page-title', 'Manajemen Paket Kursus')
 @section('page-subtitle', 'Tambah, edit, dan kelola paket kursus')
 
-@section('admin-content')
+@section('owner-content')
 {{-- Page Header --}}
 <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4">
     <div>
@@ -14,9 +14,14 @@
         <h1 class="text-2xl sm:text-3xl font-extrabold text-gray-900">Manajemen Paket Kursus</h1>
         <p class="text-gray-400 mt-1.5 text-sm">Kelola semua paket kursus yang tersedia untuk peserta.</p>
     </div>
-    <button onclick="openModal('addPackageModal')" class="admin-btn admin-btn-primary" id="btn-add-package">
-        <i class="fas fa-plus mr-2"></i> Tambah Paket
-    </button>
+    <div class="flex items-center space-x-3">
+        <button onclick="openModal('importPackageModal')" class="admin-btn admin-btn-outline" id="btn-import-package" style="background: white;">
+            <i class="fas fa-file-excel mr-2 text-green-600"></i> Import Excel
+        </button>
+        <button onclick="openModal('addPackageModal')" class="admin-btn admin-btn-primary" id="btn-add-package">
+            <i class="fas fa-plus mr-2"></i> Tambah Paket
+        </button>
+    </div>
 </div>
 
 {{-- Packages Table --}}
@@ -110,7 +115,7 @@
         </button>
     </div>
     <div class="admin-modal-body">
-        <form method="POST" action="{{ route('admin.packages.store') }}" id="addPackageForm">
+        <form method="POST" action="{{ route('owner.packages.store') }}" id="addPackageForm">
             @csrf
             <div class="space-y-4">
                 <div>
@@ -287,6 +292,49 @@
         </form>
     </div>
 </div>
+
+{{-- ========================= --}}
+{{-- IMPORT PACKAGE MODAL      --}}
+{{-- ========================= --}}
+<div class="admin-modal-overlay" id="importPackageModalOverlay" onclick="closeModal('importPackageModal')"></div>
+<div class="admin-modal" id="importPackageModal" style="max-width: 480px;">
+    <div class="admin-modal-header">
+        <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: linear-gradient(135deg, #DCFCE7, #BBF7D0);">
+                <i class="fas fa-file-excel text-green-600"></i>
+            </div>
+            <h3 class="text-lg font-bold text-gray-900">Import Paket Kursus</h3>
+        </div>
+        <button onclick="closeModal('importPackageModal')" class="w-9 h-9 rounded-xl flex items-center justify-center hover:bg-gray-100 transition-colors">
+            <i class="fas fa-times text-gray-400"></i>
+        </button>
+    </div>
+    <div class="admin-modal-body">
+        <p class="text-gray-600 text-sm mb-4">Anda dapat menambahkan banyak paket sekaligus dengan mengunggah file Excel (.xlsx). Unduh template di bawah ini untuk melihat format yang dibutuhkan.</p>
+        
+        <a href="{{ route('owner.packages.template') }}" class="inline-flex items-center justify-center w-full py-2.5 px-4 mb-5 border border-green-200 bg-green-50 text-green-700 rounded-xl hover:bg-green-100 transition-colors text-sm font-semibold">
+            <i class="fas fa-download mr-2"></i> Download Template Excel
+        </a>
+
+        <form method="POST" action="{{ route('owner.packages.import') }}" enctype="multipart/form-data" id="importPackageForm">
+            @csrf
+            <div>
+                <label class="admin-form-label"><i class="fas fa-upload mr-2 text-green-500 text-xs"></i> Upload File Excel (.xlsx) <span class="text-red-400">*</span></label>
+                <div class="relative mt-1">
+                    <input type="file" name="excel_file" id="excel_file" accept=".xlsx, .xls" required class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100 border border-gray-200 rounded-xl">
+                </div>
+                <p class="text-[10px] text-gray-400 mt-1">Maksimal ukuran file: 2MB.</p>
+            </div>
+            
+            <div class="flex space-x-3 mt-6">
+                <button type="button" onclick="closeModal('importPackageModal')" class="admin-btn admin-btn-outline flex-1">Batal</button>
+                <button type="submit" class="admin-btn admin-btn-primary flex-1 !bg-green-600 !border-green-600 hover:!bg-green-700" style="background: #16a34a;">
+                    <i class="fas fa-cloud-upload-alt mr-2"></i> Import Data
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
 @endsection
 
 @section('scripts')
@@ -314,7 +362,7 @@
         document.getElementById('edit-descriptions').value = pkg.descriptions || '';
         document.getElementById('edit-features').value = pkg.features || '';
         document.getElementById('edit-is-active').checked = pkg.is_active == 1 || pkg.is_active === true;
-        document.getElementById('editPackageForm').action = '/admin/packages/' + pkg.id;
+        document.getElementById('editPackageForm').action = '/owner/packages/' + pkg.id;
         document.getElementById('edit-discount-warn').classList.add('hidden');
         openModal('editPackageModal');
     }
@@ -345,7 +393,7 @@
     // Delete modal
     function openDeleteModal(id, name, regCount) {
         document.getElementById('deletePackageName').textContent = name;
-        document.getElementById('deletePackageForm').action = '/admin/packages/' + id;
+        document.getElementById('deletePackageForm').action = '/owner/packages/' + id;
 
         // Show/hide warning banner based on registrant count
         const warningBanner = document.getElementById('deleteWarningBanner');
@@ -361,7 +409,7 @@
 
     // Toggle package active status via AJAX
     function togglePackageStatus(id, el) {
-        fetch('/admin/packages/' + id + '/toggle', {
+        fetch('/owner/packages/' + id + '/toggle', {
             method: 'PATCH',
             headers: {
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
@@ -382,7 +430,7 @@
     // Close modals with Escape key
     document.addEventListener('keydown', e => {
         if (e.key === 'Escape') {
-            ['addPackageModal', 'editPackageModal', 'deletePackageModal'].forEach(closeModal);
+            ['addPackageModal', 'editPackageModal', 'deletePackageModal', 'importPackageModal'].forEach(closeModal);
         }
     });
 </script>

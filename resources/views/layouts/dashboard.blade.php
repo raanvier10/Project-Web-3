@@ -6,6 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Dashboard - English For Akhwat (EFA)</title>
     <meta name="description" content="Dashboard EFA - Kelola program kursus bahasa Inggris Anda.">
+    <link rel="icon" href="/images/LogoEFA.svg" type="image/svg+xml">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&display=swap" rel="stylesheet">
@@ -242,8 +243,8 @@
     <aside id="pesertaSidebar" class="sidebar-glass fixed inset-y-0 left-0 w-[250px] z-50 flex flex-col transition-transform duration-300 lg:translate-x-0 -translate-x-full shadow-2xl shadow-pink-900/10 overflow-y-auto">
         <div class="relative z-10 px-6 pt-7 pb-5 border-b border-white/10">
             <div class="flex items-center gap-3.5">
-                <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/18 backdrop-blur-sm shadow-lg shadow-black/5 ring-1 ring-white/20">
-                    <img src="/images/EFA.svg" alt="Logo EFA" class="h-8 w-8 object-contain" onerror="this.parentElement.innerHTML='<span class=\'text-white font-bold text-lg\'>E</span>'" />
+                <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-white backdrop-blur-sm shadow-lg shadow-black/5 ring-1 ring-white/20">
+                    <img src="/images/LogoEFA.svg" alt="Logo EFA" class="h-8 w-8 object-contain" onerror="this.parentElement.innerHTML='<span class=\'text-white font-bold text-lg\'>E</span>'" />
                 </div>
                 <div class="min-w-0">
                     <span class="block font-extrabold text-[24px] leading-none text-white tracking-wide" style="font-family:'Oswald',sans-serif;">EFA</span>

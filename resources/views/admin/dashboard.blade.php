@@ -97,16 +97,7 @@
                 <h3 class="text-base font-bold text-gray-900">Aksi Cepat</h3>
             </div>
             <div class="space-y-2.5">
-                <a href="{{ route('admin.packages') }}" class="group flex items-center space-x-4 p-4 rounded-2xl transition-all duration-300 hover:bg-gradient-to-r hover:from-pink-50/80 hover:to-primary-50/60 border border-transparent hover:border-primary-100">
-                    <div class="w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-primary-200/40" style="background: linear-gradient(135deg, #FFE0EC, #FFC2D9);">
-                        <i class="fas fa-box-open text-primary-700"></i>
-                    </div>
-                    <div class="flex-1">
-                        <p class="font-bold text-gray-900 text-sm group-hover:text-primary-700 transition-colors">Kelola Paket Kursus</p>
-                        <p class="text-gray-400 text-xs mt-0.5">Tambah, edit, atau hapus paket</p>
-                    </div>
-                    <i class="fas fa-chevron-right text-gray-300 group-hover:text-primary-400 group-hover:translate-x-1 transition-all"></i>
-                </a>
+
                 <a href="{{ route('admin.payments') }}" class="group flex items-center space-x-4 p-4 rounded-2xl transition-all duration-300 hover:bg-gradient-to-r hover:from-amber-50/80 hover:to-yellow-50/60 border border-transparent hover:border-amber-100">
                     <div class="w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-amber-200/40" style="background: linear-gradient(135deg, #FEF3C7, #FDE68A);">
                         <i class="fas fa-credit-card text-amber-600"></i>

@@ -101,23 +101,33 @@
                     </td>
                     <td class="text-gray-500 text-sm">{{ $reg->created_at->format('d M Y') }}</td>
                     <td class="text-center">
-                        <button onclick="openParticipantDetail({{ json_encode([
-                            'name' => $reg->detail ? $reg->detail->name : $reg->user->name,
-                            'email' => $reg->user->email,
-                            'phone' => $reg->detail ? ($reg->detail->phone ?? $reg->detail->parent_phone ?? $reg->user->phone) : $reg->user->phone,
-                            'age' => $reg->detail ? $reg->detail->age : null,
-                            'domicile' => $reg->detail ? $reg->detail->domicile : null,
-                            'job' => $reg->detail ? $reg->detail->job : null,
-                            'package' => $reg->coursePackage->name,
-                            'category' => $reg->coursePackage->category_label,
-                            'price' => $reg->coursePackage->formatted_price,
-                            'reg_number' => $reg->registration_number,
-                            'reg_date' => $reg->created_at->format('d M Y, H:i'),
-                            'payment_amount' => $reg->payment ? 'Rp ' . number_format($reg->payment->amount, 0, ',', '.') : '-',
-                            'payment_date' => $reg->payment ? $reg->payment->created_at->format('d M Y, H:i') : '-',
-                        ]) }})" class="w-9 h-9 rounded-xl flex items-center justify-center text-primary-700 hover:bg-primary-50 transition-colors mx-auto" title="Lihat Detail" id="btn-detail-{{ $reg->id }}">
-                            <i class="fas fa-eye text-sm"></i>
-                        </button>
+                        <div class="flex items-center justify-center space-x-2">
+                            <button onclick="openParticipantDetail({{ json_encode([
+                                'name' => $reg->detail ? $reg->detail->name : $reg->user->name,
+                                'email' => $reg->user->email,
+                                'phone' => $reg->detail ? ($reg->detail->phone ?? $reg->detail->parent_phone ?? $reg->user->phone) : $reg->user->phone,
+                                'age' => $reg->detail ? $reg->detail->age : null,
+                                'domicile' => $reg->detail ? $reg->detail->domicile : null,
+                                'job' => $reg->detail ? $reg->detail->job : null,
+                                'package' => $reg->coursePackage->name,
+                                'category' => $reg->coursePackage->category_label,
+                                'price' => $reg->coursePackage->formatted_price,
+                                'reg_number' => $reg->registration_number,
+                                'reg_date' => $reg->created_at->format('d M Y, H:i'),
+                                'payment_amount' => $reg->payment ? 'Rp ' . number_format($reg->payment->amount, 0, ',', '.') : '-',
+                                'payment_date' => $reg->payment ? $reg->payment->created_at->format('d M Y, H:i') : '-',
+                            ]) }})" class="w-9 h-9 rounded-xl flex items-center justify-center text-primary-700 hover:bg-primary-50 transition-colors" title="Lihat Detail" id="btn-detail-{{ $reg->id }}">
+                                <i class="fas fa-eye text-sm"></i>
+                            </button>
+
+                            <form action="{{ route('admin.participants.complete', $reg->id) }}" method="POST" onsubmit="return confirm('Tandai peserta ini telah selesai kursus? Setelah ini, peserta akan dapat mendaftar paket ini lagi.');">
+                                @csrf
+                                @method('PATCH')
+                                <button type="submit" class="w-9 h-9 rounded-xl flex items-center justify-center text-emerald-600 hover:bg-emerald-50 transition-colors" title="Tandai Selesai">
+                                    <i class="fas fa-check-double text-sm"></i>
+                                </button>
+                            </form>
+                        </div>
                     </td>
                 </tr>
                 @empty

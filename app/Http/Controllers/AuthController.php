@@ -38,12 +38,11 @@ class AuthController extends Controller
     {
         // Validate input
         $request->validate([
-            'email'    => ['required', 'string', 'email', 'max:255', 'ends_with:@gmail.com'],
+            'email'    => ['required', 'string', 'email', 'max:255'],
             'password' => ['required', 'string', 'min:8'],
         ], [
             'email.required'    => 'Email wajib diisi.',
             'email.email'       => 'Format email tidak valid.',
-            'email.ends_with'   => 'Email harus menggunakan domain @gmail.com.',
             'password.required' => 'Password wajib diisi.',
             'password.min'      => 'Password minimal 8 karakter.',
         ]);
@@ -111,7 +110,7 @@ class AuthController extends Controller
             // Validate without unique email
             $request->validate([
                 'name'     => ['required', 'string', 'max:255', 'regex:/^[a-zA-Z\s]+$/'],
-                'email'    => ['required', 'string', 'email', 'max:255', 'ends_with:@gmail.com'],
+                'email'    => ['required', 'string', 'email', 'max:255'],
                 'password' => [
                     'required', 
                     'string', 
@@ -145,7 +144,7 @@ class AuthController extends Controller
         // Validate input with strong password rules and unique email
         $request->validate([
             'name'     => ['required', 'string', 'max:255', 'regex:/^[a-zA-Z\s]+$/'],
-            'email'    => ['required', 'string', 'email', 'max:255', 'unique:users,email', 'ends_with:@gmail.com'],
+            'email'    => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
             'password' => [
                 'required', 
                 'string', 
@@ -161,7 +160,6 @@ class AuthController extends Controller
             'email.required'      => 'Email wajib diisi.',
             'email.email'         => 'Format email tidak valid.',
             'email.unique'        => 'Email sudah terdaftar.',
-            'email.ends_with'     => 'Email harus menggunakan domain @gmail.com.',
             'password.required'   => 'Password wajib diisi.',
             'password.min'        => 'Password minimal 8 karakter.',
             'password.mixed'      => 'Password harus mengandung huruf besar dan huruf kecil.',
@@ -324,9 +322,7 @@ class AuthController extends Controller
     public function sendResetLinkEmail(Request $request)
     {
         $request->validate([
-            'email' => 'required|email|ends_with:@gmail.com'
-        ], [
-            'email.ends_with' => 'Email harus menggunakan domain @gmail.com.',
+            'email' => 'required|email'
         ]);
 
         $status = \Illuminate\Support\Facades\Password::sendResetLink(
@@ -359,10 +355,9 @@ class AuthController extends Controller
     {
         $request->validate([
             'token' => 'required',
-            'email' => 'required|email|ends_with:@gmail.com',
+            'email' => 'required|email',
             'password' => ['required', 'confirmed', Password::min(8)->mixedCase()->symbols()],
         ], [
-            'email.ends_with' => 'Email harus menggunakan domain @gmail.com.',
             'password.mixed'  => 'Password harus mengandung huruf besar dan huruf kecil.',
             'password.symbols' => 'Password harus mengandung karakter simbol.',
         ]);

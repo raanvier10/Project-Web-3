@@ -67,12 +67,7 @@ Route::middleware('auth')->group(function () {
         // Dashboard overview
         Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
 
-        // Manajemen Paket Kursus
-        Route::get('/packages', [AdminDashboardController::class, 'packages'])->name('packages');
-        Route::post('/packages', [AdminDashboardController::class, 'storePackage'])->name('packages.store');
-        Route::put('/packages/{package}', [AdminDashboardController::class, 'updatePackage'])->name('packages.update');
-        Route::patch('/packages/{package}/toggle', [AdminDashboardController::class, 'togglePackage'])->name('packages.toggle');
-        Route::delete('/packages/{package}', [AdminDashboardController::class, 'deletePackage'])->name('packages.delete');
+        // Manajemen Paket Kursus dipindah ke Owner
 
         // Verifikasi Pembayaran
         Route::get('/payments', [AdminDashboardController::class, 'payments'])->name('payments');
@@ -82,6 +77,7 @@ Route::middleware('auth')->group(function () {
 
         // Manajemen Peserta
         Route::get('/participants', [AdminDashboardController::class, 'participants'])->name('participants');
+        Route::patch('/participants/{registration}/complete', [AdminDashboardController::class, 'completeParticipant'])->name('participants.complete');
 
         // Laporan & Export
         Route::get('/reports', [AdminDashboardController::class, 'reports'])->name('reports');
@@ -101,6 +97,15 @@ Route::middleware('auth')->group(function () {
         Route::post('/staff', [OwnerDashboardController::class, 'storeStaff'])->name('staff.store');
         Route::put('/staff/{user}', [OwnerDashboardController::class, 'updateStaff'])->name('staff.update');
         Route::delete('/staff/{user}', [OwnerDashboardController::class, 'deleteStaff'])->name('staff.delete');
+
+        // Manajemen Paket Kursus
+        Route::get('/packages', [OwnerDashboardController::class, 'packages'])->name('packages');
+        Route::post('/packages', [OwnerDashboardController::class, 'storePackage'])->name('packages.store');
+        Route::post('/packages/import', [OwnerDashboardController::class, 'importPackages'])->name('packages.import');
+        Route::get('/packages/template', [OwnerDashboardController::class, 'downloadTemplate'])->name('packages.template');
+        Route::put('/packages/{package}', [OwnerDashboardController::class, 'updatePackage'])->name('packages.update');
+        Route::patch('/packages/{package}/toggle', [OwnerDashboardController::class, 'togglePackage'])->name('packages.toggle');
+        Route::delete('/packages/{package}', [OwnerDashboardController::class, 'deletePackage'])->name('packages.delete');
 
         // Laporan Keuangan
         Route::get('/reports', [OwnerDashboardController::class, 'reports'])->name('reports');

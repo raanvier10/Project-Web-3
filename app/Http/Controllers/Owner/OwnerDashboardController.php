@@ -67,7 +67,7 @@ class OwnerDashboardController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255|regex:/^[a-zA-Z\s]+$/',
-            'email' => 'required|string|email|max:255|unique:users,email|ends_with:@gmail.com',
+            'email' => 'required|string|email|max:255|unique:users,email',
             'phone' => 'nullable|string|max:20',
             'role' => 'required|string|in:admin,staff',
             'password' => ['required', 'string', 'confirmed', Password::min(8)->mixedCase()->symbols()],
@@ -77,7 +77,6 @@ class OwnerDashboardController extends Controller
             'email.required' => 'Email wajib diisi.',
             'email.email' => 'Format email tidak valid.',
             'email.unique' => 'Email sudah terdaftar.',
-            'email.ends_with' => 'Email harus menggunakan domain @gmail.com.',
             'password.required' => 'Password wajib diisi.',
             'password.min' => 'Password minimal 8 karakter.',
             'password.mixed' => 'Password harus mengandung huruf besar dan huruf kecil.',
@@ -108,7 +107,6 @@ class OwnerDashboardController extends Controller
                 'email',
                 'max:255',
                 Rule::unique('users', 'email')->ignore($user->id),
-                'ends_with:@gmail.com',
             ],
             'phone' => 'nullable|string|max:20',
             'role' => 'required|string|in:admin,staff',
@@ -119,7 +117,6 @@ class OwnerDashboardController extends Controller
             'email.required' => 'Email wajib diisi.',
             'email.email' => 'Format email tidak valid.',
             'email.unique' => 'Email sudah terdaftar.',
-            'email.ends_with' => 'Email harus menggunakan domain @gmail.com.',
             'password.min' => 'Password minimal 8 karakter.',
             'password.mixed' => 'Password harus mengandung huruf besar dan huruf kecil.',
             'password.symbols' => 'Password harus mengandung karakter simbol.',
@@ -149,6 +146,190 @@ class OwnerDashboardController extends Controller
 
         return redirect()->route('owner.staff')
             ->with('success', 'Akun pengguna berhasil dihapus.');
+    }
+
+    /**
+     * Course Packages management — list all.
+     */
+    public function packages()
+    {
+        $packages = CoursePackage::latest()->get();
+        return view('owner.packages', compact('packages'));
+    }
+
+    /**
+     * Store a new course package.
+     */
+    public function storePackage(Request $request)
+    {
+        $validated = $request->validate([
+            'name'         => 'required|string|max:255',
+            'category'     => 'required|in:kids,adult',
+            'descriptions' => 'nullable|string',
+            'features'     => 'nullable|string',
+            'original_price' => 'nullable|numeric|min:0',
+            'price'        => 'required|numeric|min:0',
+            'amount'       => 'required|integer|min:0',
+            'is_active'    => 'sometimes|boolean',
+            'whatsapp_link' => 'nullable|url|max:255',
+        ]);
+
+        $validated['is_active'] = $request->has('is_active');
+
+        // Server-side guard: original_price must be greater than final price
+        if (!empty($validated['original_price']) && $validated['original_price'] <= $validated['price']) {
+            $validated['original_price'] = null;
+        }
+
+        CoursePackage::create($validated);
+
+        return redirect()->route('owner.packages')->with('success', 'Paket kursus berhasil ditambahkan.');
+    }
+
+
+    /**
+     * Update an existing course package.
+     */
+    public function updatePackage(Request $request, CoursePackage $package)
+    {
+        $validated = $request->validate([
+            'name'           => 'required|string|max:255',
+            'category'       => 'required|in:kids,adult',
+            'descriptions'   => 'nullable|string',
+            'features'       => 'nullable|string',
+            'original_price' => 'nullable|numeric|min:0',
+            'price'          => 'required|numeric|min:0',
+            'amount'         => 'required|integer|min:0',
+            'is_active'      => 'sometimes|boolean',
+            'whatsapp_link'  => 'nullable|url|max:255',
+        ]);
+
+        // Ensure original_price is greater than price when provided
+        if (!empty($validated['original_price']) && $validated['original_price'] <= $validated['price']) {
+            $validated['original_price'] = null;
+        }
+
+        $validated['is_active'] = $request->has('is_active');
+
+        $package->update($validated);
+
+        return redirect()->route('owner.packages')->with('success', 'Paket kursus berhasil diperbarui.');
+    }
+
+
+    /**
+     * Toggle package active status.
+     */
+    public function togglePackage(CoursePackage $package)
+    {
+        $package->update(['is_active' => !$package->is_active]);
+
+        return response()->json([
+            'success' => true,
+            'is_active' => $package->is_active,
+            'message' => $package->is_active ? 'Paket diaktifkan.' : 'Paket dinonaktifkan.',
+        ]);
+    }
+
+    /**
+     * Delete a course package.
+     */
+    public function deletePackage(CoursePackage $package)
+    {
+        $package->delete(); // Soft delete — data tetap tersimpan di database
+
+        return redirect()->route('owner.packages')->with('success', 'Paket kursus berhasil dihapus.');
+    }
+
+    /**
+     * Download Excel Template for Packages Import.
+     */
+    public function downloadTemplate()
+    {
+        $data = [
+            [
+                'Nama Paket',
+                'Kategori (adult/kids)',
+                'Harga Jual',
+                'Harga Asli (opsional)',
+                'Jumlah Pertemuan',
+                'Link WhatsApp (opsional)',
+                'Deskripsi (opsional)',
+                'Fasilitas (pisahkan dengan |)'
+            ],
+            [
+                'Paket Contoh Dewasa',
+                'adult',
+                '150000',
+                '200000',
+                '8',
+                'https://chat.whatsapp.com/...',
+                'Deskripsi singkat',
+                'Modul | Sertifikat | Grup WA'
+            ]
+        ];
+
+        $xlsx = \Shuchkin\SimpleXLSXGen::fromArray($data);
+        return response($xlsx->downloadAs('template_paket_kursus.xlsx'));
+    }
+
+    /**
+     * Import Packages from Excel.
+     */
+    public function importPackages(Request $request)
+    {
+        $request->validate([
+            'excel_file' => 'required|file|mimes:xlsx,xls|max:2048'
+        ], [
+            'excel_file.required' => 'File Excel wajib diunggah.',
+            'excel_file.mimes' => 'File harus berformat Excel (.xlsx atau .xls).'
+        ]);
+
+        $file = $request->file('excel_file');
+        
+        $xlsx = \Shuchkin\SimpleXLSX::parse($file->getRealPath());
+        
+        if (!$xlsx) {
+            return redirect()->back()->with('error', 'Gagal membaca file Excel. Pastikan format file benar.');
+        }
+
+        $importedCount = 0;
+        $rows = $xlsx->rows();
+        
+        // Loop through rows, skip header (index 0)
+        foreach ($rows as $index => $data) {
+            if ($index === 0) continue;
+            
+            // Ensure data has enough columns (at least Name, Category, Price, Amount)
+            if (count($data) < 5 || trim($data[0]) === '') continue; 
+            
+            $category = trim(strtolower($data[1]));
+            if (!in_array($category, ['kids', 'adult'])) {
+                $category = 'adult'; // Default fallback
+            }
+
+            $price = floatval(preg_replace('/[^0-9.]/', '', $data[2]));
+            $originalPrice = isset($data[3]) && trim($data[3]) !== '' ? floatval(preg_replace('/[^0-9.]/', '', $data[3])) : null;
+            
+            if ($originalPrice <= $price) {
+                $originalPrice = null;
+            }
+
+            CoursePackage::create([
+                'name' => trim($data[0]),
+                'category' => $category,
+                'price' => $price,
+                'original_price' => $originalPrice,
+                'amount' => intval($data[4]),
+                'whatsapp_link' => isset($data[5]) && filter_var(trim($data[5]), FILTER_VALIDATE_URL) ? trim($data[5]) : null,
+                'descriptions' => isset($data[6]) ? trim($data[6]) : null,
+                'features' => isset($data[7]) ? trim($data[7]) : null,
+                'is_active' => true,
+            ]);
+            $importedCount++;
+        }
+
+        return redirect()->route('owner.packages')->with('success', $importedCount . ' paket kursus berhasil diimpor.');
     }
 
     /**

@@ -17,3 +17,29 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
+
+# AI Agents & Local Testing
+/.agents
+/.skills
+/skills-lock.json
+/test-results
+test_cookies.txt
+
+# Databases
+/database/*.sqlite
+/database/*.sqlite3
+/database/*.db
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# Build files & Logs
+*.log
+!storage/logs/.gitignore

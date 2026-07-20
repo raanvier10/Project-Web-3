@@ -6,6 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Owner Dashboard - English For Akhwat (EFA)</title>
     <meta name="description" content="Owner Dashboard EFA - Pantau operasional dan kelola staff.">
+    <link rel="icon" href="/images/LogoEFA.svg" type="image/svg+xml">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&display=swap" rel="stylesheet">
@@ -292,8 +293,8 @@
             {{-- Logo --}}
             <div class="relative z-10 px-6 py-6">
                 <div class="flex items-center space-x-3">
-                    <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: rgba(255,255,255,0.2); backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.15);">
-                        <i class="fas fa-crown text-white text-lg"></i>
+                    <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: rgba(255,255,255,0.9); backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.15);">
+                        <img src="/images/LogoEFA.svg" alt="Logo EFA" class="h-6 w-6 object-contain" />
                     </div>
                     <div>
                         <h1 class="text-white font-extrabold text-lg leading-tight tracking-tight">EFA Owner</h1>
@@ -312,6 +313,11 @@
                 <a href="{{ route('owner.dashboard') }}" class="admin-nav-item {{ request()->routeIs('owner.dashboard') ? 'active' : '' }}" id="nav-owner-dashboard">
                     <div class="admin-icon-wrap"><i class="fas fa-th-large text-sm"></i></div>
                     <span>Dashboard</span>
+                </a>
+
+                <a href="{{ route('owner.packages') }}" class="admin-nav-item {{ request()->routeIs('owner.packages') ? 'active' : '' }}" id="nav-owner-packages">
+                    <div class="admin-icon-wrap"><i class="fas fa-box-open text-sm"></i></div>
+                    <span>Paket Kursus</span>
                 </a>
 
                 <a href="{{ route('owner.staff') }}" class="admin-nav-item {{ request()->routeIs('owner.staff') ? 'active' : '' }}" id="nav-owner-staff">

@@ -90,6 +90,10 @@ class Registration extends Model
      */
     public function getDisplayStatusAttribute(): string
     {
+        if ($this->status === 'completed') {
+            return 'Selesai';
+        }
+
         if ($this->payment) {
             return match ($this->payment->payment_status) {
                 'valid', 'verified', 'paid' => 'Lunas',
@@ -113,6 +117,7 @@ class Registration extends Model
     public function getStatusBadgeClassAttribute(): string
     {
         return match ($this->display_status) {
+            'Selesai' => 'bg-gray-100 text-gray-800 border border-gray-200',
             'Lunas' => 'status-paid',
             'Ditolak' => 'status-rejected',
             'Menunggu Verifikasi' => 'status-verifying',
@@ -130,6 +135,7 @@ class Registration extends Model
             'Menunggu Pembayaran' => 1,
             'Menunggu Verifikasi' => 2,
             'Lunas' => 4,
+            'Selesai' => 4,
             'Ditolak' => 3,
             default => 1,
         };

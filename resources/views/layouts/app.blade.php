@@ -6,6 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>English For Akhwat (EFA) - Kursus Bahasa Inggris</title>
     <meta name="description" content="EFA - Program kursus bahasa Inggris khusus akhwat. Tingkatkan kemampuan bahasa Inggris Anda bersama komunitas yang supportif.">
+    <link rel="icon" href="/images/LogoEFA.svg" type="image/svg+xml">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">

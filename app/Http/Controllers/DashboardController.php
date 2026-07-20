@@ -115,10 +115,10 @@ class DashboardController extends Controller
         $request->validate([
             'name' => ['required', 'string', 'max:255', 'regex:/^[a-zA-Z\s]+$/'],
             'age' => ['required', 'integer', 'min:' . ($isKids ? '4' : '16'), 'max:' . ($isKids ? '15' : '100')],
-            'domicile' => ['required', 'string', 'max:255'],
-            'job' => ['required', 'string', 'max:255'],
-            'phone' => [$isKids ? 'nullable' : 'required', 'string', 'regex:/^08[0-9]{8,11}$/'],
-            'parent_phone' => [$isKids ? 'required' : 'nullable', 'string', 'regex:/^08[0-9]{8,11}$/'],
+            'domicile' => ['required', 'string', 'max:255', 'regex:/^[a-zA-Z\s]+$/'],
+            'job' => ['required', 'string', 'max:255', 'regex:/^[a-zA-Z\s]+$/'],
+            'phone' => [$isKids ? 'nullable' : 'required', 'string', 'regex:/^08[0-9]{10,11}$/'],
+            'parent_phone' => [$isKids ? 'required' : 'nullable', 'string', 'regex:/^08[0-9]{10,11}$/'],
         ], [
             'name.required' => 'Nama wajib diisi.',
             'name.regex' => 'Nama hanya boleh berisi huruf dan spasi (tanpa angka/karakter khusus).',
@@ -131,11 +131,13 @@ class DashboardController extends Controller
                 ? 'Usia maksimal 15 tahun untuk program Kids. Silakan pilih paket Dewasa untuk usia 16 tahun ke atas.'
                 : 'Usia maksimal 100 tahun.',
             'domicile.required' => 'Domisili wajib diisi.',
+            'domicile.regex' => 'Domisili hanya boleh berisi huruf dan spasi (tanpa angka/karakter khusus).',
             'job.required' => 'Pekerjaan wajib diisi.',
+            'job.regex' => 'Pekerjaan hanya boleh berisi huruf dan spasi (tanpa angka/karakter khusus).',
             'phone.required' => 'No. WhatsApp wajib diisi.',
-            'phone.regex' => 'No. WhatsApp harus diawali "08" dan terdiri dari 10-13 digit angka.',
+            'phone.regex' => 'No. WhatsApp harus diawali "08" dan terdiri dari 12-13 digit angka.',
             'parent_phone.required' => 'No. WhatsApp orang tua wajib diisi.',
-            'parent_phone.regex' => 'No. WhatsApp orang tua harus diawali "08" dan terdiri dari 10-13 digit angka.',
+            'parent_phone.regex' => 'No. WhatsApp orang tua harus diawali "08" dan terdiri dari 12-13 digit angka.',
         ]);
 
         // FIX: Gunakan model boot untuk generate registration number (anti-collision)

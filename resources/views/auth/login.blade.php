@@ -19,7 +19,9 @@
     <div class="relative z-10 flex flex-col justify-center gap-12 w-full h-full min-h-screen px-12 xl:px-16 2xl:px-20 py-16">
       {{-- Top: Logo --}}
       <div class="flex items-center space-x-3">
-          <img src="/images/EFA.svg" alt="Logo EFA" class="w-8 h-8 object-contain" />
+        <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center shadow-md">
+            <img src="/images/LogoEFA.svg" alt="Logo EFA" class="w-6 h-6 object-contain" />
+        </div>
         <span class="font-extrabold text-2xl text-white tracking-wide" style="font-family:'Oswald',sans-serif;">EFA</span>
       </div>
 
@@ -84,8 +86,8 @@
     <div class="w-full max-w-[420px] mx-auto px-6 sm:px-8 py-10 relative z-10">
       {{-- Mobile Logo --}}
       <div class="flex items-center justify-center space-x-2.5 mb-10 lg:hidden">
-        <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center shadow-lg shadow-primary-500/30">
-          <img src="/images/EFA.svg" alt="Logo EFA" class="w-7 h-7 object-contain" />
+        <div class="w-11 h-11 rounded-2xl bg-white flex items-center justify-center shadow-lg border border-gray-100">
+          <img src="/images/LogoEFA.svg" alt="Logo EFA" class="w-7 h-7 object-contain" />
         </div>
         <span class="font-extrabold text-xl text-primary-700" style="font-family:'Oswald',sans-serif;">EFA</span>
       </div>

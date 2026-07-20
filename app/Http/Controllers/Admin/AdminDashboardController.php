@@ -49,98 +49,6 @@ class AdminDashboardController extends Controller
         ));
     }
 
-    /**
-     * Course Packages management — list all.
-     */
-    public function packages()
-    {
-        $packages = CoursePackage::latest()->get();
-        return view('admin.packages', compact('packages'));
-    }
-
-    /**
-     * Store a new course package.
-     */
-    public function storePackage(Request $request)
-    {
-        $validated = $request->validate([
-            'name'         => 'required|string|max:255',
-            'category'     => 'required|in:kids,adult',
-            'descriptions' => 'nullable|string',
-            'features'     => 'nullable|string',
-            'original_price' => 'nullable|numeric|min:0',
-            'price'        => 'required|numeric|min:0',
-            'amount'       => 'required|integer|min:0',
-            'is_active'    => 'sometimes|boolean',
-            'whatsapp_link' => 'nullable|url|max:255',
-        ]);
-
-        $validated['is_active'] = $request->has('is_active');
-
-        // Server-side guard: original_price must be greater than final price
-        if (!empty($validated['original_price']) && $validated['original_price'] <= $validated['price']) {
-            $validated['original_price'] = null;
-        }
-
-        CoursePackage::create($validated);
-
-        return redirect()->route('admin.packages')->with('success', 'Paket kursus berhasil ditambahkan.');
-    }
-
-
-    /**
-     * Update an existing course package.
-     */
-    public function updatePackage(Request $request, CoursePackage $package)
-    {
-        $validated = $request->validate([
-            'name'           => 'required|string|max:255',
-            'category'       => 'required|in:kids,adult',
-            'descriptions'   => 'nullable|string',
-            'features'       => 'nullable|string',
-            'original_price' => 'nullable|numeric|min:0',
-            'price'          => 'required|numeric|min:0',
-            'amount'         => 'required|integer|min:0',
-            'is_active'      => 'sometimes|boolean',
-            'whatsapp_link'  => 'nullable|url|max:255',
-        ]);
-
-        // Ensure original_price is greater than price when provided
-        if (!empty($validated['original_price']) && $validated['original_price'] <= $validated['price']) {
-            $validated['original_price'] = null;
-        }
-
-        $validated['is_active'] = $request->has('is_active');
-
-        $package->update($validated);
-
-        return redirect()->route('admin.packages')->with('success', 'Paket kursus berhasil diperbarui.');
-    }
-
-
-    /**
-     * Toggle package active status.
-     */
-    public function togglePackage(CoursePackage $package)
-    {
-        $package->update(['is_active' => !$package->is_active]);
-
-        return response()->json([
-            'success' => true,
-            'is_active' => $package->is_active,
-            'message' => $package->is_active ? 'Paket diaktifkan.' : 'Paket dinonaktifkan.',
-        ]);
-    }
-
-    /**
-     * Delete a course package.
-     */
-    public function deletePackage(CoursePackage $package)
-    {
-        $package->delete(); // Soft delete — data tetap tersimpan di database
-
-        return redirect()->route('admin.packages')->with('success', 'Paket kursus berhasil dihapus.');
-    }
 
     /**
      * Payment Verification — list pending payments.
@@ -269,6 +177,21 @@ class AdminDashboardController extends Controller
         $packages = CoursePackage::where('is_active', true)->get();
 
         return view('admin.participants', compact('participants', 'packages'));
+    }
+
+    /**
+     * Mark a participant's registration as completed.
+     */
+    public function completeParticipant(Registration $registration)
+    {
+        if ($registration->status !== 'active') {
+            return redirect()->back()->with('error', 'Hanya peserta dengan status aktif yang dapat diselesaikan.');
+        }
+
+        $registration->update(['status' => 'completed']);
+
+        return redirect()->back()
+            ->with('success', 'Status peserta berhasil diubah menjadi Selesai. Peserta kini dapat mendaftar ulang.');
     }
 
     /**
@@ -411,6 +334,7 @@ class AdminDashboardController extends Controller
             $statusMap = [
                 'pending' => 'Menunggu Pembayaran',
                 'active' => 'Aktif / Lunas',
+                'completed' => 'Selesai',
                 'rejected' => 'Ditolak'
             ];
             $statusText = $statusMap[$request->status] ?? ucfirst($request->status);
