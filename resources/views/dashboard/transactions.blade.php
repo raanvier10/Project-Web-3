@@ -66,10 +66,10 @@
                                 <span class="text-xs text-gray-300 font-mono">{{ $reg->registration_number }}</span>
                             </div>
                             <h3 class="text-base font-bold text-gray-900 truncate">{{ $reg->coursePackage->name }}</h3>
-                            <p class="text-gray-400 text-xs mt-0.5 flex items-center flex-wrap gap-x-2">
-                                <span><i class="fas fa-calendar mr-1"></i>{{ $reg->created_at->format('d M Y, H:i') }}</span>
+                            <p class="text-gray-400 text-xs mt-1.5 flex items-center flex-wrap gap-3">
+                                <span class="flex items-center"><i class="fas fa-calendar mr-1.5 text-gray-300"></i>{{ $reg->created_at->format('d M Y, H:i') }}</span>
                                 @if($reg->detail)
-                                <span><i class="fas fa-user mr-1"></i>{{ $reg->detail->name }}</span>
+                                <span class="flex items-center"><i class="fas fa-user mr-1.5 text-gray-300"></i>{{ $reg->detail->name }}</span>
                                 @endif
                             </p>
                         </div>
@@ -107,25 +107,28 @@
                     </div>
 
                     {{-- Right: Price + Status + Action --}}
-                    <div class="flex flex-wrap items-center gap-3 lg:flex-col lg:items-end lg:gap-2 mt-2 lg:mt-0">
-                        <p class="text-lg font-extrabold text-gray-900">{{ $reg->coursePackage->formatted_price }}</p>
-                        <span class="status-badge {{ $reg->status_badge_class }}">
-                            {{ $reg->display_status }}
-                        </span>
+                    <div class="flex flex-col lg:items-end gap-3 lg:gap-2 mt-4 lg:mt-0 w-full lg:w-auto pt-4 lg:pt-0 border-t lg:border-t-0 border-gray-100">
+                        <div class="flex items-center justify-between w-full lg:w-auto gap-3">
+                            <p class="text-lg font-extrabold text-gray-900">{{ $reg->coursePackage->formatted_price }}</p>
+                            <span class="status-badge {{ $reg->status_badge_class }}">
+                                {{ $reg->display_status }}
+                            </span>
+                        </div>
+                        
                         @if($reg->display_status === 'Menunggu Pembayaran')
-                        <a href="{{ route('dashboard.payment', $reg->id) }}" class="inline-flex items-center px-4 py-2 rounded-xl text-xs font-bold text-white transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5" style="background: linear-gradient(135deg, #E8699F, #FF85BB);">
+                        <a href="{{ route('dashboard.payment', $reg->id) }}" class="inline-flex items-center justify-center w-full lg:w-auto px-4 py-2.5 lg:py-2 rounded-xl text-xs font-bold text-white transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 mt-1 lg:mt-0" style="background: linear-gradient(135deg, #E8699F, #FF85BB);">
                             <i class="fas fa-credit-card mr-1.5"></i> Bayar
                         </a>
                         @elseif($reg->display_status === 'Ditolak')
-                        <a href="{{ route('dashboard.payment', $reg->id) }}" class="inline-flex items-center px-4 py-2 rounded-xl text-xs font-bold text-white bg-red-500 hover:bg-red-600 transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5">
+                        <a href="{{ route('dashboard.payment', $reg->id) }}" class="inline-flex items-center justify-center w-full lg:w-auto px-4 py-2.5 lg:py-2 rounded-xl text-xs font-bold text-white bg-red-500 hover:bg-red-600 transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 mt-1 lg:mt-0">
                             <i class="fas fa-redo mr-1.5"></i> Upload Ulang
                         </a>
                         @elseif($reg->display_status === 'Menunggu Verifikasi')
-                        <a href="{{ route('dashboard.payment', $reg->id) }}" class="inline-flex items-center px-4 py-2 rounded-xl text-xs font-bold text-blue-600 transition-all hover:shadow-sm" style="background: linear-gradient(135deg, #EFF6FF, #DBEAFE);">
+                        <a href="{{ route('dashboard.payment', $reg->id) }}" class="inline-flex items-center justify-center w-full lg:w-auto px-4 py-2.5 lg:py-2 rounded-xl text-xs font-bold text-blue-600 transition-all hover:shadow-sm mt-1 lg:mt-0" style="background: linear-gradient(135deg, #EFF6FF, #DBEAFE);">
                             <i class="fas fa-eye mr-1.5"></i> Lihat
                         </a>
                         @elseif($reg->display_status === 'Lunas' && $reg->coursePackage->whatsapp_link)
-                        <a href="{{ $reg->coursePackage->whatsapp_link }}" target="_blank" class="inline-flex items-center px-4 py-2 rounded-xl text-xs font-bold text-white transition-all hover:shadow-lg hover:-translate-y-0.5" style="background: linear-gradient(135deg, #10B981, #059669);">
+                        <a href="{{ $reg->coursePackage->whatsapp_link }}" target="_blank" class="inline-flex items-center justify-center w-full lg:w-auto px-4 py-2.5 lg:py-2 rounded-xl text-xs font-bold text-white transition-all hover:shadow-lg hover:-translate-y-0.5 mt-1 lg:mt-0" style="background: linear-gradient(135deg, #10B981, #059669);">
                             <i class="fab fa-whatsapp mr-1.5 text-sm"></i> Grup WA
                         </a>
                         @endif
