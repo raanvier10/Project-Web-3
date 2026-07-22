@@ -258,6 +258,12 @@
                                 <input type="file" id="proof_of_payment" name="proof_of_payment" accept="image/jpeg,image/jpg,image/png,image/webp" required
                                     class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20" title="Klik untuk pilih file" />
                                 
+                                @error('proof_of_payment')
+                                <div class="absolute inset-x-0 bottom-0 z-30 bg-red-100 text-red-600 text-xs font-bold p-2 text-center border-t border-red-200">
+                                    {{ $message }}
+                                </div>
+                                @enderror
+
                                 {{-- State: Empty --}}
                                 <div id="dropContent" class="flex flex-col items-center justify-center py-12 px-6 transition-all duration-300 relative z-10 group-hover:bg-white/40">
                                     <div class="w-16 h-16 rounded-full flex items-center justify-center mb-4 transition-transform duration-500 group-hover:scale-110 group-hover:-translate-y-1" style="background: linear-gradient(135deg, #FFE0EC, #FFC2D9); box-shadow: 0 8px 24px rgba(255,133,187,0.25);">
