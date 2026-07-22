@@ -76,11 +76,11 @@
                     </div>
 
                     {{-- Center: Progress Mini Tracker --}}
-                    <div class="flex items-center space-x-1 px-3 flex-shrink-0">
+                    <div class="flex items-center w-full lg:w-48 xl:w-56 flex-shrink-0 my-3 lg:my-0 lg:px-4">
                         @php $step = $reg->progress_step; @endphp
                         @for($i = 1; $i <= 4; $i++)
-                        <div class="flex items-center">
-                            <div class="w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold transition-all duration-300
+                        <div class="flex items-center {{ $i < 4 ? 'flex-1' : '' }}">
+                            <div class="w-7 h-7 flex-shrink-0 rounded-full flex items-center justify-center text-[10px] font-bold transition-all duration-300
                                 {{ $step >= $i ? ($i === 3 && $reg->display_status === 'Ditolak' ? 'bg-red-500 text-white' : ($i === 4 ? 'text-white' : 'text-white')) : 'bg-gray-100 text-gray-400' }}"
                                 @if($step >= $i)
                                     @if($i === 3 && $reg->display_status === 'Ditolak')
@@ -100,7 +100,7 @@
                                 @endif
                             </div>
                             @if($i < 4)
-                            <div class="w-4 h-[2px] rounded {{ $step > $i ? 'bg-primary-300' : 'bg-gray-200' }}"></div>
+                            <div class="flex-1 h-[2px] rounded mx-1.5 {{ $step > $i ? 'bg-primary-300' : 'bg-gray-200' }}"></div>
                             @endif
                         </div>
                         @endfor
