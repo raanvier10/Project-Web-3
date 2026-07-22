@@ -16,10 +16,10 @@
 
 <div class="max-w-4xl mx-auto">
     {{-- Progress Steps — Premium --}}
-    <div class="float-card mb-6 !p-5">
-        <div class="flex items-center justify-between relative px-4">
+    <div class="float-card mb-6 !p-4 sm:!p-5 overflow-hidden">
+        <div class="flex items-center justify-between relative px-1 sm:px-4">
             {{-- Line background --}}
-            <div class="absolute top-[22px] left-[60px] right-[60px] h-[3px] rounded-full bg-gray-100"></div>
+            <div class="absolute top-[22px] left-[15%] right-[15%] sm:left-[60px] sm:right-[60px] h-[3px] rounded-full bg-gray-100"></div>
             {{-- Line progress --}}
             @php
                 $progressWidth = match(true) {
@@ -28,10 +28,10 @@
                     default => '0%',
                 };
             @endphp
-            <div class="absolute top-[22px] left-[60px] h-[3px] rounded-full transition-all duration-700 ease-out" style="width: {{ $progressWidth }}; max-width: calc(100% - 120px); background: linear-gradient(90deg, #E8699F, #FF85BB);"></div>
+            <div class="absolute top-[22px] left-[15%] sm:left-[60px] h-[3px] rounded-full transition-all duration-700 ease-out" style="width: {{ $progressWidth }}; background: linear-gradient(90deg, #E8699F, #FF85BB);"></div>
 
             {{-- Step 1 --}}
-            <div class="relative z-10 flex flex-col items-center w-28">
+            <div class="relative z-10 flex flex-col items-center flex-1">
                 <div class="w-11 h-11 rounded-full flex items-center justify-center text-white text-sm font-bold shadow-lg ring-4 ring-white" style="background: linear-gradient(135deg, #E8699F, #FF85BB);">
                     <i class="fas fa-check"></i>
                 </div>
@@ -40,7 +40,7 @@
             </div>
 
             {{-- Step 2 --}}
-            <div class="relative z-10 flex flex-col items-center w-28">
+            <div class="relative z-10 flex flex-col items-center flex-1">
                 <div class="w-11 h-11 rounded-full flex items-center justify-center text-sm font-bold shadow-lg ring-4 ring-white transition-all duration-500
                     {{ $registration->payment ? 'text-white' : 'bg-white border-2 border-primary-300 text-primary-600' }}"
                     @if($registration->payment) style="background: linear-gradient(135deg, #E8699F, #FF85BB);" @endif>
@@ -52,7 +52,7 @@
             </div>
 
             {{-- Step 3 --}}
-            <div class="relative z-10 flex flex-col items-center w-28">
+            <div class="relative z-10 flex flex-col items-center flex-1">
                 <div class="w-11 h-11 rounded-full flex items-center justify-center text-sm font-bold ring-4 ring-white transition-all duration-500
                     {{ $registration->display_status === 'Lunas' ? 'text-white shadow-lg' : 'bg-gray-100 text-gray-400' }}"
                     @if($registration->display_status === 'Lunas') style="background: linear-gradient(135deg, #10B981, #34D399);" @endif>
@@ -65,7 +65,7 @@
         </div>
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 items-stretch">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 items-start">
         {{-- Invoice --}}
         <div class="space-y-4">
             <div class="float-card h-full">
