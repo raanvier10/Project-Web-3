@@ -199,7 +199,8 @@ class AdminDashboardController extends Controller
      */
     public function reports(Request $request)
     {
-        $query = Registration::with(['user', 'coursePackage', 'detail', 'payment']);
+        // Only include registrations that have a payment (exclude "Belum Bayar")
+        $query = Registration::with(['user', 'coursePackage', 'detail', 'payment'])->has('payment');
 
         // Date filter
         if ($request->filled('date_from')) {
@@ -238,7 +239,8 @@ class AdminDashboardController extends Controller
      */
     public function exportExcel(Request $request)
     {
-        $query = Registration::with(['user', 'coursePackage', 'detail', 'payment']);
+        // Only include registrations that have a payment (exclude "Belum Bayar")
+        $query = Registration::with(['user', 'coursePackage', 'detail', 'payment'])->has('payment');
 
         if ($request->filled('date_from')) {
             $query->whereDate('created_at', '>=', $request->date_from);
@@ -302,7 +304,8 @@ class AdminDashboardController extends Controller
      */
     public function exportPdf(Request $request)
     {
-        $query = Registration::with(['user', 'coursePackage', 'detail', 'payment']);
+        // Only include registrations that have a payment (exclude "Belum Bayar")
+        $query = Registration::with(['user', 'coursePackage', 'detail', 'payment'])->has('payment');
 
         if ($request->filled('date_from')) {
             $query->whereDate('created_at', '>=', $request->date_from);
