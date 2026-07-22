@@ -14,12 +14,12 @@
         <p class="text-gray-400 mt-1.5 text-sm">Pantau semua pendaftaran dan status pembayaran Anda.</p>
     </div>
     <a href="{{ route('dashboard.packages') }}"
-       class="inline-flex items-center px-6 py-3 rounded-xl text-white font-bold text-sm transition-all duration-300 transform hover:-translate-y-0.5 relative overflow-hidden group"
-       style="background: linear-gradient(135deg, #E8699F 0%, #FF85BB 50%, #C74E83 100%); box-shadow: 0 4px 20px rgba(199,78,131,0.25);"
+       class="inline-flex items-center justify-center w-full sm:w-auto px-6 py-3 rounded-xl text-white font-bold text-sm transition-all duration-300 transform hover:-translate-y-0.5 relative overflow-hidden group shadow-lg"
+       style="background: linear-gradient(135deg, #E8699F 0%, #FF85BB 50%, #C74E83 100%);"
        id="btn-new-registration">
-        <span class="relative z-10 flex items-center">
+        <span class="relative z-10 flex items-center justify-center">
             <i class="fas fa-plus mr-2"></i>
-            <span class="hidden sm:inline">Daftar Baru</span>
+            <span>Daftar Baru</span>
         </span>
         <div class="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
     </a>
@@ -27,21 +27,21 @@
 
 @if($registrations->count() > 0)
     {{-- Status Filter Tabs --}}
-    <div class="mb-6 overflow-x-auto pb-2 -mx-1">
-        <div class="tab-rail inline-flex">
-            <button onclick="filterTransactions('all')" class="filter-tab active" data-filter="all">
+    <div class="mb-6 w-full">
+        <div class="tab-rail grid grid-cols-2 sm:flex sm:flex-wrap gap-2 p-1.5 rounded-2xl sm:rounded-full bg-white/60 shadow-sm border border-pink-100/50">
+            <button onclick="filterTransactions('all')" class="filter-tab active col-span-2 sm:col-span-1 w-full flex items-center justify-center px-4 py-3 sm:py-2" data-filter="all">
                 Semua <span class="ml-1 px-1.5 py-0.5 rounded-md bg-white/60 text-[10px] font-bold text-gray-500">{{ $registrations->count() }}</span>
             </button>
-            <button onclick="filterTransactions('Menunggu Pembayaran')" class="filter-tab" data-filter="Menunggu Pembayaran">
+            <button onclick="filterTransactions('Menunggu Pembayaran')" class="filter-tab w-full flex items-center justify-center px-4 py-3 sm:py-2" data-filter="Menunggu Pembayaran">
                 <span class="w-1.5 h-1.5 rounded-full bg-amber-400 mr-1.5 inline-block"></span> Bayar
             </button>
-            <button onclick="filterTransactions('Menunggu Verifikasi')" class="filter-tab" data-filter="Menunggu Verifikasi">
+            <button onclick="filterTransactions('Menunggu Verifikasi')" class="filter-tab w-full flex items-center justify-center px-4 py-3 sm:py-2" data-filter="Menunggu Verifikasi">
                 <span class="w-1.5 h-1.5 rounded-full bg-blue-400 mr-1.5 inline-block"></span> Verifikasi
             </button>
-            <button onclick="filterTransactions('Lunas')" class="filter-tab" data-filter="Lunas">
+            <button onclick="filterTransactions('Lunas')" class="filter-tab w-full flex items-center justify-center px-4 py-3 sm:py-2" data-filter="Lunas">
                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1.5 inline-block"></span> Lunas
             </button>
-            <button onclick="filterTransactions('Ditolak')" class="filter-tab" data-filter="Ditolak">
+            <button onclick="filterTransactions('Ditolak')" class="filter-tab w-full flex items-center justify-center px-4 py-3 sm:py-2" data-filter="Ditolak">
                 <span class="w-1.5 h-1.5 rounded-full bg-red-400 mr-1.5 inline-block"></span> Ditolak
             </button>
         </div>
@@ -107,7 +107,7 @@
                     </div>
 
                     {{-- Right: Price + Status + Action --}}
-                    <div class="flex items-center gap-3 lg:flex-col lg:items-end lg:gap-2">
+                    <div class="flex flex-wrap items-center gap-3 lg:flex-col lg:items-end lg:gap-2 mt-2 lg:mt-0">
                         <p class="text-lg font-extrabold text-gray-900">{{ $reg->coursePackage->formatted_price }}</p>
                         <span class="status-badge {{ $reg->status_badge_class }}">
                             {{ $reg->display_status }}
