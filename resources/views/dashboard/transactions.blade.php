@@ -28,20 +28,20 @@
 @if($registrations->count() > 0)
     {{-- Status Filter Tabs --}}
     <div class="mb-6 w-full">
-        <div class="tab-rail grid grid-cols-2 sm:flex sm:flex-wrap gap-2 p-1.5 rounded-2xl sm:rounded-full bg-white/60 shadow-sm border border-pink-100/50">
-            <button onclick="filterTransactions('all')" class="filter-tab active col-span-2 sm:col-span-1 w-full flex items-center justify-center px-4 py-3 sm:py-2" data-filter="all">
+        <div class="tab-rail grid grid-cols-2 gap-2 p-1.5 rounded-2xl bg-white/60 shadow-sm border border-pink-100/50">
+            <button onclick="filterTransactions('all')" class="filter-tab active col-span-2 w-full flex items-center justify-center px-4 py-3" data-filter="all">
                 Semua <span class="ml-1 px-1.5 py-0.5 rounded-md bg-white/60 text-[10px] font-bold text-gray-500">{{ $registrations->count() }}</span>
             </button>
-            <button onclick="filterTransactions('Menunggu Pembayaran')" class="filter-tab w-full flex items-center justify-center px-4 py-3 sm:py-2" data-filter="Menunggu Pembayaran">
+            <button onclick="filterTransactions('Menunggu Pembayaran')" class="filter-tab w-full flex items-center justify-center px-4 py-3" data-filter="Menunggu Pembayaran">
                 <span class="w-1.5 h-1.5 rounded-full bg-amber-400 mr-1.5 inline-block"></span> Bayar
             </button>
-            <button onclick="filterTransactions('Menunggu Verifikasi')" class="filter-tab w-full flex items-center justify-center px-4 py-3 sm:py-2" data-filter="Menunggu Verifikasi">
+            <button onclick="filterTransactions('Menunggu Verifikasi')" class="filter-tab w-full flex items-center justify-center px-4 py-3" data-filter="Menunggu Verifikasi">
                 <span class="w-1.5 h-1.5 rounded-full bg-blue-400 mr-1.5 inline-block"></span> Verifikasi
             </button>
-            <button onclick="filterTransactions('Lunas')" class="filter-tab w-full flex items-center justify-center px-4 py-3 sm:py-2" data-filter="Lunas">
+            <button onclick="filterTransactions('Lunas')" class="filter-tab w-full flex items-center justify-center px-4 py-3" data-filter="Lunas">
                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1.5 inline-block"></span> Lunas
             </button>
-            <button onclick="filterTransactions('Ditolak')" class="filter-tab w-full flex items-center justify-center px-4 py-3 sm:py-2" data-filter="Ditolak">
+            <button onclick="filterTransactions('Ditolak')" class="filter-tab w-full flex items-center justify-center px-4 py-3" data-filter="Ditolak">
                 <span class="w-1.5 h-1.5 rounded-full bg-red-400 mr-1.5 inline-block"></span> Ditolak
             </button>
         </div>
