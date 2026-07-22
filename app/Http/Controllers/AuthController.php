@@ -79,8 +79,8 @@ class AuthController extends Controller
         // Regenerate session to prevent session fixation attacks
         $request->session()->regenerate();
 
-        // Check if user is verified
-        if (Auth::user()->email_verified_at === null) {
+        // Check if user is verified (only for regular participants)
+        if (Auth::user()->role === 'user' && Auth::user()->email_verified_at === null) {
             Auth::logout();
             return back()->withErrors([
                 'email' => 'Akun Anda belum diverifikasi. Silakan verifikasi melalui kode OTP yang dikirim saat pendaftaran, atau daftar ulang untuk mendapatkan kode baru.'
