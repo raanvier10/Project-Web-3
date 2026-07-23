@@ -122,8 +122,8 @@
                     <div class="space-y-2.5">
                         @foreach($registrations->take(3) as $index => $registration)
                             <div class="flex items-center space-x-4 rounded-2xl p-3.5 transition-all duration-300 hover:bg-gray-50/80 group" style="animation: pageEnter 0.5s ease forwards; animation-delay: {{ $index * 0.1 }}s; opacity: 0;">
-                                <div class="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl transition-transform duration-300 group-hover:scale-110 {{ $registration->coursePackage->category === 'kids' ? 'bg-purple-50 ring-1 ring-purple-100' : 'bg-primary-50 ring-1 ring-primary-100' }}">
-                                    <i class="fas {{ $registration->coursePackage->category === 'kids' ? 'fa-child text-purple-500' : 'fa-user-graduate text-primary-500' }} text-sm"></i>
+                                <div class="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl transition-transform duration-300 group-hover:scale-110 {{ $registration->coursePackage->category === 'kids' ? 'bg-purple-50 ring-1 ring-purple-100' : ($registration->coursePackage->category === 'teens' ? 'bg-blue-50 ring-1 ring-blue-100' : 'bg-primary-50 ring-1 ring-primary-100') }}">
+                                    <i class="fas {{ $registration->coursePackage->category === 'kids' ? 'fa-child text-purple-500' : ($registration->coursePackage->category === 'teens' ? 'fa-user-friends text-blue-500' : 'fa-user-graduate text-primary-500') }} text-sm"></i>
                                 </div>
                                 <div class="min-w-0 flex-1">
                                     <p class="truncate text-sm font-bold text-gray-900">{{ $registration->coursePackage->name }}</p>

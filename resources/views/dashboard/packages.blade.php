@@ -23,6 +23,9 @@
     <button onclick="filterPackages('kids')" class="filter-tab" id="filter-kids" data-filter="kids">
         <i class="fas fa-child mr-1.5 text-xs"></i> Kids
     </button>
+    <button onclick="filterPackages('teens')" class="filter-tab" id="filter-teens" data-filter="teens">
+        <i class="fas fa-user-friends mr-1.5 text-xs"></i> Teens
+    </button>
     <button onclick="filterPackages('adult')" class="filter-tab" id="filter-adult" data-filter="adult">
         <i class="fas fa-user-graduate mr-1.5 text-xs"></i> Adult
     </button>
@@ -35,12 +38,12 @@
     <div class="course-card-premium h-full" data-category="{{ $package->category }}" style="animation: pageEnter 0.5s ease forwards; animation-delay: {{ $index * 0.12 }}s; opacity: 0;">
         <div class="float-card relative overflow-hidden group flex flex-col h-full">
             {{-- Decorative corner gradient --}}
-            <div class="absolute -top-20 -right-20 w-40 h-40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" style="background: radial-gradient(circle, {{ $package->category === 'kids' ? 'rgba(139,92,246,0.06)' : 'rgba(255,133,187,0.08)' }} 0%, transparent 70%);"></div>
+            <div class="absolute -top-20 -right-20 w-40 h-40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" style="background: radial-gradient(circle, {{ $package->category === 'kids' ? 'rgba(139,92,246,0.06)' : ($package->category === 'teens' ? 'rgba(59,130,246,0.06)' : 'rgba(255,133,187,0.08)') }} 0%, transparent 70%);"></div>
 
             {{-- Top: Category + Slot --}}
             <div class="flex items-center justify-between mb-5">
-                <span class="inline-flex items-center px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider {{ $package->category === 'kids' ? 'text-purple-700' : 'text-primary-700' }}" style="background: {{ $package->category === 'kids' ? 'linear-gradient(135deg, #F3E8FF, #E9D5FF)' : 'linear-gradient(135deg, #FFE0EC, #FFC2D9)' }};">
-                    <i class="fas {{ $package->category === 'kids' ? 'fa-child' : 'fa-user-graduate' }} mr-1.5"></i>
+                <span class="inline-flex items-center px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider {{ $package->category === 'kids' ? 'text-purple-700' : ($package->category === 'teens' ? 'text-blue-700' : 'text-primary-700') }}" style="background: {{ $package->category === 'kids' ? 'linear-gradient(135deg, #F3E8FF, #E9D5FF)' : ($package->category === 'teens' ? 'linear-gradient(135deg, #DBEAFE, #BFDBFE)' : 'linear-gradient(135deg, #FFE0EC, #FFC2D9)') }};">
+                    <i class="fas {{ $package->category === 'kids' ? 'fa-child' : ($package->category === 'teens' ? 'fa-user-friends' : 'fa-user-graduate') }} mr-1.5"></i>
                     {{ $package->category_label }}
                 </span>
                 @if($package->amount > 0)
@@ -80,8 +83,8 @@
                 <div class="grid grid-cols-1 gap-2">
                     @foreach(explode('|', $package->features) as $feature)
                     <div class="flex items-center space-x-2.5 text-sm text-gray-600">
-                        <div class="w-5 h-5 rounded-md flex items-center justify-center flex-shrink-0" style="background: {{ $package->category === 'kids' ? 'linear-gradient(135deg, #F3E8FF, #E9D5FF)' : 'linear-gradient(135deg, #FFE0EC, #FFC2D9)' }};">
-                            <i class="fas fa-check text-[9px] {{ $package->category === 'kids' ? 'text-purple-600' : 'text-primary-600' }}"></i>
+                        <div class="w-5 h-5 rounded-md flex items-center justify-center flex-shrink-0" style="background: {{ $package->category === 'kids' ? 'linear-gradient(135deg, #F3E8FF, #E9D5FF)' : ($package->category === 'teens' ? 'linear-gradient(135deg, #DBEAFE, #BFDBFE)' : 'linear-gradient(135deg, #FFE0EC, #FFC2D9)') }};">
+                            <i class="fas fa-check text-[9px] {{ $package->category === 'kids' ? 'text-purple-600' : ($package->category === 'teens' ? 'text-blue-600' : 'text-primary-600') }}"></i>
                         </div>
                         <span>{{ trim($feature) }}</span>
                     </div>

@@ -33,6 +33,9 @@
         <button onclick="filterPackages('kids')" class="filter-tab" data-filter="kids" id="filter-kids">
             <span class="w-1.5 h-1.5 rounded-full bg-purple-400 mr-1.5 inline-block"></span> Kids
         </button>
+        <button onclick="filterPackages('teens')" class="filter-tab" data-filter="teens" id="filter-teens">
+            <span class="w-1.5 h-1.5 rounded-full bg-blue-400 mr-1.5 inline-block"></span> Teens
+        </button>
     </div>
 </div>
 
@@ -43,15 +46,15 @@
         <div class="package-item" data-category="{{ $package->category }}" style="animation: pageEnter 0.5s ease forwards; animation-delay: {{ $index * 0.08 }}s; opacity: 0;">
             <div class="float-card h-full flex flex-col !p-0 overflow-hidden group">
                 {{-- Card Header with Gradient --}}
-                <div class="relative p-6 pb-4" style="background: linear-gradient(135deg, {{ $package->category === 'kids' ? 'rgba(139,92,246,0.06), rgba(243,232,255,0.8)' : 'rgba(255,133,187,0.06), rgba(255,240,246,0.8)' }});">
+                <div class="relative p-6 pb-4" style="background: linear-gradient(135deg, {{ $package->category === 'kids' ? 'rgba(139,92,246,0.06), rgba(243,232,255,0.8)' : ($package->category === 'teens' ? 'rgba(59,130,246,0.06), rgba(219,234,254,0.8)' : 'rgba(255,133,187,0.06), rgba(255,240,246,0.8)') }});">
                     {{-- Category Badge --}}
                     <div class="flex items-center justify-between mb-4">
-                        <span class="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider {{ $package->category === 'kids' ? 'text-purple-700 bg-purple-100' : 'text-primary-700 bg-primary-100' }}">
-                            <i class="fas {{ $package->category === 'kids' ? 'fa-child' : 'fa-user-graduate' }} mr-1.5"></i>
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider {{ $package->category === 'kids' ? 'text-purple-700 bg-purple-100' : ($package->category === 'teens' ? 'text-blue-700 bg-blue-100' : 'text-primary-700 bg-primary-100') }}">
+                            <i class="fas {{ $package->category === 'kids' ? 'fa-child' : ($package->category === 'teens' ? 'fa-user-friends' : 'fa-user-graduate') }} mr-1.5"></i>
                             {{ $package->category_label }}
                         </span>
-                        <div class="w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:rotate-6" style="background: {{ $package->category === 'kids' ? 'linear-gradient(135deg, #E9D5FF, #D8B4FE)' : 'linear-gradient(135deg, #FFC2D9, #FFA3C7)' }}; box-shadow: 0 4px 12px {{ $package->category === 'kids' ? 'rgba(139,92,246,0.15)' : 'rgba(199,78,131,0.15)' }};">
-                            <i class="fas fa-book-open text-sm {{ $package->category === 'kids' ? 'text-purple-600' : 'text-primary-600' }}"></i>
+                        <div class="w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:rotate-6" style="background: {{ $package->category === 'kids' ? 'linear-gradient(135deg, #E9D5FF, #D8B4FE)' : ($package->category === 'teens' ? 'linear-gradient(135deg, #BFDBFE, #93C5FD)' : 'linear-gradient(135deg, #FFC2D9, #FFA3C7)') }}; box-shadow: 0 4px 12px {{ $package->category === 'kids' ? 'rgba(139,92,246,0.15)' : ($package->category === 'teens' ? 'rgba(59,130,246,0.15)' : 'rgba(199,78,131,0.15)') }};">
+                            <i class="fas fa-book-open text-sm {{ $package->category === 'kids' ? 'text-purple-600' : ($package->category === 'teens' ? 'text-blue-600' : 'text-primary-600') }}"></i>
                         </div>
                     </div>
 

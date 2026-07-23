@@ -216,7 +216,7 @@
                     </td>
                     <td class="font-semibold text-gray-700">{{ $reg->coursePackage->name }}</td>
                     <td>
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase {{ $reg->coursePackage->category === 'kids' ? 'text-purple-600 bg-purple-50' : 'text-primary-700 bg-primary-50' }}">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase {{ $reg->coursePackage->category === 'kids' ? 'text-purple-600 bg-purple-50' : ($reg->coursePackage->category === 'teens' ? 'text-blue-600 bg-blue-50' : 'text-primary-700 bg-primary-50') }}">
                             {{ $reg->coursePackage->category_label }}
                         </span>
                     </td>

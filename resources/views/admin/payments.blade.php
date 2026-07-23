@@ -257,7 +257,7 @@
 
             // Populate package
             document.getElementById('detail-package-name').textContent = data.package.name;
-            document.getElementById('detail-package-category').textContent = data.package.category === 'kids' ? 'Kids' : 'Dewasa';
+            document.getElementById('detail-package-category').textContent = data.package.category === 'kids' ? 'Kids' : (data.package.category === 'teens' ? 'Teens' : 'Dewasa');
             document.getElementById('detail-reg-number').textContent = data.registration.registration_number;
             document.getElementById('detail-amount').textContent = 'Rp ' + data.amount;
 

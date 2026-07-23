@@ -4,6 +4,27 @@
 @section('page-subtitle', 'Tambah, edit, dan kelola paket kursus')
 
 @section('owner-content')
+<style>
+/* Fallback styles for category radio buttons */
+input[type="radio"][value="adult"]:checked + div {
+    background-color: #fdf2f8 !important;
+    border-color: #ec4899 !important;
+}
+input[type="radio"][value="teens"]:checked + div {
+    background-color: #eff6ff !important;
+    border-color: #3b82f6 !important;
+}
+input[type="radio"][value="kids"]:checked + div {
+    background-color: #faf5ff !important;
+    border-color: #a855f7 !important;
+}
+input[type="radio"]:checked + div {
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
+}
+input[type="radio"]:checked + div > div {
+    transform: scale(1.1);
+}
+</style>
 {{-- Page Header --}}
 <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4">
     <div>
@@ -43,8 +64,8 @@
                 <tr style="animation: pageEnter 0.5s ease forwards; animation-delay: {{ $index * 0.05 }}s; opacity: 0;">
                     <td>
                         <div class="flex items-center space-x-3">
-                            <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background: linear-gradient(135deg, {{ $package->category === 'kids' ? '#F3E8FF, #E9D5FF' : '#FFE0EC, #FFC2D9' }});">
-                                <i class="fas {{ $package->category === 'kids' ? 'fa-child text-purple-500' : 'fa-user-graduate text-primary-600' }} text-sm"></i>
+                            <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background: linear-gradient(135deg, {{ $package->category === 'kids' ? '#F3E8FF, #E9D5FF' : ($package->category === 'teens' ? '#DBEAFE, #BFDBFE' : '#FFE0EC, #FFC2D9') }});">
+                                <i class="fas {{ $package->category === 'kids' ? 'fa-child text-purple-500' : ($package->category === 'teens' ? 'fa-user-friends text-blue-500' : 'fa-user-graduate text-primary-600') }} text-sm"></i>
                             </div>
                             <div>
                                 <p class="font-bold text-gray-900 text-sm">{{ $package->name }}</p>
@@ -55,7 +76,7 @@
                         </div>
                     </td>
                     <td>
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase {{ $package->category === 'kids' ? 'text-purple-600 bg-purple-50' : 'text-primary-700 bg-primary-50' }}">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase {{ $package->category === 'kids' ? 'text-purple-600 bg-purple-50' : ($package->category === 'teens' ? 'text-blue-600 bg-blue-50' : 'text-primary-700 bg-primary-50') }}">
                             {{ $package->category_label }}
                         </span>
                     </td>
@@ -123,11 +144,36 @@
                     <input type="text" name="name" class="admin-form-input" placeholder="Contoh: Paket Reguler 3 Bulan" required>
                 </div>
                 <div>
-                    <label class="admin-form-label"><i class="fas fa-layer-group mr-2 text-primary-400 text-xs"></i> Kategori</label>
-                    <select name="category" class="admin-form-select" required>
-                        <option value="adult">Dewasa</option>
-                        <option value="kids">Kids</option>
-                    </select>
+                    <label class="admin-form-label mb-2 block"><i class="fas fa-layer-group mr-2 text-primary-400 text-xs"></i> Kategori</label>
+                    <div class="grid grid-cols-3 gap-3">
+                        <label class="relative cursor-pointer">
+                            <input type="radio" name="category" value="adult" class="peer sr-only" required>
+                            <div class="rounded-xl border border-gray-200 p-3 text-center transition-all peer-checked:border-primary-500 peer-checked:bg-primary-50 peer-checked:shadow-sm hover:bg-gray-50">
+                                <div class="mx-auto mb-1 flex h-8 w-8 items-center justify-center rounded-lg bg-primary-100 text-primary-600">
+                                    <i class="fas fa-user-graduate"></i>
+                                </div>
+                                <span class="text-xs font-bold text-gray-700">Dewasa</span>
+                            </div>
+                        </label>
+                        <label class="relative cursor-pointer">
+                            <input type="radio" name="category" value="teens" class="peer sr-only" required>
+                            <div class="rounded-xl border border-gray-200 p-3 text-center transition-all peer-checked:border-blue-500 peer-checked:bg-blue-50 peer-checked:shadow-sm hover:bg-gray-50">
+                                <div class="mx-auto mb-1 flex h-8 w-8 items-center justify-center rounded-lg bg-blue-100 text-blue-600">
+                                    <i class="fas fa-user-friends"></i>
+                                </div>
+                                <span class="text-xs font-bold text-gray-700">Teens</span>
+                            </div>
+                        </label>
+                        <label class="relative cursor-pointer">
+                            <input type="radio" name="category" value="kids" class="peer sr-only" required>
+                            <div class="rounded-xl border border-gray-200 p-3 text-center transition-all peer-checked:border-purple-500 peer-checked:bg-purple-50 peer-checked:shadow-sm hover:bg-gray-50">
+                                <div class="mx-auto mb-1 flex h-8 w-8 items-center justify-center rounded-lg bg-purple-100 text-purple-600">
+                                    <i class="fas fa-child"></i>
+                                </div>
+                                <span class="text-xs font-bold text-gray-700">Kids</span>
+                            </div>
+                        </label>
+                    </div>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
@@ -200,11 +246,36 @@
                     <input type="text" name="name" class="admin-form-input" id="edit-name" required>
                 </div>
                 <div>
-                    <label class="admin-form-label"><i class="fas fa-layer-group mr-2 text-blue-400 text-xs"></i> Kategori</label>
-                    <select name="category" class="admin-form-select" id="edit-category" required>
-                        <option value="adult">Dewasa</option>
-                        <option value="kids">Kids</option>
-                    </select>
+                    <label class="admin-form-label mb-2 block"><i class="fas fa-layer-group mr-2 text-blue-400 text-xs"></i> Kategori</label>
+                    <div class="grid grid-cols-3 gap-3">
+                        <label class="relative cursor-pointer">
+                            <input type="radio" name="category" value="adult" id="edit-category-adult" class="peer sr-only" required>
+                            <div class="rounded-xl border border-gray-200 p-3 text-center transition-all peer-checked:border-primary-500 peer-checked:bg-primary-50 peer-checked:shadow-sm hover:bg-gray-50">
+                                <div class="mx-auto mb-1 flex h-8 w-8 items-center justify-center rounded-lg bg-primary-100 text-primary-600">
+                                    <i class="fas fa-user-graduate"></i>
+                                </div>
+                                <span class="text-xs font-bold text-gray-700">Dewasa</span>
+                            </div>
+                        </label>
+                        <label class="relative cursor-pointer">
+                            <input type="radio" name="category" value="teens" id="edit-category-teens" class="peer sr-only" required>
+                            <div class="rounded-xl border border-gray-200 p-3 text-center transition-all peer-checked:border-blue-500 peer-checked:bg-blue-50 peer-checked:shadow-sm hover:bg-gray-50">
+                                <div class="mx-auto mb-1 flex h-8 w-8 items-center justify-center rounded-lg bg-blue-100 text-blue-600">
+                                    <i class="fas fa-user-friends"></i>
+                                </div>
+                                <span class="text-xs font-bold text-gray-700">Teens</span>
+                            </div>
+                        </label>
+                        <label class="relative cursor-pointer">
+                            <input type="radio" name="category" value="kids" id="edit-category-kids" class="peer sr-only" required>
+                            <div class="rounded-xl border border-gray-200 p-3 text-center transition-all peer-checked:border-purple-500 peer-checked:bg-purple-50 peer-checked:shadow-sm hover:bg-gray-50">
+                                <div class="mx-auto mb-1 flex h-8 w-8 items-center justify-center rounded-lg bg-purple-100 text-purple-600">
+                                    <i class="fas fa-child"></i>
+                                </div>
+                                <span class="text-xs font-bold text-gray-700">Kids</span>
+                            </div>
+                        </label>
+                    </div>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
@@ -354,7 +425,12 @@
     // Edit modal
     function openEditModal(pkg) {
         document.getElementById('edit-name').value = pkg.name;
-        document.getElementById('edit-category').value = pkg.category;
+        
+        const categoryRadio = document.querySelector(`#editPackageForm input[name="category"][value="${pkg.category}"]`);
+        if (categoryRadio) {
+            categoryRadio.checked = true;
+        }
+
         document.getElementById('edit-original_price').value = pkg.original_price ? parseFloat(pkg.original_price) : '';
         document.getElementById('edit-price').value = parseFloat(pkg.price);
         document.getElementById('edit-amount').value = pkg.amount;

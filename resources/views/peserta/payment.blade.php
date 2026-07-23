@@ -98,7 +98,7 @@
                         </div>
                         <div class="flex justify-between items-center py-3" style="border-bottom: 1px solid rgba(0,0,0,0.05);">
                             <span class="text-sm text-gray-400 font-medium">Kategori</span>
-                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold uppercase {{ $registration->coursePackage->category === 'kids' ? 'text-purple-700' : 'text-primary-700' }}" style="background: {{ $registration->coursePackage->category === 'kids' ? 'linear-gradient(135deg, #F3E8FF, #E9D5FF)' : 'linear-gradient(135deg, #FFE0EC, #FFC2D9)' }};">
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold uppercase {{ $registration->coursePackage->category === 'kids' ? 'text-purple-700' : ($registration->coursePackage->category === 'teens' ? 'text-blue-700' : 'text-primary-700') }}" style="background: {{ $registration->coursePackage->category === 'kids' ? 'linear-gradient(135deg, #F3E8FF, #E9D5FF)' : ($registration->coursePackage->category === 'teens' ? 'linear-gradient(135deg, #DBEAFE, #BFDBFE)' : 'linear-gradient(135deg, #FFE0EC, #FFC2D9)') }};">
                                 {{ $registration->coursePackage->category_label }}
                             </span>
                         </div>

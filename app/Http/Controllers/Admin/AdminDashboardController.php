@@ -289,7 +289,7 @@ class AdminDashboardController extends Controller
                     $reg->detail ? ($reg->detail->phone ?? $reg->detail->parent_phone) : $reg->user->phone,
                     $reg->detail ? $reg->detail->domicile : '-',
                     $reg->coursePackage->name,
-                    $reg->coursePackage->category === 'kids' ? 'Kids' : 'Dewasa',
+                    $reg->coursePackage->category === 'kids' ? 'Kids' : ($reg->coursePackage->category === 'teens' ? 'Teens' : 'Dewasa'),
                     $reg->payment ? $reg->payment->amount : 0,
                 ]);
             }

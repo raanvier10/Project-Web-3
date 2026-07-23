@@ -74,6 +74,10 @@ class CoursePackage extends Model
      */
     public function getCategoryLabelAttribute(): string
     {
-        return $this->category === 'kids' ? 'Kids' : 'Dewasa';
+        return match ($this->category) {
+            'kids' => 'Kids',
+            'teens' => 'Teens',
+            default => 'Dewasa',
+        };
     }
 }

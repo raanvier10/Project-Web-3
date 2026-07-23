@@ -164,7 +164,7 @@ class OwnerDashboardController extends Controller
     {
         $validated = $request->validate([
             'name'         => 'required|string|max:255',
-            'category'     => 'required|in:kids,adult',
+            'category'     => 'required|in:kids,teens,adult',
             'descriptions' => 'nullable|string',
             'features'     => 'nullable|string',
             'original_price' => 'nullable|numeric|min:0',
@@ -194,7 +194,7 @@ class OwnerDashboardController extends Controller
     {
         $validated = $request->validate([
             'name'           => 'required|string|max:255',
-            'category'       => 'required|in:kids,adult',
+            'category'       => 'required|in:kids,teens,adult',
             'descriptions'   => 'nullable|string',
             'features'       => 'nullable|string',
             'original_price' => 'nullable|numeric|min:0',
@@ -249,7 +249,7 @@ class OwnerDashboardController extends Controller
         $data = [
             [
                 'Nama Paket',
-                'Kategori (adult/kids)',
+                'Kategori (adult/teens/kids)',
                 'Harga Jual',
                 'Harga Asli (opsional)',
                 'Jumlah Pertemuan',
@@ -304,7 +304,7 @@ class OwnerDashboardController extends Controller
             if (count($data) < 5 || trim($data[0]) === '') continue; 
             
             $category = trim(strtolower($data[1]));
-            if (!in_array($category, ['kids', 'adult'])) {
+            if (!in_array($category, ['kids', 'teens', 'adult'])) {
                 $category = 'adult'; // Default fallback
             }
 

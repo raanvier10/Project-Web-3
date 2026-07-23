@@ -15,7 +15,7 @@
 
 <div class="max-w-3xl mx-auto">
     {{-- Package Info Banner --}}
-    <div class="relative overflow-hidden rounded-2xl mb-6" style="background: {{ $package->category === 'kids' ? 'linear-gradient(135deg, #7C3AED 0%, #8B5CF6 40%, #A78BFA 100%)' : 'linear-gradient(135deg, #C74E83 0%, #E8699F 40%, #FF85BB 100%)' }};">
+    <div class="relative overflow-hidden rounded-2xl mb-6" style="background: {{ $package->category === 'kids' ? 'linear-gradient(135deg, #7C3AED 0%, #8B5CF6 40%, #A78BFA 100%)' : ($package->category === 'teens' ? 'linear-gradient(135deg, #2563EB 0%, #3B82F6 40%, #60A5FA 100%)' : 'linear-gradient(135deg, #C74E83 0%, #E8699F 40%, #FF85BB 100%)') }};">
         {{-- Decorative --}}
         <div class="absolute inset-0 pointer-events-none">
             <div class="absolute -top-12 -right-12 w-40 h-40 rounded-full" style="background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);"></div>
@@ -25,7 +25,7 @@
 
         <div class="relative z-10 p-6 sm:p-8 flex items-start space-x-5">
             <div class="w-16 h-16 rounded-2xl flex items-center justify-center flex-shrink-0" style="background: rgba(255,255,255,0.15); backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.15);">
-                <i class="fas {{ $package->category === 'kids' ? 'fa-child' : 'fa-user-graduate' }} text-2xl text-white"></i>
+                <i class="fas {{ $package->category === 'kids' ? 'fa-child' : ($package->category === 'teens' ? 'fa-user-friends' : 'fa-user-graduate') }} text-2xl text-white"></i>
             </div>
             <div>
                 <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider mb-2 text-white/90" style="background: rgba(255,255,255,0.15);">
@@ -59,8 +59,8 @@
     {{-- Registration Form --}}
     <div class="float-card">
         <div class="flex items-center space-x-3 mb-7 pb-5" style="border-bottom: 1px dashed rgba(0,0,0,0.06);">
-            <div class="w-11 h-11 rounded-xl flex items-center justify-center" style="background: {{ $package->category === 'kids' ? 'linear-gradient(135deg, #F3E8FF, #E9D5FF)' : 'linear-gradient(135deg, #FFE0EC, #FFC2D9)' }};">
-                <i class="fas fa-file-pen {{ $package->category === 'kids' ? 'text-purple-600' : 'text-primary-600' }}"></i>
+            <div class="w-11 h-11 rounded-xl flex items-center justify-center" style="background: {{ $package->category === 'kids' ? 'linear-gradient(135deg, #F3E8FF, #E9D5FF)' : ($package->category === 'teens' ? 'linear-gradient(135deg, #DBEAFE, #BFDBFE)' : 'linear-gradient(135deg, #FFE0EC, #FFC2D9)') }};">
+                <i class="fas fa-file-pen {{ $package->category === 'kids' ? 'text-purple-600' : ($package->category === 'teens' ? 'text-blue-600' : 'text-primary-600') }}"></i>
             </div>
             <div>
                 <h3 class="text-lg font-bold text-gray-900">Form Pendaftaran</h3>
@@ -75,13 +75,13 @@
             <div class="form-group">
                 <label for="name" class="form-label">
                     <i class="fas fa-user text-xs mr-1.5 text-gray-400"></i>
-                    {{ $package->category === 'kids' ? 'Nama Anak' : 'Nama Lengkap' }}
+                    {{ in_array($package->category, ['kids', 'teens']) ? 'Nama Anak' : 'Nama Lengkap' }}
                     <span class="text-red-400 ml-0.5">*</span>
                 </label>
                 <div class="relative group">
                     <input type="text" id="name" name="name" value="{{ old('name', Auth::user()->name) }}" required maxlength="255"
                         pattern="[a-zA-Z\s]+" title="Hanya boleh berisi huruf dan spasi"
-                        placeholder="{{ $package->category === 'kids' ? 'Masukkan nama anak' : 'Masukkan nama lengkap' }}"
+                        placeholder="{{ in_array($package->category, ['kids', 'teens']) ? 'Masukkan nama anak' : 'Masukkan nama lengkap' }}"
                         class="form-input-premium @error('name') !border-red-300 !bg-red-50/30 @enderror" />
                     <div class="form-input-glow"></div>
                 </div>
@@ -98,14 +98,16 @@
                         Usia <span class="text-red-400 ml-0.5">*</span>
                     </label>
                     <input type="number" id="age" name="age" value="{{ old('age') }}" required
-                        min="{{ $package->category === 'kids' ? '4' : '16' }}"
-                        max="{{ $package->category === 'kids' ? '15' : '100' }}"
+                        min="{{ $package->category === 'kids' ? '4' : ($package->category === 'teens' ? '11' : '16') }}"
+                        max="{{ $package->category === 'kids' ? '10' : ($package->category === 'teens' ? '15' : '150') }}"
                         placeholder="Masukkan usia"
                         class="form-input-premium @error('age') !border-red-300 !bg-red-50/30 @enderror" />
                     <p class="text-gray-400 text-[11px] mt-1.5 flex items-center">
                         <i class="fas fa-info-circle mr-1 text-gray-300"></i>
                         @if($package->category === 'kids')
-                            Rentang usia program Kids: <strong class="ml-1 text-gray-500">4 – 15 tahun</strong>
+                            Rentang usia program Kids: <strong class="ml-1 text-gray-500">4 – 10 tahun</strong>
+                        @elseif($package->category === 'teens')
+                            Rentang usia program Teens: <strong class="ml-1 text-gray-500">11 – 15 tahun</strong>
                         @else
                             Rentang usia program Dewasa: <strong class="ml-1 text-gray-500">16 tahun ke atas</strong>
                         @endif
@@ -139,11 +141,11 @@
             <div class="form-group">
                 <label for="job" class="form-label">
                     <i class="fas fa-briefcase text-xs mr-1.5 text-gray-400"></i>
-                    {{ $package->category === 'kids' ? 'Pekerjaan Orang Tua' : 'Pekerjaan' }}
+                    {{ in_array($package->category, ['kids', 'teens']) ? 'Pekerjaan Orang Tua' : 'Pekerjaan' }}
                     <span class="text-red-400 ml-0.5">*</span>
                 </label>
                 <input type="text" id="job" name="job" value="{{ old('job') }}" required maxlength="255"
-                    placeholder="{{ $package->category === 'kids' ? 'Pekerjaan orang tua' : 'Masukkan pekerjaan Anda' }}"
+                    placeholder="{{ in_array($package->category, ['kids', 'teens']) ? 'Pekerjaan orang tua' : 'Masukkan pekerjaan Anda' }}"
                     class="form-input-premium @error('job') !border-red-300 !bg-red-50/30 @enderror" />
                 @error('job')
                 <p class="text-red-500 text-xs mt-1.5 flex items-center"><i class="fas fa-exclamation-circle mr-1"></i>{{ $message }}</p>
@@ -151,7 +153,7 @@
             </div>
 
             {{-- Phone --}}
-            @if($package->category === 'kids')
+            @if(in_array($package->category, ['kids', 'teens']))
             <div class="form-group">
                 <label for="parent_phone" class="form-label">
                     <i class="fab fa-whatsapp text-xs mr-1.5 text-green-500"></i>
@@ -180,10 +182,10 @@
             @endif
 
             {{-- Terms Notice --}}
-            <label class="mt-7 p-4 rounded-2xl flex items-start space-x-3 cursor-pointer transition-all duration-300 hover:shadow-md" style="background: linear-gradient(135deg, rgba(255,133,187,0.04), rgba(199,78,131,0.02)); border: 1px solid rgba(255,133,187,0.2);">
+            <label class="mt-7 p-4 rounded-2xl flex items-start space-x-3 cursor-pointer transition-all duration-300 hover:shadow-md" style="background: {{ $package->category === 'kids' ? 'linear-gradient(135deg, rgba(167,139,250,0.04), rgba(124,58,237,0.02))' : ($package->category === 'teens' ? 'linear-gradient(135deg, rgba(96,165,250,0.04), rgba(37,99,235,0.02))' : 'linear-gradient(135deg, rgba(255,133,187,0.04), rgba(199,78,131,0.02))') }}; border: 1px solid {{ $package->category === 'kids' ? 'rgba(167,139,250,0.2)' : ($package->category === 'teens' ? 'rgba(96,165,250,0.2)' : 'rgba(255,133,187,0.2)') }};">
                 <div class="flex items-center h-5 mt-1 relative">
                     <input id="terms-checkbox" type="checkbox" name="terms" required
-                           class="w-5 h-5 text-primary-600 bg-white border-primary-300 rounded focus:ring-primary-500 focus:ring-2 cursor-pointer transition-colors"
+                           class="w-5 h-5 {{ $package->category === 'kids' ? 'text-purple-600 border-purple-300 focus:ring-purple-500' : ($package->category === 'teens' ? 'text-blue-600 border-blue-300 focus:ring-blue-500' : 'text-primary-600 border-primary-300 focus:ring-primary-500') }} bg-white rounded cursor-pointer transition-colors"
                            onchange="document.getElementById('submitRegistration').disabled = !this.checked; if(this.checked){ document.getElementById('submitRegistration').classList.remove('opacity-60', 'cursor-not-allowed'); document.getElementById('submitRegistration').classList.add('hover:-translate-y-0.5', 'active:translate-y-0'); } else { document.getElementById('submitRegistration').classList.add('opacity-60', 'cursor-not-allowed'); document.getElementById('submitRegistration').classList.remove('hover:-translate-y-0.5', 'active:translate-y-0'); }">
                 </div>
                 <div>
@@ -208,7 +210,7 @@
                 </a>
                 <button type="submit" id="submitRegistration" disabled
                     class="w-full sm:flex-1 py-4 rounded-xl text-white font-bold text-sm transition-all duration-300 transform flex items-center justify-center space-x-2 relative overflow-hidden group opacity-60 cursor-not-allowed"
-                    style="background: linear-gradient(135deg, #E8699F 0%, #FF85BB 50%, #C74E83 100%); box-shadow: 0 4px 20px rgba(199,78,131,0.25);">
+                    style="background: {{ $package->category === 'kids' ? 'linear-gradient(135deg, #8B5CF6 0%, #A78BFA 50%, #7C3AED 100%)' : ($package->category === 'teens' ? 'linear-gradient(135deg, #3B82F6 0%, #60A5FA 50%, #2563EB 100%)' : 'linear-gradient(135deg, #E8699F 0%, #FF85BB 50%, #C74E83 100%)') }}; box-shadow: {{ $package->category === 'kids' ? '0 4px 20px rgba(124,58,237,0.25)' : ($package->category === 'teens' ? '0 4px 20px rgba(59,130,246,0.25)' : '0 4px 20px rgba(199,78,131,0.25)') }};">
                     <span class="relative z-10 flex items-center">
                         <span>Daftar & Lanjut Bayar</span>
                         <i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i>
@@ -224,8 +226,8 @@
 @section('scripts')
 <script>
     const packageCategory = '{{ $package->category }}';
-    const minAge = packageCategory === 'kids' ? 4 : 16;
-    const maxAge = packageCategory === 'kids' ? 15 : 100;
+    const minAge = packageCategory === 'kids' ? 4 : (packageCategory === 'teens' ? 11 : 16);
+    const maxAge = packageCategory === 'kids' ? 10 : (packageCategory === 'teens' ? 15 : 150);
 
     const ageInput = document.getElementById('age');
     const ageWarning = document.getElementById('ageWarningBanner');
@@ -243,11 +245,14 @@
 
         let warning = '';
         if (packageCategory === 'kids') {
-            if (val < 4) warning = 'Usia terlalu kecil. Program Kids untuk anak usia 4–15 tahun.';
-            else if (val > 15) warning = 'Usia melebihi batas program Kids (maks. 15 tahun). Silakan pilih paket Dewasa untuk usia 16 tahun ke atas.';
+            if (val < 4) warning = 'Usia terlalu kecil. Program Kids untuk anak usia 4–10 tahun.';
+            else if (val > 10) warning = 'Usia melebihi batas program Kids (maks. 10 tahun). Silakan pilih paket Teens atau Dewasa.';
+        } else if (packageCategory === 'teens') {
+            if (val < 11) warning = 'Usia terlalu kecil. Program Teens untuk anak usia 11–15 tahun.';
+            else if (val > 15) warning = 'Usia melebihi batas program Teens (maks. 15 tahun). Silakan pilih paket Dewasa untuk usia 16 tahun ke atas.';
         } else {
-            if (val < 16) warning = 'Usia di bawah 16 tahun tidak dapat mendaftar program Dewasa. Silakan pilih paket Kids untuk usia 4–15 tahun.';
-            else if (val > 100) warning = 'Usia tidak valid. Maksimal 100 tahun.';
+            if (val < 16) warning = 'Usia di bawah 16 tahun tidak dapat mendaftar program Dewasa. Silakan pilih paket Kids atau Teens.';
+            else if (val > 150) warning = 'Usia tidak valid.';
         }
 
         if (warning) {

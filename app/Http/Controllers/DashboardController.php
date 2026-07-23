@@ -111,14 +111,15 @@ class DashboardController extends Controller
         }
 
         $isKids = $package->category === 'kids';
+        $isTeens = $package->category === 'teens';
 
         $request->validate([
             'name' => ['required', 'string', 'max:255', 'regex:/^[a-zA-Z\s]+$/'],
-            'age' => ['required', 'integer', 'min:' . ($isKids ? '4' : '16'), 'max:' . ($isKids ? '15' : '100')],
+            'age' => ['required', 'integer', 'min:' . ($isKids ? '4' : ($isTeens ? '11' : '16')), 'max:' . ($isKids ? '10' : ($isTeens ? '15' : '150'))],
             'domicile' => ['required', 'string', 'max:255', 'regex:/^[a-zA-Z\s]+$/'],
             'job' => ['required', 'string', 'max:255', 'regex:/^[a-zA-Z\s]+$/'],
             'phone' => [$isKids ? 'nullable' : 'required', 'string', 'regex:/^08[0-9]{10,11}$/'],
-            'parent_phone' => [$isKids ? 'required' : 'nullable', 'string', 'regex:/^08[0-9]{10,11}$/'],
+            'parent_phone' => [$isKids || $isTeens ? 'required' : 'nullable', 'string', 'regex:/^08[0-9]{10,11}$/'],
         ], [
             'name.required' => 'Nama wajib diisi.',
             'name.regex' => 'Nama hanya boleh berisi huruf dan spasi (tanpa angka/karakter khusus).',
@@ -126,10 +127,14 @@ class DashboardController extends Controller
             'age.integer' => 'Usia harus berupa angka.',
             'age.min' => $isKids
                 ? 'Usia minimal 4 tahun untuk program Kids.'
-                : 'Usia minimal 16 tahun untuk program Dewasa. Silakan pilih paket Kids untuk usia di bawah 16 tahun.',
+                : ($isTeens
+                    ? 'Usia minimal 11 tahun untuk program Teens.'
+                    : 'Usia minimal 16 tahun untuk program Dewasa. Silakan pilih paket Kids atau Teens untuk usia di bawah 16 tahun.'),
             'age.max' => $isKids
-                ? 'Usia maksimal 15 tahun untuk program Kids. Silakan pilih paket Dewasa untuk usia 16 tahun ke atas.'
-                : 'Usia maksimal 100 tahun.',
+                ? 'Usia maksimal 10 tahun untuk program Kids. Silakan pilih paket Teens untuk usia 11-15 tahun.'
+                : ($isTeens
+                    ? 'Usia maksimal 15 tahun untuk program Teens. Silakan pilih paket Dewasa untuk usia 16 tahun ke atas.'
+                    : 'Usia tidak valid.'),
             'domicile.required' => 'Domisili wajib diisi.',
             'domicile.regex' => 'Domisili hanya boleh berisi huruf dan spasi (tanpa angka/karakter khusus).',
             'job.required' => 'Pekerjaan wajib diisi.',

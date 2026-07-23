@@ -144,8 +144,8 @@
                 <div class="space-y-2.5">
                     @foreach($registrations->take(3) as $index => $reg)
                     <div class="flex items-center space-x-4 p-3.5 rounded-2xl transition-all duration-300 hover:bg-gray-50/80 group" style="animation: pageEnter 0.5s ease forwards; animation-delay: {{ $index * 0.1 }}s; opacity: 0;">
-                        <div class="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 transition-transform duration-300 group-hover:scale-110 {{ $reg->coursePackage->category === 'kids' ? 'bg-purple-50 ring-1 ring-purple-100' : 'bg-primary-50 ring-1 ring-primary-100' }}">
-                            <i class="fas {{ $reg->coursePackage->category === 'kids' ? 'fa-child text-purple-500' : 'fa-user-graduate text-primary-500' }} text-sm"></i>
+                        <div class="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 transition-transform duration-300 group-hover:scale-110 {{ $reg->coursePackage->category === 'kids' ? 'bg-purple-50 ring-1 ring-purple-100' : ($reg->coursePackage->category === 'teens' ? 'bg-blue-50 ring-1 ring-blue-100' : 'bg-primary-50 ring-1 ring-primary-100') }}">
+                            <i class="fas {{ $reg->coursePackage->category === 'kids' ? 'fa-child text-purple-500' : ($reg->coursePackage->category === 'teens' ? 'fa-user-friends text-blue-500' : 'fa-user-graduate text-primary-500') }} text-sm"></i>
                         </div>
                         <div class="flex-1 min-w-0">
                             <p class="font-bold text-gray-900 text-sm truncate">{{ $reg->coursePackage->name }}</p>

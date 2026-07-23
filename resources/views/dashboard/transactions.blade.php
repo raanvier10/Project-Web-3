@@ -55,12 +55,12 @@
                 <div class="flex flex-col lg:flex-row lg:items-center gap-4">
                     {{-- Left: Package Info --}}
                     <div class="flex items-start space-x-4 flex-1 min-w-0">
-                        <div class="w-13 h-13 rounded-2xl flex items-center justify-center flex-shrink-0 transition-transform duration-300 hover:scale-110" style="width: 52px; height: 52px; {{ $reg->coursePackage->category === 'kids' ? 'background: linear-gradient(135deg, #F3E8FF, #E9D5FF); box-shadow: 0 4px 12px rgba(139,92,246,0.1);' : 'background: linear-gradient(135deg, #FFE0EC, #FFC2D9); box-shadow: 0 4px 12px rgba(255,133,187,0.1);' }}">
-                            <i class="fas {{ $reg->coursePackage->category === 'kids' ? 'fa-child text-purple-500' : 'fa-user-graduate text-primary-500' }} text-lg"></i>
+                        <div class="w-13 h-13 rounded-2xl flex items-center justify-center flex-shrink-0 transition-transform duration-300 hover:scale-110" style="width: 52px; height: 52px; {{ $reg->coursePackage->category === 'kids' ? 'background: linear-gradient(135deg, #F3E8FF, #E9D5FF); box-shadow: 0 4px 12px rgba(139,92,246,0.1);' : ($reg->coursePackage->category === 'teens' ? 'background: linear-gradient(135deg, #DBEAFE, #BFDBFE); box-shadow: 0 4px 12px rgba(59,130,246,0.1);' : 'background: linear-gradient(135deg, #FFE0EC, #FFC2D9); box-shadow: 0 4px 12px rgba(255,133,187,0.1);') }}">
+                            <i class="fas {{ $reg->coursePackage->category === 'kids' ? 'fa-child text-purple-500' : ($reg->coursePackage->category === 'teens' ? 'fa-user-friends text-blue-500' : 'fa-user-graduate text-primary-500') }} text-lg"></i>
                         </div>
                         <div class="min-w-0">
                             <div class="flex items-center flex-wrap gap-2 mb-1">
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider {{ $reg->coursePackage->category === 'kids' ? 'text-purple-600 bg-purple-50' : 'text-primary-600 bg-primary-50' }}">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider {{ $reg->coursePackage->category === 'kids' ? 'text-purple-600 bg-purple-50' : ($reg->coursePackage->category === 'teens' ? 'text-blue-600 bg-blue-50' : 'text-primary-600 bg-primary-50') }}">
                                     {{ $reg->coursePackage->category_label }}
                                 </span>
                                 <span class="text-xs text-gray-300 font-mono">{{ $reg->registration_number }}</span>

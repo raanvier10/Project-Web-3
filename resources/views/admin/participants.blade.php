@@ -69,8 +69,8 @@
                     <td class="text-gray-400 font-mono text-sm">{{ $index + 1 }}</td>
                     <td>
                         <div class="flex items-center space-x-3">
-                            <div class="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style="background: linear-gradient(135deg, {{ $reg->coursePackage->category === 'kids' ? '#F3E8FF, #E9D5FF' : '#FFE0EC, #FFC2D9' }});">
-                                <i class="fas {{ $reg->coursePackage->category === 'kids' ? 'fa-child text-purple-500' : 'fa-user text-primary-600' }} text-xs"></i>
+                            <div class="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style="background: linear-gradient(135deg, {{ $reg->coursePackage->category === 'kids' ? '#F3E8FF, #E9D5FF' : ($reg->coursePackage->category === 'teens' ? '#DBEAFE, #BFDBFE' : '#FFE0EC, #FFC2D9') }});">
+                                <i class="fas {{ $reg->coursePackage->category === 'kids' ? 'fa-child text-purple-500' : ($reg->coursePackage->category === 'teens' ? 'fa-user-friends text-blue-500' : 'fa-user text-primary-600') }} text-xs"></i>
                             </div>
                             <div>
                                 <p class="font-bold text-gray-900 text-sm">{{ $reg->detail ? $reg->detail->name : $reg->user->name }}</p>
@@ -86,7 +86,7 @@
                     <td class="text-gray-600 text-sm">{{ $reg->detail ? $reg->detail->domicile ?? '-' : '-' }}</td>
                     <td>
                         <div class="flex items-center space-x-2">
-                            <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold uppercase {{ $reg->coursePackage->category === 'kids' ? 'text-purple-600 bg-purple-50' : 'text-primary-700 bg-primary-50' }}">
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold uppercase {{ $reg->coursePackage->category === 'kids' ? 'text-purple-600 bg-purple-50' : ($reg->coursePackage->category === 'teens' ? 'text-blue-600 bg-blue-50' : 'text-primary-700 bg-primary-50') }}">
                                 {{ $reg->coursePackage->category_label }}
                             </span>
                             <span class="text-sm font-semibold text-gray-700">{{ $reg->coursePackage->name }}</span>

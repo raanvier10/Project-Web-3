@@ -19,13 +19,13 @@
     {{-- Package Info Card --}}
     <div class="float-card mb-6 !p-5" style="animation: pageEnter 0.5s ease forwards; opacity: 0;">
         <div class="flex items-center space-x-4">
-            <div class="w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0 transition-all duration-300 hover:scale-110" style="background: linear-gradient(135deg, {{ $package->category === 'kids' ? '#F3E8FF, #E9D5FF' : '#FFE0EC, #FFC2D9' }}); box-shadow: 0 4px 16px {{ $package->category === 'kids' ? 'rgba(139,92,246,0.12)' : 'rgba(199,78,131,0.12)' }};">
-                <i class="fas {{ $package->category === 'kids' ? 'fa-child text-purple-500' : 'fa-user-graduate text-primary-600' }} text-xl"></i>
+            <div class="w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0 transition-all duration-300 hover:scale-110" style="background: linear-gradient(135deg, {{ $package->category === 'kids' ? '#F3E8FF, #E9D5FF' : ($package->category === 'teens' ? '#DBEAFE, #BFDBFE' : '#FFE0EC, #FFC2D9') }}); box-shadow: 0 4px 16px {{ $package->category === 'kids' ? 'rgba(139,92,246,0.12)' : ($package->category === 'teens' ? 'rgba(59,130,246,0.12)' : 'rgba(199,78,131,0.12)') }};">
+                <i class="fas {{ $package->category === 'kids' ? 'fa-child text-purple-500' : ($package->category === 'teens' ? 'fa-user-friends text-blue-500' : 'fa-user-graduate text-primary-600') }} text-xl"></i>
             </div>
             <div class="flex-1 min-w-0">
                 <div class="flex items-center flex-wrap gap-2 mb-1">
-                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase {{ $package->category === 'kids' ? 'text-purple-600 bg-purple-50' : 'text-primary-700 bg-primary-50' }}">
-                        <i class="fas {{ $package->category === 'kids' ? 'fa-child' : 'fa-user-graduate' }} mr-1"></i>
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase {{ $package->category === 'kids' ? 'text-purple-600 bg-purple-50' : ($package->category === 'teens' ? 'text-blue-600 bg-blue-50' : 'text-primary-700 bg-primary-50') }}">
+                        <i class="fas {{ $package->category === 'kids' ? 'fa-child' : ($package->category === 'teens' ? 'fa-user-friends' : 'fa-user-graduate') }} mr-1"></i>
                         {{ $package->category_label }}
                     </span>
                     <span class="text-gray-300 text-xs">•</span>
@@ -52,7 +52,7 @@
             </div>
             <div>
                 <h3 class="text-base font-bold text-gray-900">Formulir Pendaftaran</h3>
-                <p class="text-gray-400 text-[11px]">{{ $package->category === 'kids' ? 'Diisi oleh orang tua / wali' : 'Lengkapi data diri Anda' }}</p>
+                <p class="text-gray-400 text-[11px]">{{ in_array($package->category, ['kids', 'teens']) ? 'Diisi oleh orang tua / wali' : 'Lengkapi data diri Anda' }}</p>
             </div>
         </div>
 
@@ -79,12 +79,12 @@
                 <div class="form-group">
                     <label class="form-label">
                         <i class="fas fa-user mr-2 text-primary-400 text-xs"></i>
-                        {{ $package->category === 'kids' ? 'Nama Lengkap Anak' : 'Nama Lengkap' }}
+                        {{ in_array($package->category, ['kids', 'teens']) ? 'Nama Lengkap Anak' : 'Nama Lengkap' }}
                         <span class="text-red-400 ml-0.5">*</span>
                     </label>
                     <input type="text" name="name" value="{{ old('name') }}"
                            class="form-input-premium @error('name') !border-red-300 focus:!border-red-400 focus:!ring-red-100 @enderror"
-                           placeholder="{{ $package->category === 'kids' ? 'Masukkan nama lengkap anak' : 'Masukkan nama lengkap Anda' }}" required
+                           placeholder="{{ in_array($package->category, ['kids', 'teens']) ? 'Masukkan nama lengkap anak' : 'Masukkan nama lengkap Anda' }}" required
                            id="input-name">
                     @error('name')
                     <p class="text-red-500 text-xs mt-1.5 flex items-center"><i class="fas fa-exclamation-circle mr-1 text-[10px]"></i>{{ $message }}</p>
@@ -95,13 +95,13 @@
                 <div class="form-group">
                     <label class="form-label">
                         <i class="fas fa-birthday-cake mr-2 text-primary-400 text-xs"></i>
-                        {{ $package->category === 'kids' ? 'Usia Anak' : 'Usia' }}
+                        {{ in_array($package->category, ['kids', 'teens']) ? 'Usia Anak' : 'Usia' }}
                         <span class="text-red-400 ml-0.5">*</span>
                     </label>
                     <input type="number" name="age" value="{{ old('age') }}"
                            class="form-input-premium @error('age') !border-red-300 focus:!border-red-400 focus:!ring-red-100 @enderror"
-                           placeholder="{{ $package->category === 'kids' ? 'Contoh: 8' : 'Contoh: 25' }}"
-                           min="1" max="{{ $package->category === 'kids' ? '17' : '100' }}" required
+                           placeholder="{{ $package->category === 'kids' ? 'Contoh: 8' : ($package->category === 'teens' ? 'Contoh: 15' : 'Contoh: 25') }}"
+                           min="{{ $package->category === 'teens' ? '13' : '1' }}" max="{{ in_array($package->category, ['kids', 'teens']) ? '17' : '100' }}" required
                            id="input-age">
                     @error('age')
                     <p class="text-red-500 text-xs mt-1.5 flex items-center"><i class="fas fa-exclamation-circle mr-1 text-[10px]"></i>{{ $message }}</p>
@@ -128,12 +128,12 @@
                 <div class="form-group">
                     <label class="form-label">
                         <i class="fas fa-briefcase mr-2 text-primary-400 text-xs"></i>
-                        {{ $package->category === 'kids' ? 'Pekerjaan Orang Tua' : 'Pekerjaan' }}
+                        {{ in_array($package->category, ['kids', 'teens']) ? 'Pekerjaan Orang Tua' : 'Pekerjaan' }}
                         <span class="text-red-400 ml-0.5">*</span>
                     </label>
                     <input type="text" name="job" value="{{ old('job') }}"
                            class="form-input-premium @error('job') !border-red-300 focus:!border-red-400 focus:!ring-red-100 @enderror"
-                           placeholder="{{ $package->category === 'kids' ? 'Contoh: PNS / Wiraswasta' : 'Contoh: Mahasiswi / Ibu Rumah Tangga' }}" required
+                           placeholder="{{ in_array($package->category, ['kids', 'teens']) ? 'Contoh: PNS / Wiraswasta' : 'Contoh: Mahasiswi / Ibu Rumah Tangga' }}" required
                            id="input-job">
                     @error('job')
                     <p class="text-red-500 text-xs mt-1.5 flex items-center"><i class="fas fa-exclamation-circle mr-1 text-[10px]"></i>{{ $message }}</p>
@@ -144,11 +144,11 @@
                 <div class="form-group">
                     <label class="form-label">
                         <i class="fab fa-whatsapp mr-2 text-green-500 text-xs"></i>
-                        {{ $package->category === 'kids' ? 'No. WhatsApp Orang Tua' : 'No. WhatsApp' }}
+                        {{ in_array($package->category, ['kids', 'teens']) ? 'No. WhatsApp Orang Tua' : 'No. WhatsApp' }}
                         <span class="text-red-400 ml-0.5">*</span>
                     </label>
                     <div class="relative">
-                        <input type="text" name="{{ $package->category === 'kids' ? 'parent_phone' : 'phone' }}" value="{{ old($package->category === 'kids' ? 'parent_phone' : 'phone') }}"
+                        <input type="text" name="{{ in_array($package->category, ['kids', 'teens']) ? 'parent_phone' : 'phone' }}" value="{{ old(in_array($package->category, ['kids', 'teens']) ? 'parent_phone' : 'phone') }}"
                                class="form-input-premium !pl-[72px] @error('phone') !border-red-300 focus:!border-red-400 focus:!ring-red-100 @enderror @error('parent_phone') !border-red-300 focus:!border-red-400 focus:!ring-red-100 @enderror"
                                placeholder="8123456789" required
                                id="input-whatsapp">

@@ -66,7 +66,10 @@
         modal.querySelector('[name="_method"]').value = 'PUT';
         modal.querySelector('[name="title"]').value = pkg.title || '';
         modal.querySelector('[name="price"]').value = pkg.price || '';
-        modal.querySelector('[name="category"]').value = pkg.category || '';
+        if (pkg.category) {
+          const catRadio = modal.querySelector(`[name="category"][value="${pkg.category}"]`);
+          if (catRadio) catRadio.checked = true;
+        }
         modal.querySelector('[name="description"]').value = pkg.description || '';
       } else {
         const form = modal.querySelector('form');

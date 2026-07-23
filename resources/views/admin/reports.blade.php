@@ -144,7 +144,7 @@
                     <td class="text-gray-600 text-sm">{{ $reg->user->email }}</td>
                     <td class="font-semibold text-gray-700 text-sm">{{ $reg->coursePackage->name }}</td>
                     <td>
-                        <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold uppercase {{ $reg->coursePackage->category === 'kids' ? 'text-purple-600 bg-purple-50' : 'text-primary-700 bg-primary-50' }}">
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold uppercase {{ $reg->coursePackage->category === 'kids' ? 'text-purple-600 bg-purple-50' : ($reg->coursePackage->category === 'teens' ? 'text-blue-600 bg-blue-50' : 'text-primary-700 bg-primary-50') }}">
                             {{ $reg->coursePackage->category_label }}
                         </span>
                     </td>
@@ -252,7 +252,7 @@
                 <td>{{ $reg->detail ? ($reg->detail->phone ?? $reg->detail->parent_phone) : $reg->user->phone }}</td>
                 <td>{{ $reg->detail ? $reg->detail->domicile : '-' }}</td>
                 <td>{{ $reg->coursePackage->name }}</td>
-                <td>{{ $reg->coursePackage->category === 'kids' ? 'Kids' : 'Dewasa' }}</td>
+                <td>{{ $reg->coursePackage->category === 'kids' ? 'Kids' : ($reg->coursePackage->category === 'teens' ? 'Teens' : 'Dewasa') }}</td>
                 <td>{{ $reg->payment ? 'Rp ' . number_format($reg->payment->amount, 0, ',', '.') : '-' }}</td>
             </tr>
             @endforeach

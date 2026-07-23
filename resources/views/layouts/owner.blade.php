@@ -441,10 +441,11 @@
         // Initialize Search Dropdown (Tom Select)
         document.addEventListener('DOMContentLoaded', function() {
             document.querySelectorAll('.searchdropdown, .admin-form-select').forEach((el) => {
+                const noSort = el.hasAttribute('data-no-sort');
                 new TomSelect(el, {
                     create: false,
                     dropdownParent: 'body',
-                    sortField: { field: "text", direction: "asc" },
+                    sortField: noSort ? null : { field: "text", direction: "asc" },
                     placeholder: el.getAttribute('data-placeholder') || 'Pilih opsi...',
                     plugins: ['clear_button']
                 });
